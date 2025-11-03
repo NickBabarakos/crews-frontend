@@ -1,38 +1,89 @@
-.App {
+/* Γενικό styling για να μηδενίσουμε τα περιθώρια */
+body {
+  margin:0;
+  font-family: sans-serif;
+  background-color:#ccc 
+}
+
+/* To το βασικό container που χωρίζει τη σελίδα σε δύο στήλες */
+.app-container {
+  display: flex; 
+  height: 100vh; /*Ύψος ίσο με το ύψος της οθόνης */
+  flex-direction: column;
+}
+
+.header-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 10px 20px;
+  background-color: #333
+
+}
+
+.header-bar h1 {
+  color: white;
+  margin: 0;
+  
+  padding: 10px 0;
+}
+
+.header-bar button, 
+.dropdown-toggle {
+  min-width: 180px;
+  padding: 6px 15px;
+  font-size: 16px;
+  text-align: left;
+
+  border: 1px solid #777;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+}
+
+button.search-button {
+  min-width: 120px;
+  background-color: #555;
+  color: white;
+  border-color: black;
+  border-radius: 7px;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.dropdown {
+  position: relative;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.dropdown-menu {
+  max-height: 200px;
+  overflow-y: auto;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+
+  width: 100%;
+  box-sizing: border-box;
+
+
+
+  list-style:none;
+  padding:0;
+  margin-top:5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color:white;
+  color:#333;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.dropdown-menu li {
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 14px;
 }
 
-.App-link {
-  color: #61dafb;
+.dropdown-menu li:hover {
+  background-color: #f0f0f0;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
