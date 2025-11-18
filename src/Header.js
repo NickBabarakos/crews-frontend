@@ -2,7 +2,7 @@ import './App.css';
 import { useState, useEffect, useRef } from 'react';
 import Dropdown from './Dropdown';
 
- const levelOptions = ['Level 1', 'Level 2', 'Level 3', 'Level 5'];
+    const levelOptions = ['Level 1', 'Level 2', 'Level 3', 'Level 5'];
     const stageOptions = [
         'GV vs Local Sea Monster', 'GV vs Iron-Mace Alvida', 'GV vs Axe-Hand Morgan',
         'GV vs Buggy the Clown', 'GV vs (O.T.)Monkey D. Luffy', 'GV vs Captain Kuro',
@@ -12,7 +12,7 @@ import Dropdown from './Dropdown';
         'GV vs Mr.3', 'GV vs Wapol', 'GV vs Wapol', 'GV vs (DEX)Smoker', 'GV vs Miss Doublefinger'
     ];
 
-function Header( { onSearch }){
+function Header( { viewMode, onSearch, characterCategory, onCharacterCategoryChange }){
     const [selectedLevel, setSelectedLevel] = useState(null);
     const [selectedStage, setSelectedStage] = useState(null);
     const [openDropdown, setOpenDropdown] = useState(null);
@@ -52,34 +52,70 @@ function Header( { onSearch }){
         level: levelNumber
     });
     };
-   
+
+    const handleLevelSelect = (level) => {
+        setSelectedLevel(level);
+        setOpenDropdown(null);
+    };
+
+    const handleStageSelect = (stage) => {
+        setSelectedStage(stage);
+        setOpenDropdown(null);
+    };
 
     return(
         <div className="header-bar">
-            <h1> Crews </h1>
-            <div ref={levelDropdownRef}>
-                <Dropdown
-                    options={levelOptions}
-                    selectedOption = {selectedLevel}
-                    onSelect={setSelectedLevel}
-                    placeholder = "Selecet Level"
-                    isOpen={openDropdown === 'level'}
-                    onToggle={()=> handleToggleDropdown('level')}
-                />
-            </div>
-            <div ref={stageDropdownRef}>
-                <Dropdown
-                    options={stageOptions}
-                    selectedOption={selectedStage}
-                    onSelect={setSelectedStage}
-                    placeholder="Select Stage"
-                    isOpen={openDropdown === 'stage'}
-                    onToggle={()=> handleToggleDropdown('stage')}
-                />
-            </div>
-            <button className="search-button" onClick={handleSearch}>Search</button>
+            <h1> otpc-crews </h1>
 
-        </div>
+            <div className="header-controls">
+                {viewMode === `grandVoyage` ? (
+                    <>
+                        <div ref={stageDropdownRef}>
+                            <Dropdown 
+                                className="header-dropdown"
+                                options={stageOptions}
+                                selectedOption={selectedStage}
+                                onSelect={handleStageSelect}
+                                placeholder="Select Stage"
+                                isOpen={openDropdown === 'stage'}
+                                onToggle={()=> handleToggleDropdown('stage')}
+                            />
+                        </div>
+                        <div ref={levelDropdownRef}>
+                            <Dropdown 
+                                className="header-dropdown"
+                                options={levelOptions}
+                                selectedOption={selectedLevel}
+                                onSelect={handleLevelSelect}
+                                placeholder="Level"
+                                isOpen={openDropdown === 'level'}
+                                onToggle={()=> handleToggleDropdown('level')}
+                            />
+                        </div>
+                        <button className="search-button" onClick={handleSearch}>Search</button>
+                    </>
+                ):(
+                    <div className="character-category-buttons">
+                        <button 
+                            className={`header-button ${characterCategory === 'plusLegends' ? 'active' : ''}`}
+                            onClick={() => onCharacterCategoryChange('plusLegends')}
+                        > 6+ Legends 
+                        </button>
+                        <button 
+                            className = {`header-button ${characterCategory === 'legends' ? 'active' : ''}`}
+                            onClick={()=> onCharacterCategoryChange('legends')}
+                        > Legends
+                        </button>
+                        <button
+                            className={`header-button ${characterCategory === 'rareRecruits' ? 'active' : ''}`}
+                            onClick = {()=> onCharacterCategoryChange('rareRecruits')}
+                        > Rare Recruits
+                        </button>
+                    </div>
+                )}
+
+            </div>
+    </div>
 
     )
 }

@@ -1,12 +1,9 @@
 import './App.css';
 
 function Footer({currentPage, hasMore, onPageChange, hasSearched}){
-    if(!hasSearched){
-        return <div className="footer"></div>
-    }
-
-    const showPrevButton = currentPage> 1;
-    const showNextButton = hasMore;
+    const showPrevButton = hasSearched && currentPage > 1;
+    const showNextButton = hasSearched && hasMore;
+    const indicatorClass = `page-indicator ${hasSearched ? 'active': 'inactive'}`;
 
     return(
         <div className="footer">
@@ -17,7 +14,7 @@ function Footer({currentPage, hasMore, onPageChange, hasSearched}){
                     </button>
                 )}
 
-                <div className="page-indicator"> {currentPage}</div>
+                <div className={indicatorClass}> {currentPage}</div>
 
                 {showNextButton && (
                     <button onClick={() => onPageChange('next')} className="pagination-arrow">

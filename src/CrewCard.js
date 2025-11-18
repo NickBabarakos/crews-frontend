@@ -1,6 +1,5 @@
 function MemberSlot({main, support}) {
     const characterLinkClass = `character-link ${main ? 'has-image': ''}`;
-    const supportLinkClass = `support-link ${support ? 'has-image' : ''}`;
 
     return(
         <div className="member-slot">
@@ -8,12 +7,18 @@ function MemberSlot({main, support}) {
                 {main && <img src={`${main.image_url}.png`} alt={main.name} className="character-image "/>}
             </a>
 
-            {main?.position !== 'Friend Captain' && (
-                <a href={support?.info_url} target="_blank" rel="noopener noreferrer" className={supportLinkClass}>
-                {support && <img src={`${support.image_url}.png`} alt={support.name} className="support-image" />}
-                </a>
-            )}
+        {support && (
+            <a 
+                href={support.info_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="support-link has-image"
+            >
+                <img src={`${support.image_url}.png`} alt={support.name} className="support-image" />
+            </a>
+        )}
         </div>
+
     );
 }
 
