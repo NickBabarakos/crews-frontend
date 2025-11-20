@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef} from 'react';
 
 
-function Dropdown({options, selectedOption, onSelect, placeholder, isOpen, onToggle, className}){
+function Dropdown({options, selectedOption, onSelect, placeholder, isOpen, onToggle, className, disabled}){
     const [dropdownWidth, setDropdownWidth] = useState(null);
     const dropdownRef= useRef(null);
 
@@ -35,7 +35,7 @@ function Dropdown({options, selectedOption, onSelect, placeholder, isOpen, onTog
             ref={dropdownRef}
             style={{ width: dropdownWidth ? `${dropdownWidth}px` : `auto`}}
         >
-            <button className="dropdown-toggle" onClick={onToggle}>
+            <button className="dropdown-toggle" onClick={onToggle} disabled={disabled}>
                 {selectedOption || placeholder}
             </button>
 

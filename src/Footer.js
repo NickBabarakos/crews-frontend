@@ -8,19 +8,21 @@ function Footer({currentPage, hasMore, onPageChange, hasSearched}){
     return(
         <div className="footer">
             <div className="pagination-controls">
-                {showPrevButton && (
-                    <button onClick={() => onPageChange('prev')} className="pagination-arrow">
-                        &lt;
+                    <button 
+                        onClick={() => onPageChange('prev')} 
+                        className={`pagination-arrow prev ${!showPrevButton ? 'hidden' : ''}`}
+                        disabled={!showPrevButton}
+                    >
                     </button>
-                )}
 
                 <div className={indicatorClass}> {currentPage}</div>
 
-                {showNextButton && (
-                    <button onClick={() => onPageChange('next')} className="pagination-arrow">
-                        &gt;
+                    <button onClick={() => onPageChange('next')} 
+                        className={`pagination-arrow next ${!showNextButton ? 'hidden' : ''}`}
+                        disabled={!showNextButton}
+                    >
                     </button>
-                )}
+                
             </div>
         </div>
     );

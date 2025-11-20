@@ -1,16 +1,44 @@
 import './App.css';
 
-function Sidebar({onViewChange}){
+function Sidebar({onViewChange, currentView}){
     return(
         <div className="sidebar">
-            <button className="sidebar-button character-button" onClick={()=>onViewChange('characters')}>Characters </button>
-            <button className="sidebar-button grand-voyage-button" onClick={()=>onViewChange('grandVoyage')}>Grand Voyage</button>
-            <button className="sidebar-button Garp's Challenge!">Garp's Challenge!</button>
-            <button className="sidebar-button Forest of Training">Forest of Training</button>
-            <button className="sidebar-button Clash/Coliseum">Clash/Coliseum</button>
-            <button className="sidebar-button Pirate King Adventures">Pirate King Adventures</button>
-            <button className="sidebar-button Treasure Map">Treasure Map</button>
-            <button className="sidebar-button Kizuna Clash">Kizuna Clash</button>
+            <button 
+                className={`sidebar-button character-button ${currentView === 'characters' ? 'active' : ''}`}
+                onClick={()=>onViewChange('characters')}>Characters 
+            </button>
+            <button 
+                className={`sidebar-button grand-voyage-button ${currentView === 'grandVoyage' ? 'active' : ''}`}
+                onClick={()=>onViewChange('grandVoyage')}>Grand Voyage
+            </button>
+            <button     
+                className={`sidebar-button garps-challenge-button ${currentView === 'garpsChallenge' ? 'active' : ''}`} 
+                onClick={()=> onViewChange('garpsChallenge')}>Garp's Challenge!
+            </button>
+            <button 
+                className={`sidebar-button forest-of-training-button ${currentView === 'forestOfTraining' ? 'active' : ''}`}
+                onClick={()=>onViewChange('forestOfTraining') }>Forest of Training
+            </button>
+            <button 
+                className={`sidebar-button clash-button ${currentView === 'clash' ? 'active' : ''}`}
+                onClick={()=> onViewChange('clash')}>Clash
+            </button>
+            <button 
+                className={`sidebar-button coliseum-button ${currentView === 'coliseum' ? 'active' : ''}`} 
+                onClick={()=> onViewChange('coliseum')}>Coliseum
+            </button>
+            <button 
+                className={`sidebar-button pka-button ${currentView === 'pirateKingAdventures' ? 'active' : ''}`} 
+                onClick={()=>onViewChange('pirateKingAdventures')}>Pirate King Adventures
+            </button>
+            <button 
+                className={`sidebar-button treasure-map-button ${currentView === 'treasureMap' ? 'active' : ''}`}
+                onClick={()=> onViewChange('treasureMap')}>Treasure Map
+            </button>
+            <button 
+                className={`sidebar-button kizuna-clash-button ${currentView === 'kizunaClash' ? 'active' : ''}`}
+                onClick={()=> onViewChange('kizunaClash')}>Kizuna Clash
+            </button>
         </div>
     );
 }

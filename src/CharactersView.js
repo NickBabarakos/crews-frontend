@@ -1,13 +1,6 @@
 import './App.css';
-import { useState, useRef, useEffect } from 'react';
-import Dropdown from './Dropdown';
+import { useRef, useEffect, useCallback } from 'react';
 
-const legendOptions = [
-    'All Legends', 'Super Sugo-Fest Only', 'Anniversary', 'Pirate Rumble Sugo-Fest Only', 'Treasure Sugo-Fest Only',
-    'Pirate Alliance Kizuna Clash Sugo-Fest Only', 'Exchange Only', 'Sugo Rare'
-];
-
-const TOTAL_PLACEHODLERS = 48;
 
 function CharacterCard({character}){
     return(
@@ -19,87 +12,64 @@ function CharacterCard({character}){
 
 
 
-function CharactersView({ characters, totalCount, characterCategory, legendSubCategory, onLegendSubCategoryChange }){
-    const hasData = characters && characters.length>0;
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+function CharactersView({ characters, onPageSizeChange }){
+    const gridRef = useRef(null);
+    const resizeTimeoutRef = useRef(null);
 
-    const dropdownRef = useRef(null);
+    const calculatePageSize = useCallback(()=> {
+        if(!gridRef.current) return;
+
+        const gridStyle = window.getComputedStyle(gridRef.current);
+        const cardMinWidth = 110;
+        const gap = parseInt(gridStyle.gap) || 15;
+
+        const containerWidth = gridRef.current.clientWidth;
+        const containerHeight = gridRef.current.clientHeight;
+
+        if (containerWidth === 0) return;
+
+        const columns = Math.floor(containerWidth / (cardMinWidth + gap));
+        if(columns === 0) return;
+
+        const cardHeight = (containerWidth - (columns-1)*gap)/columns;
+        const rows = Math.floor(containerHeight/(cardHeight + gap));
+        
+        const newSize =columns*rows;
+
+        if(newSize <=0 ){
+            onPageSizeChange(Math.max(1, columns));
+            return;    
+        }
+
+        onPageSizeChange(newSize);
+    }, [onPageSizeChange]);
 
     useEffect(()=> {
+        const observer = new ResizeObserver(()=> {
+            clearTimeout(resizeTimeoutRef.current);
+            resizeTimeoutRef.current = setTimeout(()=> {
+                calculatePageSize();
+            }, 150);
+        });
 
-        if (!isDropdownOpen) return;
-        const scrollContainer = dropdownRef.current?.closest('.main-content');
-        if (!scrollContainer) return;
-
-        function handleClickOutside(event) {
-            if(dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setIsDropdownOpen(false);
-            }
+        if(gridRef.current){
+            observer.observe(gridRef.current);
         }
-        
-        const computedStyle = window.getComputedStyle(scrollContainer);
-        const originalPaddingRightValue = parseFloat(computedStyle.paddingRight);
-        const scrollbarWidth = scrollContainer.offsetWidth - scrollContainer.clientWidth;
-        const originalInlineOverflow = scrollContainer.style.overflow;
-        const originalInlinePaddingRight = scrollContainer.style.paddingRight;
-
-        document.addEventListener('mousedown', handleClickOutside);
-
-        scrollContainer.style.paddingRight = `${originalPaddingRightValue + scrollbarWidth}px`;
-        scrollContainer.style.overflow = 'hidden';
 
         return ()=> {
-            scrollContainer.style.paddingRight = originalInlinePaddingRight;
-            scrollContainer.style.overflow = originalInlineOverflow;
+            observer.disconnect();
+            clearTimeout(resizeTimeoutRef.current);
         };
-    }, [isDropdownOpen]);
+    }, [calculatePageSize]);
 
-    const handleSubCategorySelect = (selection) => {
-        const valueToUpdate = selection === 'All Legends' ? 'all' : selection;
-        onLegendSubCategoryChange(valueToUpdate);
-        setIsDropdownOpen(false);
-    }; 
-
-    const getSelectedOptionLabel = () => {
-        if (legendSubCategory === 'all') {
-            return 'All Legends';
-        }
-        return legendSubCategory;
-    };
 
     return (
-        <div className="character-display-wrapper">
-            {hasData && (
-                <div className="results-counter">
-                    {totalCount} / {totalCount}
-                </div>
-            )}
-        <div className ="content-container">
-            {characterCategory === 'legends' && ( 
-                <div className = "sub-category-filter" ref={dropdownRef}>
-                    <Dropdown
-                        className="legends-dropdown" 
-                        options={legendOptions}
-                        selectedOption = {getSelectedOptionLabel()}
-                        onSelect = {handleSubCategorySelect}
-                        isOpen = {isDropdownOpen}
-                        onToggle={()=> setIsDropdownOpen(!isDropdownOpen)}
-                    />
-                </div>
-            )}
-
-            <div className="characters-view">
-                {!hasData ? (
-                    [...Array(TOTAL_PLACEHODLERS)].map((_,index) => (
-                        <div key={index} className="character-placeholder-card"> </div>
-                    ))
-                ) : (
-                    characters.map(char => <CharacterCard key={char.id} character={char} />)
-                )}
+        <>
+            <div className = "characters-view" ref={gridRef}>
+                {characters && characters.map(char => <CharacterCard key={char.id} character={char} />)}
             </div>
-        </div>
-    </div>
-
+    
+        </>
     );
 }
 
