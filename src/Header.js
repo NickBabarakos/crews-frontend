@@ -4,7 +4,13 @@ function Header(){
 
     return(
         <div className="header-bar">
-            <h1> optc-crews </h1>
+            <div className="logo-container">
+                <h1>
+                    <span className="logo-accent">OPTC</span>
+                    <span className="highlight-text">crews</span>
+                </h1>
+                
+            </div>
         </div>
     );
     

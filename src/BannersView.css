@@ -1,0 +1,118 @@
+.banners-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    padding: 24px;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    align-content: start;
+    box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: #475569 #0f172a;
+}
+
+.banners-view::-webkit-scrollbar { width: 8px;}
+.banners-view::-webkit-scrollbar-track{ background: #0f172a;}
+.banners-view::-webkit-scrollbar-thumb{background-color: #475569; border-radius: 4px;}
+
+.banner-card{
+    background-color: #1e293b;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+}
+
+.banner-card:hover{
+    transform: translateY(-6px);
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5),0 0 15px rgba(139, 92, 246, 0.3);
+    border-color: #8b5cf6;
+}
+
+.banner-image-container{
+    width: 100%;
+    aspect-ratio: 1151/663;
+    overflow: hidden;
+    background-color: #0f172a;
+    position: relative;
+}
+
+.banner-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transfrom 0.5s ease;
+}
+
+.banner-card:hover .banner-image-container img {transform: scale(1.08);}
+
+.banner-info {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-grow: 1;
+}
+
+.banner-title{
+    margin: 0;
+    color: #f1f5f9;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+}
+
+.banner-dates{
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+}
+
+.date-box{
+    flex: 1;
+    background: rgba(15,23,42,0.8);
+    border-radius: 8px;
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    position: relative;
+    overflow: hidden;
+}
+
+.date-box::after{
+    content:'';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+
+}
+
+.date-box.start::after{ background-color: #10b981;}
+.date-box.end::after {background-color: #f43f5e;}
+
+.date-label{
+    color: #94a3b8;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+}
+
+.date-value{
+    color: #fff;
+    font-weight: 500;
+    font-size: 12px;
+    font-family: 'Inter', monospace;
+}

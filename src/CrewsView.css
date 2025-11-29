@@ -1,0 +1,293 @@
+.no-crews-message{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    flex-grow: 1;
+    box-sizing: border-box;
+    color: #a0a2a8;
+}
+
+.empty-state-card {
+    background-color: #2C313A;
+    border: 1px solid #4A505C;
+    border-radius: 12px;
+    padding: 5vh 60px;
+    max-width: 700px;
+    width: 100%;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    text-align: center;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInCard 0.6s ease-out forwards;
+    transition: all 0.3s ease-in-out;
+}
+
+.crews-view{
+    display:flex;
+    gap: 30px;
+    justify-content: center;
+    flex-wrap: wrap;
+    flex: 1;
+    overflow-y: auto;
+    align-content: flex-start;
+    padding: 20px 10px 60px 10px;
+}
+
+.no-crews-message .luffy-empty-state-image {
+    max-width: 35vh;
+    max-height: 350px;
+    margin-bottom: 2vh;
+    opacity: 0.7;
+    animation: floatAnimation 4s ease-in-out infinite;
+    transition: max-width 0.3s ease-in-out;
+}
+
+.no-crews-message h2 {
+    color: #E0E1E6;
+    font-size: clamp(1.8em, 4vh, 2.5em);
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+    transition: font-size 0.3s ease-in-out;
+}
+
+.no-crews-message p {
+    font-size: clamp(1em, 2vh, 1.2em);
+    color: #94a3b8;
+    max-width: 500px;
+    line-height: 1.7;
+    margin-left: auto;
+    margin-right: auto;
+    transition: font-size 0.3s ease-in-out;
+}
+
+@keyframes fadeInCard {
+    to{
+        opacity:1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes floatAnimation{
+    0%{
+        transform: translateY(0);
+    }
+    50%{
+        transform: translateY(-10px);
+    }
+    100%{
+        transform: translateY(0);
+    }
+}
+
+
+.crew-container{
+  flex-basis: 300px;
+  flex-grow: 0;
+  flex-shrink: 1;
+}
+
+.card-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.card-wrapper:hover{
+  transform: translateY(-6px);
+}
+
+.card-wrapper:hover .crew-card{
+  box-shadow: 0 12px 24px rgba(0,0,0,0.4);
+  border-color: #6a6f7a;
+}
+
+.crew-container:hover .crew-card{
+  transform: none;
+  box-shadow: none;
+}
+
+.crew-card {
+  background: linear-gradient(180deg, #1e293b 0%, #111827 100%);
+  border-radius: 16px 16px 0 0;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: none;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+ 
+}
+
+.crew-card h4 {
+  margin-top: 0;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #f1f5f9;
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+}
+
+.crew-members-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  padding: 2px;
+}
+
+.member-slot {
+  position: relative;
+  width: 100%;
+
+  background-color: #020617;
+  border-radius: 8px;
+  aspect-ratio: 1/1;
+  overflow: hidden;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+}
+
+
+.support-link {
+  position: absolute;
+  width: 45%;
+  aspect-ratio: 1/1;
+  bottom: -5px;
+  right: -5px;
+  background-color: #6a6a6a;
+  border: 2px solid #888;
+  border-radius: 4px;
+}
+
+.support-link.has-image{
+  background-color: transparent;
+  border: none;
+}
+
+
+.support-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 2px;
+
+}
+
+.video-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px 0px;
+  background: linear-gradient(90deg, #5b25c9 0%, #703be8 100%);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-radius: 0 0 16px 16px;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.25,0.8,0.25,1);
+  box-sizing: border-box;
+  margin-top: 0px;
+}
+
+.video-button:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 0 20px rgba(138, 79, 255, 0.5);
+  transform: translateY(1px);
+}
+
+.video-button svg {
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card-wrapper:hover .video-button svg {
+  transform: scale(1.2);
+}
+
+.video-button.disabled{
+  background-color: #2C313A;
+  border-color: #4A505C;
+  color: #6b707c;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.crew-card.placeholder {
+  background-color: transparent;
+  border: 1px soild #4a505c;
+}
+
+@keyframes pulse {
+  0% {background-color: #484550;}
+  50% {background-color: #3a3f4a;}
+  100% {background-color: #484550;}
+}
+
+.support-slot-placeholder {
+  position: absolute;
+  width: 45%;
+  aspect-ratio: 1/1;
+  bottom: -5px;
+  right: -5px;
+  background-color: #6a6a6a;
+  border: 2px solid #888;
+  border-radius: 4px;
+}
+
+.placeholder .member-slot{
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 225,  0.03) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.placeholder .support-slot-placeholder {
+  display: none;
+}
+
+.placeholder .support-slot-placeholder {
+  border:none;
+}
+
+.crew-controls .search-button {
+  margin-left: auto;
+}
+
+.placeholder-wrapper .crew-card {
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
+  margin-bottom: 0;
+  background-color: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.placeholder-wrapper .video-button.disabled{
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 225,  0.03) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s eas-in-out infinite;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  color: transparent;
+}
+
+@keyframes shimmer{
+  0% { background-position: -200% 0;}
+  100% {background-position: 200% 0;}
+}

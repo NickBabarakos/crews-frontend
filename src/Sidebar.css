@@ -1,0 +1,224 @@
+.sidebar{
+    width: 280px;
+    flex-shrink: 0;
+    background-color: #0f172a;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 24px 16px;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+    height: 100%;
+    z-index: 40;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    flex: 1;
+    padding-right: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: #334155 transparent;
+}
+
+.sidebar-button {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    min-height: 60px;
+    padding: 0 20px;
+    border-radius: 8px;
+
+    border: 1px solid rgba(255, 255, 255, 0.05);
+
+    color: #94a3b8;
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    text-align: left;
+    background-color: #1e293b;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.sidebar-button::before {
+    content: '';
+    position: absolute;
+    top: 0; left:0; right:0; bottom:0;
+    background-image: var(--bg-image);
+    background-size: cover;
+    background-position: center;
+    opacity: 0.15;
+    filter: grayscale(100%);
+    z-index: -1;
+    transition: all 0.4s ease;
+}
+
+.characters-button { --bg-image: url('/public/buttons_bg/characters-bg.png');}
+.banners-button {--bg-image: url('/public/buttons_bg/banners-bg.png');}
+.grand-voyage-button { --bg-image: url('/public/buttons_bg/grand-voyage-bg.png');}
+.garps-challenge-button { --bg-image: url('/public/buttons_bg/garps-challenge-bg.png');}
+.forest-of-training-button { --bg-image: url('/public/buttons_bg/forest-of-training-bg.png');}
+.clash-button { --bg-image: url('/public/buttons_bg/clash-bg.png');}
+.coliseum-button { --bg-image: url('/public/buttons_bg/coliseum-bg.png');}
+.pka-button { --bg-image: url('/public/buttons_bg/pka-bg.png');}
+.treasure-map-button { --bg-image: url('/public/buttons_bg/treasure-map-bg.png');}
+.kizuna-clash-button { --bg-image: url('/public/buttons_bg/kizuna-clash-bg.png');}
+
+.sidebar-accent{
+    width: 4px;
+    height: 4px;
+    background-color: #64748b;
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+.sidebar-button:not(.active):hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #f1f5f9;
+    transform: translateX(4px);
+}
+
+.sidebar-button:not(.active):hover::before{
+    opacity: 0.4;
+    filter: grayscale(80%);
+}
+
+.sidebar-button:not(.active):hover .sidebar-accent{
+    background-color: #f1f5f9;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+.sidebar-button.active{
+    color: #FFFFFF;
+    border-color: #8b5cf6;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+    text-shadow: 0 2px 4px 4gba(0,0,0,0.8);
+}
+
+.sidebar-button.active::before {
+    transform: scale(1.05);
+    opacity: 0.85;
+    filter: grayscale(0%);
+}
+
+.sidebar-button.active:after {
+    content: '';
+    position: absolute;
+    top: 0; left:0; right:0; bottom:0;
+    background: linear-gradient(90deg, rgba(109, 40, 217, 0.9) 0%, rgba(139,92,246,0.4), transparent 100%);
+    z-index: -1;
+    border-radius: 6px;
+}
+
+.sidebar-button.active .sidebar-accent {
+    height: 24px;
+    width: 4px;
+    border-radius: 2px;
+    background-color: #fff;
+    box-shadow: 0 0 10px #8b5cf6, 0 0 20px #8b5cf6;
+}
+
+.sidebar-footer{
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.footer-separator{
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    width: 100%;
+}
+
+.footer-links{
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.footer-btn{
+    position: relative;
+    width: 100%;
+    height: 44px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(30, 41, 59, 0.4);
+    color: #94a3b8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0.2, 1);
+}
+
+.footer-btn svg{
+    pointer-events: none;
+    transition: transform 0.3s ease;
+}
+
+.footer-btn:hover{
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.footer-btn.youtube:hover{
+    background: linear-gradient(135deg, rgba(220,38,38,0.2), rgba(30,41,59,0.4));
+    border-color: rgba(220, 38, 38, 0.5);
+    box-shadow: 0 0 15px rgba(220, 38, 38, 0.2);
+    color: #f87171;
+}
+
+.footer-btn.discord:hover{
+    background: linear-gradient(135deg, rgba(88, 101,242, 0.2), rgba(30,41,59,0.4));
+    border-color: rgba(88, 101, 242, 0.5);
+    box-shadow: 0 0 15px rgba(88, 101, 242, 0.2);
+    color: #818cf8;
+}
+
+.footer-btn.database:hover{
+    background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(30,41,59,0.4));
+    border-color: rgba(16,185, 129, 0.5);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+    color: #34d399;
+}
+
+.tooltip{
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%) scale(0.8);
+    padding: 6px 10px;
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.5);
+    pointer-events: none;
+    z-index: 50;
+}
+
+.footer-btn:hover .tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
+    bottom: 130%;
+}

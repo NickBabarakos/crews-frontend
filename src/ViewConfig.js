@@ -15,7 +15,7 @@ const viewConfig = {
             {
                 id: 'level',
                 placeholder: 'Level',
-                options: ['Level 1', 'Level 2', 'Level 3', 'Level 5']
+                options: ['Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5']
             }
         ]
     }, 
@@ -74,15 +74,30 @@ const viewConfig = {
             }
         ]
     },
+    coliseum: {
+        mode: 'coliseum',
+        dropdowns: [
+            {
+                id: 'level',
+                placeholder: 'Category',
+                options: ['Clash!! (Hard)', 'Coliseum Chaos', 'Event', 'Arena']
+            }
+        ]
+    },
     pirateKingAdventures: {
         mode: 'pirate_king_adventures',
         dropdowns: [
             {
-                id: 'level',
-                placeholder: 'Level',
+                id: 'bosses',
+                placeholder: 'Bosses',
                 options: [
-                    'Level 80-99', 'Level 100-149', 'Level 150+'
+                    'vs. Dorry & Broggy (Hex)', 'vs. Pudding (Hex)', 'vs. Kid (Boss)'
                 ]
+            },
+            {
+                id: 'level',
+                placeholeder: 'Level',
+                options: [ 'Level 80-99', 'Level 100-149', 'Level 150+']
             }
         ]
     },

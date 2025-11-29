@@ -1,10 +1,33 @@
+import {useCollection} from './CollectionContext';
+
 function MemberSlot({main, support}) {
+    const {isOwned, toggleChar} = useCollection();
     const characterLinkClass = `character-link ${main ? 'has-image': ''}`;
+
+    const mainId = main?.character_id;
+    const isMainOwned = isOwned(mainId);
+
+    const supportId = support?.character_id;
+    const isSupportOwned = isOwned(supportId);
+
+    const handleRightClick = (e, charObj) => {
+        if(charObj && charObj.character_id){
+            e.preventDefault();
+            e.stopPropagation();
+            toggleChar(charObj.character_id, charObj.type);
+        }
+    };
 
     return(
         <div className="member-slot">
-            <a href={main?.info_url} target="_blank" rel="noopener noreferrer" className={characterLinkClass}>
-                {main && <img src={`${main.image_url}.png`} alt={main.name} className="character-image "/>}
+            <a
+                href={main?.info_url} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className={characterLinkClass}
+                onContextMenu={(e)=> handleRightClick(e, main)}
+                >
+                {main && <img src={`${main.image_url}.png`} alt={main.name} className={`character-image ${isMainOwned ? '': 'missing'}`}/>}
             </a>
 
         {support && (
@@ -13,8 +36,13 @@ function MemberSlot({main, support}) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="support-link has-image"
+                onContextMenu = {(e) => handleRightClick(e, support)}
             >
-                <img src={`${support.image_url}.png`} alt={support.name} className="support-image" />
+                <img 
+                src={`${support.image_url}.png`} 
+                alt={support.name} 
+                className={`support-image ${isSupportOwned ? '' : 'missing'}`}
+                />
             </a>
         )}
         </div>
