@@ -12,6 +12,8 @@ const GROUP_CONFIG = {
 
 function StageGuideModal({isOpen, onClose, guideData, loading}) {
     if(!isOpen) return null;
+    const conditions = !Array.isArray(guideData) && guideData?.conditions ? guideData.conditions : [];
+    const battles = Array.isArray(guideData) ? guideData : (guideData?.battles || []);
 
     return(
         <div className="modal-overlay" onClick={onClose}>
@@ -24,7 +26,22 @@ function StageGuideModal({isOpen, onClose, guideData, loading}) {
                 <div className="modal-body">
                     {loading && <p className="loading-text">Loading guide...</p>}
                     {!loading && !guideData && <p className="error-text"> No guide availabe for this stage yet</p>}
-                    {!loading && guideData && guideData.map((battle, index) => (
+
+                    {!loading && conditions.length >0 && (
+                        <div className="stage-conditions">
+                            <div className="conditions-header">
+                                <span className="info-icon">i</span> Stage Conditions
+                            </div>
+                            <ul className="conditions-list">
+                                {conditions.map((cond, idx) => (
+                                    <li key={idx} className="condition-item">
+                                        {cond}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                    {!loading && battles && battles.map((battle, index) => (
                         <div key={index} className="battle-section">
                             <div className="battle-title"> Battle {battle.battle}</div>
                             <div className="gimmick-list">

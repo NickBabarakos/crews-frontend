@@ -1,52 +1,74 @@
 import {useCollection} from './CollectionContext';
+import InteractiveChar from './InteractiveChar';
 
-function MemberSlot({main, support}) {
+function MemberSlot({main, support, role}) {
     const {isOwned, toggleChar} = useCollection();
-    const characterLinkClass = `character-link ${main ? 'has-image': ''}`;
-
+   
     const mainId = main?.character_id;
-    const isMainOwned = isOwned(mainId);
-
     const supportId = support?.character_id;
-    const isSupportOwned = isOwned(supportId);
+    const rawMainNotes = main?.notes;
+ 
 
-    const handleRightClick = (e, charObj) => {
-        if(charObj && charObj.character_id){
-            e.preventDefault();
-            e.stopPropagation();
-            toggleChar(charObj.character_id, charObj.type);
-        }
-    };
+    const isEmpty = !main;
+    const isMainOwned = isOwned(mainId);
+    const mainLevel = (rawMainNotes && rawMainNotes !== 'optional') ? rawMainNotes: null;
+
+    const isSupportOwned = isOwned(supportId);
+    const isSupportOptional = support?.notes === 'optional';
+    
+
 
     return(
-        <div className="member-slot">
-            <a
-                href={main?.info_url} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className={characterLinkClass}
-                onContextMenu={(e)=> handleRightClick(e, main)}
-                >
-                {main && <img src={`${main.image_url}.png`} alt={main.name} className={`character-image ${isMainOwned ? '': 'missing'}`}/>}
-            </a>
-
-        {support && (
-            <a 
-                href={support.info_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="support-link has-image"
-                onContextMenu = {(e) => handleRightClick(e, support)}
+        <div className={`member-slot ${isEmpty ? 'empty' : ''} ${role ? 'role-slot' : ''}`}>
+            {role && !isEmpty && (
+                <span className={`role-badge ${role === 'FC' ? 'fc-badge' : 'c-badge'}`}>
+                    {role === 'FC' ? 'FRIEND' : 'CAPTAIN'}
+                </span>
+            )}
+        {main && (
+            <InteractiveChar
+                id={main.character_id}
+                type={main.type}
+                url={main.info_url}
+                className={`character-link ${main ? 'has-image': ''}`}
             >
                 <img 
-                src={`${support.image_url}.png`} 
-                alt={support.name} 
-                className={`support-image ${isSupportOwned ? '' : 'missing'}`}
-                />
-            </a>
+                    src={`${main.image_url}.png`} 
+                    alt={main.name} 
+                    title={main.name} 
+                    className={`character-image ${isMainOwned ? '': 'missing'}`}
+                />  
+            </InteractiveChar>
         )}
-        </div>
 
+        {main && mainLevel && (
+            <div className="level-badge">LV.{mainLevel}</div>
+        )}
+
+        {support && (
+            <InteractiveChar
+                id={support.character_id}
+                type={support.type}
+                url={support.info_url}
+                className="support-link has-image"
+            >
+                <img 
+                    src={`${support.image_url}.png`} 
+                    alt={support.name} 
+                    className={`support-image ${isSupportOwned ? '' : 'missing'}`}
+                />
+
+                {support && isSupportOptional && (
+                    <div className="optional-indicator">
+                        !
+                        <span className="tooltip-text">
+                        Stat booster. Not required for the gimmicks of the stage.
+                        </span>
+                    </div>
+                )}
+            </InteractiveChar>
+        )}
+    </div>
     );
 }
 
@@ -68,8 +90,8 @@ function CrewCard({crew}) {
         <div className="crew-card">
             <h4>&nbsp;</h4>
             <div className="crew-members-grid">
-                <MemberSlot main={friendCaptain}/>
-                <MemberSlot main={captain} support={supportCaptain} />
+                <MemberSlot main={friendCaptain} role="FC"/>
+                <MemberSlot main={captain} support={supportCaptain} role="Captain" />
                 <MemberSlot main={crewmate4} support={support4} />
                 <MemberSlot main={crewmate1} support={support1} /> 
                 <MemberSlot main={crewmate3} support={support3} />

@@ -107,7 +107,7 @@ const viewConfig = {
             {
                 id: 'boss',
                 placeholder: 'Select Boss',
-                options: ['vs. Shanks', 'vs. Pudding']
+                options: ['vs. Big Mum', 'vs. Kid']
             }
         ]
     }, 

@@ -1,87 +1,57 @@
-import { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect, useState, memo } from 'react';
 import {useCollection} from './CollectionContext';
 import './CharactersView.css';
+import { useResponsiveGrid } from './hooks/useResponsiveGrid';
+import InteractiveChar from './InteractiveChar';
 
 
-function CharacterCard({character}){
+const CharacterCard = memo(({character, isMobile}) =>{
     const {isOwned, toggleChar } = useCollection();
     const owned = isOwned(character.id);
 
     return(
-        <a
-         href={character.info_url}
-        target="_blank" 
-        rel="noopener noreferrer" 
-        className={`character-card ${owned ? '': 'missing'}`}
-        onContextMenu={(e)=> {
-            e.preventDefault();
-            toggleChar(character.id, character.type);
-        }}
+        <InteractiveChar 
+            id={character.id}
+            type={character.type}
+            url={character.info_url}
+            className={`character-card ${owned ? '' : 'missing'}`}
+            title={character.name}
         >
-            <img src={`${character.image_url}.png`} alt={character.name} />
-        </a>
+            <img src={`${character.image_url}.png`} alt={character.name} style={{pointerEvents: 'none'}} />
+        </InteractiveChar>
     );
-}
+});
 
 
 
 function CharactersView({ characters, onPageSizeChange }){
     const gridRef = useRef(null);
-    const resizeTimeoutRef = useRef(null);
-
-    const calculatePageSize = useCallback(()=> {
-        if(!gridRef.current) return;
-
-        const containerWidth = gridRef.current.clientWidth;
-        const containerHeight = gridRef.current.clientHeight;
-        const cssPaddingX = 30;
-        const cssPaddingY = 30;
-        const availableWidth = containerWidth - cssPaddingX;
-        const availableHeight = containerHeight - cssPaddingY;
-        const cardMinWidth = 110;
-        const gap = 12;
-
-        if(availableWidth <=0 || availableHeight <= 0) return;
-
-        const columns = Math.floor((availableWidth + gap)/(cardMinWidth + gap));
-        if(columns<= 0) return;
-
-        const actualCardWidth = (availableWidth - (columns-1)*gap)/columns;
-        const rowHeight=actualCardWidth;
-        const rows = Math.floor((availableHeight+gap)/(rowHeight+gap))+1;
-        const newSize = columns*Math.max(1,rows);
-
-        if(newSize > 0){
-            onPageSizeChange(newSize);
-        }
-
-    }, [onPageSizeChange]);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+    
 
     useEffect(()=> {
-        calculatePageSize();
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return ()=> window.removeEventListener('resize', handleResize);
+    }, []);
+    
+    const calculatedSize = useResponsiveGrid(gridRef, {
+        cardWidth: isMobile ? 75: 110,
+        cardHeight: 0,
+        gap: isMobile ? 8 : 12,
+        shouldKeepSquare: true,
+        widthBuffer: 10,
+        heightBuffer: isMobile ? 20:5
+    });
 
-        const observer = new ResizeObserver(()=> {
-            clearTimeout(resizeTimeoutRef.current);
-            resizeTimeoutRef.current = setTimeout(()=> {
-                calculatePageSize();
-            }, 100);
-        });
-
-        if(gridRef.current){
-            observer.observe(gridRef.current);
-        }
-
-        return ()=> {
-            observer.disconnect();
-            clearTimeout(resizeTimeoutRef.current);
-        };
-    }, [calculatePageSize]);
-
+    useEffect(()=> {
+        if(calculatedSize > 0) onPageSizeChange(calculatedSize);
+    }, [calculatedSize, onPageSizeChange]);
 
     return (
         <>
             <div className = "characters-view" ref={gridRef}>
-                {characters && characters.map(char => <CharacterCard key={char.id} character={char} />)}
+                {characters && characters.map(char => <CharacterCard key={char.id} character={char} isMobile={isMobile} />)}
             </div>
     
         </>

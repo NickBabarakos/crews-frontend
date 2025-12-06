@@ -1,5 +1,6 @@
 import React from 'react';
 import {useCollection} from './CollectionContext';
+import InteractiveChar from './InteractiveChar';
 import './StageGuideModal.css';
 import './CharactersView.css';
 import './BannerModal.css';
@@ -45,20 +46,16 @@ function BannerModal({isOpen, onClose, data, loading}){
                                     </div>
                                     <div className="category-grid">
                                         {cat.characters && cat.characters.map(char => (
-                                            <a 
+                                            <InteractiveChar
                                                 key={char.id}
-                                                href={char.info_url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className={`character-card small ${isOwned(char.id)?  '': 'missing'}`}
-                                                onContextMenu={(e)=> {
-                                                    e.preventDefault();
-                                                    toggleChar(char.id, char.type);
-                                                }}
+                                                id={char.id}
+                                                type={char.type}
+                                                url={char.info_url}
+                                                className={`character-card small ${isOwned(char.id) ? '' : 'missing'}`}
                                                 title={char.name}
                                             >
                                              <img src={`${char.image_url}.png`} alt={char.name} loading="lazy" />
-                                        </a>
+                                        </InteractiveChar>
                                         ))}
                                     </div>
                                 </div>

@@ -14,10 +14,12 @@ import Toolbar from './Toolbar.js';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import StageGuideModal from './StageGuideModal.js';
+import AdminPanel from './admin/AdminPanel';
 
+const BASE_URL = "http://10.69.190.150:3000";
 
-const API_STAGES_URL = 'http://localhost:3000/api/stages/search';
-const API_CHARACTERS_URL = 'http://localhost:3000/api/characters';
+const API_STAGES_URL = `${BASE_URL}/api/stages/search`;
+const API_CHARACTERS_URL = `${BASE_URL}/api/characters`;
 
 
 const ALL_LEGEND_TYPES = [
@@ -27,6 +29,10 @@ const ALL_LEGEND_TYPES = [
 const ALL_RR_TYPES = [
   'Rare Recruit', 'Treasure Map Rare Recruit', 'Treasure Map Limited Character', 'Kizuna Clash Limited Character',
   'Rumble Rare Recruit', 'Support Character'
+];
+
+const ALL_TYPES_COMBINED = [
+  ...ALL_LEGEND_TYPES, ...ALL_RR_TYPES, '6+ Legend', '5+ Rare Recruit'
 ];
 
 const RR_MAPPING = {
@@ -50,9 +56,9 @@ function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [lastSearch, setLastSearch] = useState(null);
-  const [viewMode, setViewMode] = useState('grandVoyage');
-  const [characterCategory, setCharacterCategory] = useState('legends');
-  const [subCategory, setSubCategory] = useState('All Legends');
+  const [viewMode, setViewMode] = useState(() => { return localStorage.getItem('savedViewMode') || 'grandVoyage';});
+  const [characterCategory, setCharacterCategory] = useState('all');
+  const [subCategory, setSubCategory] = useState('null');
   const [isPlus, setIsPlus]= useState(false);
   const [characterPageSize, setCharacterPageSize] = useState(60);
   const [crewFilters, setCrewFilters] = useState({});
@@ -67,9 +73,12 @@ function App() {
   const [creatorPageSize, setCreatorPageSize] = useState(10);
   const [bannerPageSize, setBannerPageSize] = useState(6);
   const [selectedBannerId, setSelectedBannerId] = useState(null);
-  const mainContentRef = useRef(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-
+  useEffect(()=> {
+    localStorage.setItem('savedViewMode', viewMode);
+  }, [viewMode]);
+  
   const handleOpenGuide = async () => {
     setIsGuideOpen(true);
     setGuideLoading(true);
@@ -88,7 +97,7 @@ function App() {
     if (viewMode === 'coliseum' && selectedBoss){ params.stage = selectedBoss.name;}
 
     try {
-      const response = await axios.get('http://localhost:3000/api/stage-info', {
+      const response = await axios.get(`${BASE_URL}/api/stage-info`, {
         params: params
       });
       setGuideData(response.data.guide);
@@ -106,7 +115,7 @@ function App() {
     setLastSearch({mode: 'banners', limit});
 
     try{
-      const response = await axios.get('http://localhost:3000/api/banners', {
+      const response = await axios.get(`${BASE_URL}/api/banners`, {
         params: {page, limit}
       });
       setResults(response.data.banners);
@@ -127,7 +136,7 @@ function App() {
     setGuideLoading(true);
 
     try{
-      const response = await axios.get(`http://localhost:3000/api/banners/${bannerId}`);
+      const response = await axios.get(`${BASE_URL}/api/banners/${bannerId}`);
       setGuideData(response.data.guide);
     } catch (err){
       console.error("Failed to fetch banner details", err);
@@ -144,36 +153,18 @@ function App() {
     }
   };
 
-
-  useEffect(()=> {
-    const calculateCrewPageSize = () => {
-      if(mainContentRef.current){
-        const containerWidth = mainContentRef.current.offsetWidth;
-        const cardWidth = 300;
-        const gap = 40;
-        const newSize = Math.floor((containerWidth-40)/(cardWidth + gap));
-
-        setCrewPageSize(currentSize => {
-          const finalSize = Math.max(1, newSize);
-          if (finalSize !== currentSize) {
-            return finalSize;
-          }
-          return currentSize;
-        });
-      }
-    };
-    calculateCrewPageSize();
-    window.addEventListener('resize',calculateCrewPageSize);
-
-    return() => window.removeEventListener('resize', calculateCrewPageSize);
-  }, [viewMode]); 
+  const handleCrewPageSizeChange = (newSize) => {
+    if (newSize !== crewPageSize){
+      setCrewPageSize(newSize);
+    }
+  }
 
   const findBosses = useCallback(async (filters, page=1, limit= characterPageSize) => {
     setIsLoading(true);
     setLastSearch({mode: 'coliseum_boss_list', filters, limit});
 
     try{
-      const response = await axios.get('http://localhost:3000/api/stages/list', {
+      const response = await axios.get(`${BASE_URL}/api/stages/list`, {
         params: {
           mode: 'coliseum',
           level: filters.level,
@@ -215,15 +206,16 @@ function App() {
     if(onlyOwned){
       try{
         const savedCollection = localStorage.getItem('optc-collection');
-        if (savedCollection){
+        if(savedCollection){
           const parsed = JSON.parse(savedCollection);
-          postData.ownedIds = Object.keys(parsed).map(Number);
-        } else {
-          postData.ownedIds = [];
+          const validIds = Object.keys(parsed).map(Number).filter(id => id !== -1);
+          postData.ownedIds = validIds.length > 0 ? validIds: [-1];
+        } else{
+          postData.ownedIds = [-1];
         }
       } catch(e) {
         console.error("Error reading collection", e);
-        postData.ownedIds = [];
+        postData.ownedIds = [-1];
       }
     }
 
@@ -268,12 +260,13 @@ function App() {
     limit = characterPageSize
   }) => {
     let searchType= '';
-    if(plus){ 
-        if(cat === 'legends'){
-          searchType = '6+ Legend';
-        } else {
-          searchType = '5+ Rare Recruit'
-        }
+    if(cat === 'all'){ searchType = 'ALL';
+    } else if (plus){
+      if(cat === 'legends'){
+        searchType = '6+ Legend';
+      } else{
+        searchType = '5+ Rare Recruit'
+      }
     } else {
       if(cat === 'legends'){
         if(sub === 'All Legends'){
@@ -318,15 +311,26 @@ function App() {
 
   const handleCategoryChange = (newCategory) => {
     setCharacterCategory(newCategory);
-    const defaultSub = newCategory === 'legends' ? 'All Legends' : 'All Rare Recruits';
-    setSubCategory(defaultSub);
     setIsPlus(false);
-    findCharacters({
-      cat: newCategory,
-      sub:defaultSub,
-      plus: false,
-      page: 1
+    if(newCategory === 'all'){
+      setSubCategory(null);
+      findCharacters({
+        cat: 'all',
+        sub: null,
+        plus: false,
+        page: 1
+      });
+    } else{
+      const defaultSub = newCategory === 'legends' ? 'All Legends' : 'All Rare Recruits';
+      setSubCategory(defaultSub);
+      setIsPlus(false);
+      findCharacters({
+        cat: newCategory,
+        sub:defaultSub,
+        plus: false,
+        page: 1
     });
+    }
   };
 
   const handleSubCategoryChange = (newSub) => {
@@ -345,7 +349,7 @@ function App() {
     setLastSearch({mode:'creators',limit});
 
     try{
-      const response = await axios.get('http://localhost:3000/api/creators/leaderboard', {
+      const response = await axios.get(`${BASE_URL}/api/creators/leaderboard`, {
         params: {page, limit}
       });
       setResults(response.data.creators);
@@ -492,6 +496,7 @@ function App() {
   
   const handleViewChange = (newView) => {
     setViewMode(newView);
+    setIsMobileMenuOpen(false);
     setResults(null);
     setError(null);
     setCurrentPage(1);
@@ -512,6 +517,20 @@ function App() {
     if(newView === 'banners') { findBanners(1, bannerPageSize);}
   };
 
+  useEffect(()=> {
+    const handleResize =() => {
+      if(window.innerWidth > 1024){
+        setIsMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return ()=> window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const handleAdminTrigger = () =>{
+    setViewMode('admin');
+  };
+
   return (
     <CollectionProvider>
       <div className="App">
@@ -519,15 +538,21 @@ function App() {
    
     <div className="app-container"> 
     
-      <Header/>
+      <Header onToggleMobileMenu={()=> setIsMobileMenuOpen(!isMobileMenuOpen)}/>
 
       <div className = "content-wrapper">
 
-        <Sidebar onViewChange={handleViewChange} currentView={viewMode}/>
-        <div ref={mainContentRef} className={`main-content view-mode-${viewMode}`}>
+        <Sidebar
+          onViewChange={handleViewChange} 
+          currentView={viewMode}
+          isOpen={isMobileMenuOpen}
+          onClose={()=> setIsMobileMenuOpen(false)}  
+        />
+        <div className={`main-content view-mode-${viewMode}`}>
           <Toolbar 
             viewMode={viewMode}
             config={viewConfig[viewMode]}
+            onAdminTrigger={handleAdminTrigger}
             crewFilterValues = {crewFilters}
             onCrewFiltersChange={handleCrewFiltersChange}
             characterCategory={characterCategory}
@@ -547,11 +572,9 @@ function App() {
 
           />
 
-          {isLoading && <p></p>}
           {error && <p className="error-message">{error}</p>}
-          {!isLoading && !error && (
-           <>
-           {viewMode === 'coliseum' && !selectedBoss && (
+
+          {!isLoading && !error && viewMode === 'coliseum' && !selectedBoss && (
             <BossGridView 
               stages={bossesList}
               onPageSizeChange = {handlePageSizeChange}
@@ -560,7 +583,7 @@ function App() {
 
            )}
 
-           {viewMode === 'coliseum' && selectedBoss && (
+           {!isLoading && !error && viewMode === 'coliseum' && selectedBoss && (
             <div style={{padding: '10px 40px', display: 'flex', alignItems: 'center', gap:'10px'}}>
               <button 
                 onClick={handleBackToBosses}
@@ -572,11 +595,17 @@ function App() {
               <h3 style={{margin:0, color: '#a78bfa', fontSize: '18px'}}> {selectedBoss.name}</h3>
             </div>
            )}
+
            {((crewBasedViews.includes(viewMode) && viewMode !== 'coliseum') || (viewMode === 'coliseum' && selectedBoss)) && (
-            <CrewsView crews={results} crewPageSize={crewPageSize} />
+              <CrewsView
+                crews={isLoading ? null: results}
+                onPageSizeChange={handleCrewPageSizeChange}
+                showOnlyOwned={showOnlyOwned}
+              />
            )}
 
-           {viewMode === 'creators' && (
+
+           {!isLoading && !error && viewMode === 'creators' && (
             <CreatorsView
               creators={results}
               onPageSizeChange={handleCreatorPageSizeChange}
@@ -585,7 +614,7 @@ function App() {
               />
            )}
 
-           {viewMode === 'banners' && (
+           {!isLoading && !error && viewMode === 'banners' && (
             <BannersView 
               banners={results}
               onPageSizeChange={handleBannerPageSizeChange}
@@ -593,14 +622,12 @@ function App() {
             />
            )}
 
-           {viewMode === 'characters' &&
+           {!isLoading && !error && viewMode === 'characters' &&
             <CharactersView
               characters = {results}
               onPageSizeChange = {handlePageSizeChange}
             />
            }
-           </>
-          )}
 
           {viewMode === 'banners' ? (
             <BannerModal 
@@ -618,13 +645,16 @@ function App() {
           />
           )}
 
+          {!isLoading && !error && viewMode === 'admin' && (
+            <AdminPanel/>
+          )}
           
 
           <Footer
           currentPage={currentPage}
           hasMore={hasMore}
           onPageChange={handlePageChange}
-          hasSearched={results !== null}
+          hasSearched={results !== null || (viewMode === 'coliseum' && bossesList !== null)}
         />
         </div>
       </div>

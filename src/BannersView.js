@@ -1,5 +1,6 @@
-import {useRef, useEffect, useCallback} from 'react';
+import {useRef, useEffect} from 'react';
 import './BannersView.css';
+import { useResponsiveGrid } from './hooks/useResponsiveGrid';
 
 function BannerCard({banner, onClick}){
     const formatDate = (dateStr)=> {
@@ -42,35 +43,17 @@ function BannerCard({banner, onClick}){
 
 function BannersView({banners, onPageSizeChange, onBannerClick}){
     const gridRef = useRef(null);
-    const resizeTimeoutRef = useRef(null);
 
-    const calculatePageSize = useCallback(()=>{
-        if(!gridRef.current) return;
-        const containerWidth = gridRef.current.clientWidth;
-        const containerHeight = gridRef.current.clientHeight;
-
-        const cardWidth = 320;
-        const cardHeight = 250;
-        const gap = 24;
-
-        if(containerWidth <= 0 || containerHeight <=0) return;
-
-        const columns = Math.floor((containerWidth + gap) / (cardWidth+gap));
-        const rows = Math.floor((containerHeight + gap)/(cardHeight+gap));
-        const newSize = Math.max(1,columns)*Math.max(2,rows);
-
-        if(newSize>0) onPageSizeChange(newSize);
-    }, [onPageSizeChange]);
+    const calculatedSize = useResponsiveGrid(gridRef, {
+        cardWidth: 320,
+        cardHeight: 250,
+        gap: 24,
+        minRows: 2
+    });
 
     useEffect(()=> {
-        calculatePageSize();
-        const observer = new ResizeObserver(()=> {
-            clearTimeout(resizeTimeoutRef.current);
-            resizeTimeoutRef.current = setTimeout(calculatePageSize, 100);
-        });
-        if(gridRef.current) observer.observe(gridRef.current);
-        return ()=> { observer.disconnect(); clearTimeout(resizeTimeoutRef.current);};
-    }, [calculatePageSize]);
+        if(calculatedSize>0) onPageSizeChange(calculatedSize);
+    }, [calculatedSize, onPageSizeChange]);
 
     return(
         <div className="banners-view" ref={gridRef}>

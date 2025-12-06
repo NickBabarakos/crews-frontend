@@ -17,6 +17,9 @@ import endOfTurnDamageIcon from './assets/gimmicks/end-of-turn-damage.png';
 import lockTargetIcon from './assets/gimmicks/lock-target.png';
 import delayImmunitIcon from './assets/gimmicks/delay-immunity.png';
 import percentageReductionIcon from './assets/gimmicks/percentage-reduction.png';
+import hungerIcon from './assets/gimmicks/hunger.png';
+import limitedTapsIcon from './assets/gimmicks/limited-taps.png';
+import chainAtkDownIcon from './assets/gimmicks/chain-atk-down.png';
 
 
 const formatText = (template, params = [], turns) =>{
@@ -48,6 +51,11 @@ export const GIMMICK_DICT = {
     'chain_growth_down': {
         template: "Chain Multiplier Growth Rate x{$1}: {turns} turn(s)",
         icon: chainGrowthIcon,
+        color: "bg-red-900"
+    },
+    'chain_atk_down': {
+        template: 'If chain multiplier is {$1} or less. {$2} ATK Down: {turns} turn(s)',
+        icon: chainAtkDownIcon,
         color: "bg-red-900"
     },
     'increased_defense': {
@@ -120,6 +128,16 @@ export const GIMMICK_DICT = {
         icon: percentageReductionIcon,
         color: "bg-red-900"
     },
+    'hunger':{
+        template: 'Until using {$1} slots, Reduce current HP by {$2} each turn. ATK {$3} Down',
+        icon: hungerIcon,
+        color: "bg-red-900"
+    },
+    'limited_tap':{
+        template: 'Limited Taps {$1} time(s): {turns} turn(s)',
+        icon: limitedTapsIcon,
+        color: "bg-red-900"
+    },
     'reduce_special_charge': {
         template: "{$1}: Reduce Special Charge by {turns} turns",
         icon: null,
@@ -185,6 +203,11 @@ export const GIMMICK_DICT = {
         icon: null,
         color: "bg-red-900"
     },
+    'tap_barrier': {
+        template: "Tap Timing Barrier({$1} {$2} time(s)): {turns} turn(s)",
+        icon: null,
+        color: "bg-red-900"
+    },
     'despair': {
         template: "Despair {$1}: {turns} turn(s)",
         icon: null,
@@ -200,10 +223,20 @@ export const GIMMICK_DICT = {
         icon: null,
         color: "bg-purple-900"
     }, 
-    'full_hp_recovery':{
-        template: 'Full HP Recovery',
+    'remove_beneficial_accumulated':{
+        template: "Remove Beneficial Effects/Accumulated Values",
         icon: null,
         color: "bg-purple-900"
+    },
+    'full_hp_recovery':{
+        template: "Full HP Recovery",
+        icon: null,
+        color: "bg-purple-900"
+    },
+    'paralysis': {
+        template: "Paralysis{$2}: {turns} turn(s)",
+        icon: null,
+        color: "bg-red-900"
     }
 
 };

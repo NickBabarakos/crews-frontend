@@ -190,3 +190,63 @@
     height: 100%;
     padding-right: 36px;
 }
+
+@media (max-width: 768px){
+    .creators-view-container{
+        padding: 10px 5px;
+    }
+
+    .wanted-header{
+        margin-bottom: 15px;
+    }
+
+    .wanted-title {
+        font-size: 24px;
+    }
+
+    .marine-subtitle{
+        font-size: 10px;
+        letter-spacing: 2px;
+        margin-bottom: 4px;
+    }
+
+    .header-subtitle{
+        font-size: 10px;
+        letter-spacing: 2px;
+        margin-bottom: 4px;
+    }
+
+    .header-decoration-line {
+        margin: 10px auto 0;
+        width: 60px;
+        height: 3px;
+    }
+
+    .creator-row,
+    .creators-table td.rank-col,
+    .bounty-col-cell{
+        height: 55px;
+    }
+
+    .creators-table th {
+        padding: 10px 5px;
+        font-size: 10px;
+    }
+
+    .rank-col {width: 40px; font-size: 14px;}
+    .captain-link { font-size: 13px; gap: 6px;}
+    .bounty-value {font-size: 15px;}
+
+    .bounty-col {width: auto;}
+    .creators-table th.bounty-col,
+    .bounty-col-cell {padding-right: 10px;}
+
+    .bounty-container{
+        padding: 4px 8px;
+        min-width: auto;
+    }
+
+    .rank-badge.rank-1 { font-size: 18px;}
+    .rank-badge.rank-2 { font-size: 16px;}
+    .rank-badge.rank-3 { font-size: 15px; }
+}

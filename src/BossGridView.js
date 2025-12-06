@@ -1,5 +1,6 @@
 import {useRef, useEffect, useCallback} from 'react';
 import './BossGridView.css';
+import { useResponsiveGrid } from './hooks/useResponsiveGrid.js';
 
 function BossCard({stage, onClick}){
     const cleanName = stage.name.replace(/^Vs\.\s+/i, '');
@@ -27,34 +28,17 @@ function BossCard({stage, onClick}){
 
 function BossGridView({stages, onPageSizeChange, onBossClick}){
     const gridRef = useRef(null);
-    const resizeTimeoutRef = useRef(null);
+    
+    const calculatedSize = useResponsiveGrid(gridRef, {
+        cardWidth: 240,
+        cardHeight: 70,
+        gap: 16,
+        minRows: 1
+    });
 
-    const calculatePageSize = useCallback(()=> {
-        if(!gridRef.current) return;
-        const containerWidth = gridRef.current.clientWidth;
-        const containerHeight = gridRef.current.clientHeight;
-        const cardMinWidth = 240;
-        const cardHeight = 70;
-        const gap =16;
-        const padding= 48;
-
-        if(containerWidth <= 0 || containerHeight <= 0) return;
-        const columns = Math.floor((containerWidth + gap)/(cardMinWidth + gap));
-        const availableHeight = containerHeight - padding;
-        const rows = Math.floor((availableHeight + gap)/(cardHeight + gap));
-        const newSize = Math.max(1,columns)*Math.max(1,rows);
-        if(newSize>0) onPageSizeChange(newSize);
-    }, [onPageSizeChange]);
-
-    useEffect(()=> {
-        calculatePageSize();
-        const observer = new ResizeObserver(()=>{
-            clearTimeout(resizeTimeoutRef.current);
-            resizeTimeoutRef.current = setTimeout(()=> {calculatePageSize(); }, 100);
-        });
-        if(gridRef.current) observer.observe(gridRef.current);
-        return ()=> { observer.disconnect(); clearTimeout(resizeTimeoutRef.current);};
-    }, [calculatePageSize]);
+    useEffect(()=>{
+        if (calculatedSize>0) onPageSizeChange(calculatedSize);
+    }, [calculatedSize, onPageSizeChange]);
 
     return(
         <div className="boss-grid-view" ref={gridRef}>

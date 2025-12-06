@@ -11,13 +11,33 @@ function Dropdown({options, selectedOption, onSelect, placeholder, isOpen, onTog
         }
     });
 
-    const handleSelectOption = (option) => { onSelect(option);};
+    const handleSelectOption = (e, option) => { 
+        e.stopPropagation();
+        onSelect(option);
+    };
+
+    const handleToggleClick = (e) => {
+        e.stopPropagation();
+        onToggle();
+    };
+
+    const handleMenuTouch = (e) => {
+        e.stopPropagation();
+    };
 
 
 
     return(
-        <div className={`dropdown ${className || ''} ${isOpen ? 'open' : ''}`} ref={dropdownRef}>
-            <button className="dropdown-toggle" onClick={onToggle} disabled={disabled}>
+        <div 
+            className={`dropdown ${className || ''} ${isOpen ? 'open' : ''}`} 
+            ref={dropdownRef}
+        >
+            <button 
+                className="dropdown-toggle" 
+                onClick={handleToggleClick} 
+                disabled={disabled}
+                type="button"
+            >
                 <span title={selectedOption || placeholder}> {selectedOption || placeholder}</span>
                 <svg className="dropdown-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="https://www.w3.org/2000/svg">
                     <path d="M4 6L8 10L12 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -25,11 +45,11 @@ function Dropdown({options, selectedOption, onSelect, placeholder, isOpen, onTog
             </button>
 
             {isOpen && (
-            <ul className="dropdown-menu">
+            <ul className="dropdown-menu" onTouchStart={handleMenuTouch}> 
                 {options.map(option =>(
                     <li
                     key={option}
-                    onClick={()=> handleSelectOption(option)}
+                    onClick={(e)=> handleSelectOption(e, option)}
                     className={option === selectedOption ? 'selected' : ''}
                     title={option}
                     >

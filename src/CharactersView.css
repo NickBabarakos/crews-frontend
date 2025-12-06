@@ -5,12 +5,14 @@
   grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
   gap: 12px;
   padding: 15px;
-  width: 100%;
+  flex: 1;
   height: 100%;
-  overflow: hidden;
+  min-height: 0;
+  overflow-y: hidden;
   align-content: start;
   scrollbar-width: none;
   box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
 }
 
 .characters-view::-webkit-scrollbar{
@@ -23,13 +25,17 @@
   border-radius: 4px;
   overflow: hidden;
   border: 1px solid rgba(255,255,255,0.1);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
   background-color: #0f172a;
   position: relative;
   z-index: 1;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
+@media(hover:hover){
 .character-card:hover {
   transform: scale(1.05);
   box-shadow: 0 15px 30px rgba(0,0,0,0.5), 0 0 15px rgba(139, 92, 246, 0.4);
@@ -40,6 +46,7 @@
 .character-card:hover img {
   transform: scale(1.1);
 }
+}
 
 .character-card img {
   width: 100%;
@@ -47,7 +54,11 @@
   object-fit: cover;
   display: block;
   transition: transform 0.3s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
 }
+
 
 .results-counter {
   font-size: 16px;
@@ -86,4 +97,14 @@
 .sub-category-filter .dropdown{
   width: 300px;
   max-width: 100%;
+}
+
+
+@media(max-width: 768px){
+  .characters-view{
+    grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+    gap: 8px;
+    padding: 10px;
+  }
+
 }

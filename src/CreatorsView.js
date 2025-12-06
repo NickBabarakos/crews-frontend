@@ -9,14 +9,15 @@ function CreatorsView({creators, onPageSizeChange, currentPage, pageSize}){
 
     const calculatePageSize = useCallback(()=> {
         if(!containerRef.current) return;
-
+        const isMobile = window.innerWidth <= 768;
         const containerHeight = containerRef.current.clientHeight;
-        const titleHeight = titleRef.current?titleRef.current.offsetHeight + 50: 150;
+
+        const titleHeight = titleRef.current ? titleRef.current.offsetHeight + (isMobile ? 15:50):150;
         const tableHeaderHeight = tableHeaderRef.current? tableHeaderRef.current.offsetHeight : 60;
-        const paddingBuffer = 40;
+        const paddingBuffer = isMobile ? 10: 40;
 
         const availableHeight = containerHeight - titleHeight - tableHeaderHeight - paddingBuffer;
-        const estimatedRowHeight = 75;
+        const estimatedRowHeight = isMobile ? 55:  75;
 
         if (availableHeight <= 0 ) return;
 

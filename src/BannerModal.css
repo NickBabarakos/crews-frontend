@@ -106,7 +106,7 @@
 
 .character-card.small:hover{
     transform: scale(1.1);
-    border-color: #fff;
+    border-color: #8b5cf6;
     z-index: 10;
     box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }

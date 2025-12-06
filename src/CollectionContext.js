@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
+import React, { createContext, useState, useEffect, useContext, useCallback, useMemo } from 'react';
 
 const ALL_LEGEND_TYPES_DB = [
   'Super Sugo-Fest Only', 'Anniversary', 'Pirate Rumble Sugo-Fest Only', 'Treasure Sugo-Fest Only', 
@@ -34,10 +34,13 @@ export function CollectionProvider({children}){
     const [ownedItems, setOwnedItems] = useState(()=> {
         try{
             const saved = localStorage.getItem('optc-collection');
-            return saved ? JSON.parse(saved):{};
+            if(saved) { return JSON.parse(saved);}
+            const emptyCollection = { '-1': 'SYSTEM_INIT'};
+            localStorage.setItem('optc-collection', JSON.stringify(emptyCollection));
+            return emptyCollection;
         } catch (e) {
             console.error("Error loading collection", e);
-            return {};
+            return {'-1': 'SYSTEM_INIT'};
         }
     });
 
@@ -53,6 +56,10 @@ export function CollectionProvider({children}){
 
         setOwnedItems(prev => {
             const next = {...prev};
+            if(next['-1']){
+                delete next['-1'];
+            }
+
             if(next[numericId]){
                 delete next[numericId];
             } else {
@@ -62,13 +69,33 @@ export function CollectionProvider({children}){
         });
     }, []);
 
+    const importCollection = useCallback((newCollection) => {
+        try{
+            if(typeof newCollection === 'object' && newCollection !== null){
+                setOwnedItems(newCollection);
+                return { success: true, count: Object.keys(newCollection).length};
+            }
+            return {success: false, error: 'Invalid data format'};
+        } catch(e){
+            console.error("Import failed",e);
+            return { success: false, error: e.message};
+        }
+    }, []);
+
     const isOwned = useCallback((id)=>{
         if(!id) return true;
+        if(Number(id) === -1) return false;
         return !!ownedItems[Number(id)];
     }, [ownedItems])
 
     const getOwnedCountByCategory = useCallback((uiCategory, subCategory, isPlus) => {
         if(!uiCategory) return 0;
+
+        const realItems = Object.entries(ownedItems).filter(([key, val]) => key !== '-1');
+
+        if(uiCategory === 'all'){
+            return realItems.length;
+        }
 
         let targetTypes = [];
         if(isPlus){
@@ -91,12 +118,20 @@ export function CollectionProvider({children}){
                 targetTypes = [dbType];
             }
         }
-        
-        return Object.values(ownedItems).filter(storedType => { return targetTypes.includes(storedType);}).length;
+        const realValues = realItems.map(([key,value])=> value);
+        return realValues.filter(storedType => { return targetTypes.includes(storedType);}).length;
     }, [ownedItems]);
 
+    const contextValue = useMemo(()=> ({
+        ownedItems,
+        toggleChar,
+        isOwned,
+        getOwnedCountByCategory,
+        importCollection
+    }), [ownedItems, toggleChar, isOwned, getOwnedCountByCategory, importCollection]);
+
     return (
-        <CollectionContext.Provider value = {{ownedItems, toggleChar, isOwned, getOwnedCountByCategory}}>
+        <CollectionContext.Provider value = {contextValue}>
             {children}
         </CollectionContext.Provider>
     );
