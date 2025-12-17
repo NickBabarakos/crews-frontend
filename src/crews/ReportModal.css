@@ -1,0 +1,156 @@
+.report-modal-overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100000;
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.2s ease-out;
+}
+
+.report-modal-content{
+    background: linear-gradient(145deg, #1e293b, #0f172a);
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 16px;
+    border: 1px solid rgba(167, 139, 250, 0.3);
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.report-header{
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(15, 23, 42, 0.4);
+}
+
+.report-header h3{
+    margin: 0 0 5px 0;
+    color: #f1f5f9;
+    font-size: 1.25rem;
+}
+
+.report-subtitle{
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+.subtitle-label{
+    color: #a78bfa;
+    font-weight: 600;
+}
+
+.report-body{
+    padding: 24px;
+}
+
+.report-instruction{
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #cbd5e1;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.report-input{
+    width: 100%;
+    background-color: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 12px;
+    color: #fff;
+    font-size: 1rem;
+    resize: vertical;
+    box-sizing: border-box;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.report-input:focus{
+    outline: none;
+    border-color: #a78bfa;
+    background-color: rgba(15, 23, 42, 0.8);
+}
+
+.report-footer{
+    padding: 16px 24px;
+    background: rgba(15,23,42,0.4);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.report-footer .cancel-btn{
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #cbd5e1;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+    height: 40px;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+.report-footer .cancel-btn:hover{
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+}
+
+.report-footer .submit-btn{
+    background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+    border: none;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 120px;
+    height: 40px;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+.report-footer .submit-btn:hover{
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.report-footer .submit-btn:disabled{
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+@keyframes slideUp{
+    from {transform: translateY(20px); opacity: 0;}
+    to{transform: translateY(0); opacity: 1;}
+}

@@ -1,6 +1,6 @@
 import './Toolbar.css';
-import CharactersToolbar from './CharactersToolbar';
-import CrewsToolbar from './CrewsToolbar';
+import CharactersToolbar from './characters/CharactersToolbar';
+import CrewsToolbar from './crews/CrewsToolbar';
 
 const crewBasedViews = ['grandVoyage', 'garpsChallenge', 'forestOfTraining', 'coliseum', 'pirateKingAdventures', 'treasureMap', 'kizunaClash'];
 

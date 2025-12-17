@@ -107,7 +107,7 @@ const viewConfig = {
             {
                 id: 'boss',
                 placeholder: 'Select Boss',
-                options: ['vs. Big Mum', 'vs. Kid']
+                options: ['vs. Big Mum(Boss)', 'vs. Kid(Intrusion)']
             }
         ]
     }, 
@@ -118,7 +118,7 @@ const viewConfig = {
             {
                 id: 'boss',
                 placeholder: 'Select Boss',
-                options: ['Boss(DEX)', 'Boss(PSY)', 'Super Boss(STR)', 'Super Boss(INT)'] 
+                options: ['Boss(DEX)', 'Boss(INT)', 'Super Boss(STR)', 'Super Boss(INT)'] 
             }
         ]
     }

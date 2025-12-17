@@ -1,7 +1,7 @@
 import React, {useState } from 'react';
 import axios from 'axios';
 
-const BASE_URL = " http://10.69.190.150:3000";
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const CHAR_TYPES = [
     'Super Sugo-Fest Only', 'Anniversary', 'Pirate Rumble Sugo-Fest Only', 'Treasure Sugo-Fest Only', 'Pirate Alliance Kizuna Clash Sugo-Fest Only',

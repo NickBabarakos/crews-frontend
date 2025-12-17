@@ -2,11 +2,17 @@ import React from 'react';
 import {useCollection} from './CollectionContext';
 
 const InteractiveChar = ({id, type , url, className, children, style}) =>{
-    const {toggleChar} = useCollection();
+    const {toggleChar, viewingOther} = useCollection();
 
     const handleContextMenu = (e) => {
         e.preventDefault();
         e.stopPropagation();
+        if(viewingOther) return;
+        toggleChar(id, type);
+    };
+
+    const handleClick = ()=> {
+        if(viewingOther) return;
         toggleChar(id, type);
     };
 
@@ -15,7 +21,7 @@ const InteractiveChar = ({id, type , url, className, children, style}) =>{
         textDecoration: 'none',
         touchAction: 'manipulation',
         WebkitTapHighlightColor: 'transparent',
-        cursor: 'pointer',
+        cursor: viewingOther && !url ? 'default' : 'pointer',
         ...style
     };
 
@@ -37,7 +43,7 @@ const InteractiveChar = ({id, type , url, className, children, style}) =>{
     return(
         <div 
             className={className}
-            onClick={()=> toggleChar(id, type)}
+            onClick={handleClick}
             onContextMenu={handleContextMenu}
             style={baseStyle}
         >{children}</div>

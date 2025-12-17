@@ -1,136 +1,201 @@
-import React, {useState, useRef} from 'react';
+import React, {useState} from 'react';
 import { useCollection } from './CollectionContext';
 import './DataTransferModal.css';
+import toast from 'react-hot-toast';
+import axios from 'axios';
 
-const DownloadIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12"y1="15"x2="12"y2="3"/>
+const CopyIcon = () => (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fillRule="evenodd" clipRule="evenodd" d="M19.5 16.5L19.5 4.5L18.75 3.75H9L8.25 4.5L8.25 7.5L5.25 7.5L4.5 8.25V20.25L5.25 21H15L15.75 20.25V17.25H18.75L19.5 16.5ZM15.75 15.75L15.75 8.25L15 7.5L9.75 7.5V5.25L18 5.25V15.75H15.75ZM6 9L14.25 9L14.25 19.5L6 19.5L6 9Z" fill="currentColor"></path> 
     </svg>
 );
 
-const UploadIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="16 16 12 12 8 16"/><line x1="12"y1="12"x2="12"y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/><polyline points="16 16 12 12 8 16"/>
-    </svg>
-);
+function DataTransferModal({isOpen, onClose}){
+    const {
+        myKeys,
+        createBox,
+        loginWithSecret,
+        importCollection,
+        ownedItems
+    } = useCollection();
 
-const CheckIcon = () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{color: '#4ade80'}}>
-        <polyline points="20 6 9 17 4 12"/>
-    </svg>
-)
-function DataTransferModal ({isOpen, onClose}){
-    const {ownedItems, importCollection } = useCollection();
-    const fileInputRef = useRef(null);
-    const [status, setStatus] = useState({type:'', message: ''});
+    const [secretInput, setSecretInput] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     if(!isOpen) return null;
 
-    const handleExport = () => {
-        try{
-            const dataStr = JSON.stringify(ownedItems, null, 2);
-            const blob = new Blob([dataStr], {type: 'application/json'});
-            const url = URL.createObjectURL(blob);
-
-            const link = document.createElement('a');
-            link.href= url;
-            link.download = `optc-collection-${new Date().toISOString().slice(0,10)}.json`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            setStatus({type: 'success', message: 'Collection exported sucessfully'});
-
-        } catch (err){
-            setStatus({type: 'error', message: 'Export failed.'});
-        }
-
+    const handleCopy = (text, label) => {
+        if(!text) return;
+        navigator.clipboard.writeText(text);
+        toast.success(`${label} copied`);
     };
 
-    const handleFileSelect = (e) => {
-        const file = e.target.files[0];
-        if(!file) return;
+    const handleCreateBox = async () => {
+        setIsLoading(true);
+        const keys = await createBox(ownedItems);
+        setIsLoading(false);
+        if (keys) {
+            toast.success('Character Box Created!');
+        } else {
+            toast.error('Failed to create box.');
+        }
+    };
 
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            try{
-                let content = event.target.result;
-                if(content.charCodeAt(0) === 0xFEFF){
-                    content.slice(1);
-                }
+    const handleLogin = async () => {
+        if(!secretInput.trim()) return;
+        setIsLoading(true);
+        const success = await loginWithSecret(secretInput.trim());
+        setIsLoading(false);
 
-                content = content.trim();
+        if(success){
+            toast.success('Box Loaded Successfully!');
+            setSecretInput('');
+        } else{
+            toast.error('Invalid Secret Key or Box not found.');
+        }
+    };
 
-                const json = JSON.parse(content);
-                const result = importCollection(json);
+    const handleSelectAll = async () => {
+        if(!window.confirm("Are you sure? This will overwrite your current box with ALL characters")) return;
 
-                if(result.success){
-                    setStatus({type: 'success', message: 'Successfully imported items!'});
-                    setTimeout(()=> {
-                        onClose();
-                        setStatus({type: '', message: ''});
-                    }, 1500);
-                } else {
-                    setStatus({type: 'error', message: 'Invalid data format in file'});
-                }
-            } catch(err) {
-                console.error(err);
-                setStatus({type: 'error', message: `Import Failed: ${err.message}`});
-            }
-        };
-        e.target.value='';
-        reader.readAsText(file);
+        setIsLoading(true);
+        try{
+            const res = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/characters/all-ids`);
+
+            const allChars={};
+            res.data.forEach(char => {
+                allChars[char.id]=char.type;
+            });
+
+            importCollection(allChars);
+            toast.success(`Added ${res.data.length} characters`);
+        } catch(err){
+            console.error(err);
+            toast.error("Failed to fetch characters.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleUnselectAll = () => {
+        if(!window.confirm("Are you sure? This will REMOVE ALL characters from your box.")) return;
+
+        importCollection({});
+        toast.success("All characters removed");
     };
 
     return(
         <div className="dt-backdrop" onClick={onClose}>
-            <div className="dt-modal" onClick={e=> e.stopPropagation()}>
+            <div className="dt-modal" onClick={e=>e.stopPropagation()}>
                 <div className="dt-header">
-                    <h3>Sync Data</h3>
+                    <h3> Sync & Manage Data</h3>
                     <button className="dt-close" onClick={onClose}>&times;</button>
                 </div>
 
-                <p className="dt-subtitle">
-                    Save your collection to a file ore restore it on another device.
-                    <br/> <span style={{fontSize:'0.85em', opacity: 0.7}}>No data is sent to any server.</span>
-                </p>
+                <div className="dt-content">
 
-                <div className="dt-actions">
-                    <div className="dt-card export" onClick={handleExport}>
-                        <div className="dt-icon-circle export-bg">
-                            <DownloadIcon />
+                    <div className="keys-container">
+                        <div className="key-row">
+                            <span className="key-label">Public Key:</span>
+                            <code className="key-value">{myKeys?.publicKey || '................'}</code>
+                            <button 
+                                className="copy-btn"
+                                onClick={()=> handleCopy(myKeys?.publicKey, 'Public Key')}
+                                disabled={!myKeys}
+                            >  <CopyIcon/>
+                            </button>
                         </div>
-                        <div className="dt-info">
-                            <h4>Export</h4>
-                            <span>Save to device</span>
+                        <div className="key-row">
+                            <span className="key-label">Secret Key:</span>
+                            <code className="key-value secret">{myKeys?.secretKey || '................'} </code>
+                            <button 
+                                className="copy-btn"
+                                onClick={()=> handleCopy(myKeys?.secretKey, 'Secret Key')}
+                                disabled={!myKeys}
+                            >
+                                <CopyIcon/>
+                            </button>
                         </div>
                     </div>
 
-                    <div className="dt-card import" onClick={()=> fileInputRef.current.click()}>
-                        <div className="dt-icon-circle import-bg">
-                            <UploadIcon />
+                    <hr className="dt-divider"/>
+
+                    {!myKeys ? (
+                        <div className="action-section">
+                            <div className="action-card create">
+                                <h4>New User?</h4>
+                                <p>Create a box to save your characters permanently and sync across devices</p>
+                                <button 
+                                    className="primary-btn"
+                                    onClick={handleCreateBox}
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? 'Creating...' : 'Create New Character Box'}
+                                </button>
+                            </div>
+
+                            <div className="action-card login">
+                                <h4>Existing User?</h4>
+                                <p>Enter your <strong>Secret Key</strong> to restore your box.</p>
+                                <div className="input-group">
+                                    <input 
+                                        type="text"
+                                        placeholder="Paste Secret Key here..."
+                                        value={secretInput}
+                                        onChange={(e)=> setSecretInput(e.target.value)}
+                                    />
+                                    <button 
+                                        className="secondary-btn"
+                                        onClick={handleLogin}
+                                        disabled={isLoading || !secretInput}
+                                    >
+                                        Load 
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div className="dt-info">
-                            <h4>Import</h4>
-                            <span>Load from file</span>
+                    ): (
+                        <div className="action-section">
+                            <div className="action-card login">
+                                <h4>Switch Account</h4>
+                                <p>Want to load a different box? Enter its Secret Key Bellow</p>
+                                <div className="input-group">
+                                    <input
+                                        type="text"
+                                        placeholder="Paste Secret Key here..."
+                                        value={secretInput}
+                                        onChange={(e)=> setSecretInput(e.target.value)}
+                                    />
+                                    <button 
+                                        className="secondary-btn"
+                                        onClick={handleLogin}
+                                        disabled={isLoading || !secretInput}
+                                    >
+                                        Change Box
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="action-card bulk-tools">
+                                <h4>Bulk Tools</h4>
+                                <p>Manage your entire box at once. <span className="warning">Caution!</span></p>
+                                <div className="button-row">
+                                    <button 
+                                        className="tool-btn select-all"
+                                        onClick={handleSelectAll}
+                                        disabled={isLoading}
+                                    >Select All Characters</button>
+                                    <button 
+                                        className="tool-btn unselect-all"
+                                        onClick={handleUnselectAll}
+                                        disabled={isLoading}
+                                    >Unselect All</button>
+                                </div>
+                            </div>
                         </div>
-                        <input 
-                            type="file"
-                            accept=".json"
-                            ref={fileInputRef}
-                            style={{display:'none'}}
-                            onChange={handleFileSelect}
-                            onClick={(e)=> e.target.value = null}
-                        />
-                    </div>
+
+                    )}
                 </div>
-
-                {status.message && (
-                    <div className={`dt-status ${status.type}`}>
-                        {status.type === 'success' && <CheckIcon/>}
-                        {status.message}
-                    </div>
-                )}
             </div>
         </div>
     );

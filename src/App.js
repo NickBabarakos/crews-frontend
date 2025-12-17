@@ -1,22 +1,27 @@
 import './App.css';
 import { CollectionProvider } from './CollectionContext';
 import Header from './Header.js';
-import CrewsView from './CrewsView';
-import CharactersView from './CharactersView.js';
-import BossGridView from './BossGridView.js';
+import CrewsView from './crews/CrewsView.js';
+import CharactersView from './characters/CharactersView.js';
+import BossGridView from './crews//BossGridView.js';
 import CreatorsView from './CreatorsView.js';
-import BannersView from './BannersView.js';
-import BannerModal from './BannerModal.js';
+import BannersView from './banners/BannersView.js';
+import BannerModal from './banners/BannerModal.js';
 import Sidebar from './Sidebar.js';
 import Footer from './Footer.js';
 import viewConfig from './ViewConfig.js';
 import Toolbar from './Toolbar.js';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
-import StageGuideModal from './StageGuideModal.js';
+import StageGuideModal from './crews/StageGuideModal.js';
 import AdminPanel from './admin/AdminPanel';
+import SubmitCrewModal from './crews/submissions/SubmitCrewModal';
+import ReportModal from './crews/ReportModal.js';
+import TextGuideModal from './crews/TextGuideModal';
+import {Toaster} from 'react-hot-toast';
 
-const BASE_URL = "http://10.69.190.150:3000";
+
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const API_STAGES_URL = `${BASE_URL}/api/stages/search`;
 const API_CHARACTERS_URL = `${BASE_URL}/api/characters`;
@@ -74,6 +79,13 @@ function App() {
   const [bannerPageSize, setBannerPageSize] = useState(6);
   const [selectedBannerId, setSelectedBannerId] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
+  const [submitStageId, setSubmitStageId] = useState(null);
+  const [selectedTextGuideCrew, setSelectedTextGuideCrew] = useState(null);
+  const [selectedReportCrew, setSelectedReportCrew] = useState(null);
+  const isInitializingRef = useRef(false);
+  const [highlightedCrewId, setHighlightedCrewId]= useState(null);
+  const [sortBy, setSortBy] = useState('default');
 
   useEffect(()=> {
     localStorage.setItem('savedViewMode', viewMode);
@@ -107,6 +119,10 @@ function App() {
     } finally {
       setGuideLoading(false);
     }
+  };
+
+  const handleOpenReport = (crew) => {
+    setSelectedReportCrew(crew);
   };
 
   const findBanners = useCallback(async (page=1, limit=bannerPageSize) => {
@@ -158,6 +174,41 @@ function App() {
       setCrewPageSize(newSize);
     }
   }
+
+  const handleOpenSubmitModal = async() => {
+    if (viewMode === 'coliseum' && selectedBoss){
+      setSubmitStageId(selectedBoss.id);
+      setIsSubmitModalOpen(true)
+      return;
+    }
+
+    const config = viewConfig[viewMode];
+    if(!crewFilters || Object.keys(crewFilters).length === 0){
+      alert("Please select filters first");
+      return;
+    }
+
+    let params = {
+      mode: config.mode,
+      ...crewFilters
+    };
+
+    try{
+      const response = await axios.get(`${BASE_URL}/api/stage-info`, {
+        params: params
+      });
+
+      if(response.data && response.data.id){
+        setSubmitStageId(response.data.id);
+        setIsSubmitModalOpen(true);
+      } else {
+        alert("Stage not found in database. Cannot submit crew");
+      }
+    } catch(err){
+      console.error("Failed to fetch stage ID", err);
+      alert("Error finding stage information");
+    }
+  };
 
   const findBosses = useCallback(async (filters, page=1, limit= characterPageSize) => {
     setIsLoading(true);
@@ -385,6 +436,7 @@ function App() {
   };
 
    const handleCrewFiltersChange = useCallback((newFilter) => {
+    clearUrlParams();
     const config = viewConfig[viewMode];
     if(!config || !config.dropdowns) return;
 
@@ -457,6 +509,7 @@ function App() {
   };
 
   const handlePageChange = (direction) => {
+    clearUrlParams();
     const newPage = direction === 'next' ? currentPage + 1 : currentPage -1;
     if (newPage >0 && lastSearch) {
       if(lastSearch.mode === 'coliseum_boss_list'){
@@ -495,6 +548,7 @@ function App() {
   };
   
   const handleViewChange = (newView) => {
+    clearUrlParams();
     setViewMode(newView);
     setIsMobileMenuOpen(false);
     setResults(null);
@@ -505,6 +559,7 @@ function App() {
     setCategoryTotalCount(0);
     setLastSearch(null);
     setCrewFilters({});
+    setSortBy('default');
     setSelectedBoss(null);
     setBossesList(null);
     if(newView === 'coliseum') { setCrewFilters({level: 'Clash!! (Hard)'});} else {setCrewFilters({});}
@@ -515,6 +570,10 @@ function App() {
     setShowOnlyOwned(false);
     if(newView === 'creators') { findCreators(1, creatorPageSize);}
     if(newView === 'banners') { findBanners(1, bannerPageSize);}
+  };
+
+  const handleToggleSort = () => {
+    setSortBy(prev => prev === 'default' ? 'owned' : 'default');
   };
 
   useEffect(()=> {
@@ -531,9 +590,105 @@ function App() {
     setViewMode('admin');
   };
 
+  const handleOpenTextGuide = (crew) => {
+    setSelectedTextGuideCrew(crew);
+  };
+
+  const clearUrlParams = () => {
+    const url = new URL(window.location);
+    if(url.searchParams.has('crew')) {
+      url.searchParams.delete('crew');
+      window.history.replaceState({},'',url);
+      setHighlightedCrewId(null);
+    }
+  };
+
+  useEffect(()=> {
+    const initFromUrl = async()=> {
+      const params = new URLSearchParams(window.location.search);
+      const crewId = params.get('crew');
+
+      if(crewId){
+        setHighlightedCrewId(parseInt(crewId));
+        try{
+          const res = await axios.get(`${BASE_URL}/api/crews/${crewId}/context`);
+          const { mode, stage_name, level, stage_id, image_url, rank} = res.data;
+
+          const targetpage = Math.ceil(rank/crewPageSize);
+
+          let targetMode= '';
+          switch(mode) {
+            case 'grand_voyage': targetMode = 'grandVoyage'; break;
+            case 'garp_challenge': targetMode = 'garpChallenge'; break;
+            case 'forest_of_training': targetMode = 'forestOfTraining'; break;
+            case 'pirate_king_adventures': targetMode = 'pirateKingAdventures'; break;
+            case 'kizuna_clash': targetMode = 'kizunaClash'; break;
+            case 'treasure_map': targetMode = 'treasureMap'; break;
+            case 'coliseum': targetMode = 'coliseum'; break;
+            default: targetMode = 'grandVoyage';
+          }
+
+          let filters = {};
+          if(targetMode === 'coliseum'){
+            setSelectedBoss({id:stage_id, name:stage_name, image_url: image_url});
+            filters = {level: level};
+          } else if (targetMode === 'garpChallenge'){
+            filters = {challengeType: stage_name, challengeDetail: level};
+          } else if (targetMode === 'forestOfTraining'){
+            filters = {forest: stage_name};
+          } else if (targetMode === 'treasureMap' || targetMode === 'kizunaClash'){
+            filters = {boss: stage_name, level: level}
+          } else {
+            filters = {stage: stage_name, level: level};
+          }
+
+          isInitializingRef.current = true;
+
+          setCurrentPage(targetpage);
+          setViewMode(targetMode);
+          setCrewFilters(filters);
+          setShowOnlyOwned(false);
+        } catch(err){
+          console.error("Failed to load shared crew context", err);
+        }
+      }
+    };
+    initFromUrl();
+  }, []);
+
+  useEffect(()=> {
+    if (Object.keys(crewFilters).length>0){
+      const pageToFetch = isInitializingRef ? currentPage: 1;
+
+      if(viewMode === 'coliseum'){
+        if(selectedBoss){
+          findCrews({mode: 'coliseum', stage: selectedBoss.name, level: crewFilters.level}, pageToFetch, crewPageSize, showOnlyOwned);
+        } else {
+          findBosses(crewFilters, 1, characterPageSize);
+        }
+      }else{
+        findCrews(crewFilters, pageToFetch, crewPageSize, showOnlyOwned);
+      }
+
+      if(isInitializingRef.current){
+        isInitializingRef.current = false;
+      }
+    }
+  }, [crewFilters, findBosses, findCrews, selectedBoss, showOnlyOwned, viewMode, characterPageSize, crewPageSize]);
+
   return (
     <CollectionProvider>
       <div className="App">
+        
+        <Toaster
+          positin="bottom-center"
+          toastOptions={{
+            style: {
+              background: '#333',
+              color: '#fff'
+            },
+          }}
+        />
 
    
     <div className="app-container"> 
@@ -569,6 +724,8 @@ function App() {
             onToggleOwned = {()=> setShowOnlyOwned(!showOnlyOwned)}
             showActions={(viewMode !== 'coliseum' && viewMode !== 'creators') || (viewMode === 'coliseum' && selectedBoss)}
             disabled={viewMode === 'coliseum' && selectedBoss !== null}
+            sortBy={sortBy}
+            onToggleSort={handleToggleSort}
 
           />
 
@@ -601,6 +758,11 @@ function App() {
                 crews={isLoading ? null: results}
                 onPageSizeChange={handleCrewPageSizeChange}
                 showOnlyOwned={showOnlyOwned}
+                onAddCrewClick={handleOpenSubmitModal}
+                onOpenTextGuide={handleOpenTextGuide}
+                highlightedCrewId = {highlightedCrewId}
+                onReport={handleOpenReport}
+                sortBy={sortBy}
               />
            )}
 
@@ -645,14 +807,39 @@ function App() {
           />
           )}
 
+          <TextGuideModal
+            isOpen={!!selectedTextGuideCrew}
+            onClose={()=> setSelectedTextGuideCrew(null)}
+            crewData={selectedTextGuideCrew}
+          />
+
+          <ReportModal 
+            isOpen={!!selectedReportCrew}
+            onClose={()=> setSelectedReportCrew(null)}
+            crewData={selectedReportCrew}
+          />
+
           {!isLoading && !error && viewMode === 'admin' && (
             <AdminPanel/>
           )}
           
+          <SubmitCrewModal 
+            isOpen={isSubmitModalOpen}
+            onClose={()=> setIsSubmitModalOpen(false)}
+            stageName={selectedBoss ? selectedBoss.name : (crewFilters.stage || 'Uknown Stage')}
+            stageId={submitStageId}
+          />
 
           <Footer
           currentPage={currentPage}
-          hasMore={hasMore}
+          hasMore={
+            hasMore || 
+              (
+                crewBasedViews.includes(viewMode) &&
+                !showOnlyOwned &&
+                results &&
+                results.length === crewPageSize &&
+                viewMode !== 'coliseum_boss_list')}
           onPageChange={handlePageChange}
           hasSearched={results !== null || (viewMode === 'coliseum' && bossesList !== null)}
         />

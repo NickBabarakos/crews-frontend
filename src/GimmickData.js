@@ -20,6 +20,9 @@ import percentageReductionIcon from './assets/gimmicks/percentage-reduction.png'
 import hungerIcon from './assets/gimmicks/hunger.png';
 import limitedTapsIcon from './assets/gimmicks/limited-taps.png';
 import chainAtkDownIcon from './assets/gimmicks/chain-atk-down.png';
+import damagaNullificationIcon from './assets/gimmicks/damage-nullification.png';
+import slotDamageReductionIcon from './assets/gimmicks/slot-damage-reduction.png';
+import chainBoundryAtkDownIcon from './assets/gimmicks/chain-boundry-atk-down.png';
 
 
 const formatText = (template, params = [], turns) =>{
@@ -57,6 +60,16 @@ export const GIMMICK_DICT = {
         template: 'If chain multiplier is {$1} or less. {$2} ATK Down: {turns} turn(s)',
         icon: chainAtkDownIcon,
         color: "bg-red-900"
+    },
+    'chain_boundry_atk_down': {
+        template: 'If chain multiplier is {$1} or more, {$2} ATK Down: {turns} turn(s)',
+        icon: chainBoundryAtkDownIcon,
+        color: "bg-red-900"
+    },
+    'chain_max':{
+        template: 'Chain Multiplier Max. {$1}: {turns} turns',
+        icon: null,
+        color: 'bg-red-900'
     },
     'increased_defense': {
         template: 'DEF x{$1}: {turns} turn(s)',
@@ -128,6 +141,11 @@ export const GIMMICK_DICT = {
         icon: percentageReductionIcon,
         color: "bg-red-900"
     },
+    'slot_damage-reduction':{
+        template: '{$1} Slots: Reduce damage dealt by {$2} for {turns} turns',
+        icon: slotDamageReductionIcon,
+        color: "bg-red-900" 
+    },
     'hunger':{
         template: 'Until using {$1} slots, Reduce current HP by {$2} each turn. ATK {$3} Down',
         icon: hungerIcon,
@@ -142,6 +160,16 @@ export const GIMMICK_DICT = {
         template: "{$1}: Reduce Special Charge by {turns} turns",
         icon: null,
         color: "bg-green-900"
+    },
+    'reduce_super_switch_requirement':{
+        template: "{$1}: Reduce Super Switch Requirement by {turns} turns",
+        icon: null,
+        color: 'bg-green-900'
+    },
+    'reduce_vs_effect_gauge':{
+        template: "{$1}: Reduce VS Effect gauge by {turns} turns",
+        icon: null,
+        color: 'bg-green-900'
     },
     'retreat': {
         template: "Retreat",
@@ -177,6 +205,11 @@ export const GIMMICK_DICT = {
         template: "Change type to {$1}",
         icon: null,
         color: "bg-gray-800"
+    },
+    'hp_based_type_change':{
+        template: "{$1}: When remaining HP is {$2} or bellow",
+        icon: null,
+        color: "bg-purple-900"
     },
     'random_slot': {
         template: "Change to a Random Slot",
@@ -237,7 +270,63 @@ export const GIMMICK_DICT = {
         template: "Paralysis{$2}: {turns} turn(s)",
         icon: null,
         color: "bg-red-900"
+    },
+    'silence': {
+        template: "Silence{$1}: {turns} turns",
+        icon: null,
+        color: "bg-red-900"
+    },
+    'damage_nullification':{
+        template: "Nullify Damage: {turns} turns",
+        icon: damagaNullificationIcon,
+        color: "bg-red-900"
+    }, 
+    'damage': {
+        template: "{$1} damage",
+        icon: null,
+        color: "bg-purple-900"
+    },
+    'immunity_def_down':{
+        template: "DEF Down Immunity",
+        icon: null,
+        color: "bg-purple-900"
+    },
+    'stun': {
+        template: "Stun{$1} of {$2} damage taken",
+        icon: null,
+        color: "bg-red-900"
+    },
+    'rcv_bind': {
+        template: "RCV Bind: {turns} turns",
+        icon: null,
+        color: "bg-red-900"
+    },
+    'atk_up_reduce_actions':{
+        template: "ATK Up, Reduce Action Turns: {turns} turns",
+        icon: null,
+        color: "bg-red-900"
+    },
+    'self_heal':{
+        template: "Self Heal HP to {$1}",
+        iocn: null,
+        color: "bg-red-900"
+    },
+    'appearing_slots': {
+        template: "Appearing slots will be {$1}: {turns} turns",
+        icon: null,
+        color: "bg-red-900"
+    }, 
+    'intimidation' :{
+        template: "Reduce {$1} duration by {turns} turns",
+        icon: null,
+        color: "bg-red-900"
+    }, 
+    'until_times':{
+        template: "Until {$1} time(s)",
+        icon: null,
+        color: "bg-gray-800"
     }
+
 
 };
 

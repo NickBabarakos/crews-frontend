@@ -1,6 +1,9 @@
 import React, {useState, useEffect } from "react";
 import './Admin.css';
 import InsertCharacter from './InsertCharacter';
+import InsertCrew from "./InsertCrew";
+import ApproveCrews from "./ApproveCrews";
+import ManageReports from "./ManageReports";
 
 function AdminPanel() {
     const [isAuthenticated, setIsAuthenticated] = useState(()=> { return !!sessionStorage.getItem('admin_secret');});
@@ -53,19 +56,17 @@ function AdminPanel() {
                 <button
                     className={`admin-tab ${activeTab === 'insert_char' ? 'active' : ''}`}
                     onClick={()=> setActiveTab('insert_char')}
-                >Inset Character</button>
+                >Insert Character</button>
 
                 <button
                     className={`admin-tab ${activeTab === 'insert_crew' ? 'active': ''}`}
                     onClick={()=> setActiveTab('insert_crew')}
-                    disabled 
-                >Insert Crew (Coming Soon)
+                >Insert Crew
                 </button>
 
                 <button 
                     className={`admin-tab ${activeTab === 'approve_crew' ? 'active' : ''}`}
                     onClick={()=> setActiveTab('approve_crew')}
-                    disabled 
                 >Approve Crews</button>
 
                 <button
@@ -73,15 +74,26 @@ function AdminPanel() {
                     onClick = {()=> setActiveTab('insert_banner')}
                     disabled
                 >Insert Banner (Coming Soon)</button>
+
+                <button 
+                    className={`admin-tab ${activeTab === 'manage_reports' ? 'active' : ''}`}
+                    onClick={()=> setActiveTab('manage_reports')}
+                >Reports</button>
             </div>
 
             <div className="admin-content">
                 {activeTab === 'insert_char' && <InsertCharacter adminSecret={secretInput} />}
 
                 {activeTab === 'insert_crew' && (
-                    <div style={{textAlign:'center', marginTop:'50px'}}>
-                        <h3>Crew Insert Panel coming in next update...</h3>
-                    </div>
+                    <InsertCrew adminSecret={secretInput}/>
+                )}
+
+                {activeTab === 'approve_crew' && (
+                    <ApproveCrews adminSecret={secretInput} />
+                )}
+
+                {activeTab === 'manage_reports' && (
+                    <ManageReports adminSecret={secretInput}/>
                 )}
             </div>
         </div>

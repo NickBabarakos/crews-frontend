@@ -76,7 +76,7 @@ function CreatorsView({creators, onPageSizeChange, currentPage, pageSize}){
                                 </td>
                                 <td className="captain-col">
                                     <a 
-                                        href={creator.channel_url}
+                                        href={creator.social_url}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="captain-link"

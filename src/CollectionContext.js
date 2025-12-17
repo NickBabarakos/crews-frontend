@@ -1,4 +1,8 @@
-import React, { createContext, useState, useEffect, useContext, useCallback, useMemo } from 'react';
+import React, { createContext, useState, useEffect, useContext, useCallback, useMemo, useRef } from 'react';
+import axios from 'axios';
+
+const CollectionContext = createContext();
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const ALL_LEGEND_TYPES_DB = [
   'Super Sugo-Fest Only', 'Anniversary', 'Pirate Rumble Sugo-Fest Only', 'Treasure Sugo-Fest Only', 
@@ -18,7 +22,6 @@ const RR_MAPPING_DB = {
   'Other Rare Recruits': 'Rare Recruit'
 };
 
-const CollectionContext = createContext();
 
 const normalizeType = (input) => {
     if(!input) return '';
@@ -31,67 +34,210 @@ const normalizeType = (input) => {
 };
 
 export function CollectionProvider({children}){
-    const [ownedItems, setOwnedItems] = useState(()=> {
+    const [myKeys, setMyKeys] = useState(()=> {
         try{
-            const saved = localStorage.getItem('optc-collection');
-            if(saved) { return JSON.parse(saved);}
-            const emptyCollection = { '-1': 'SYSTEM_INIT'};
-            localStorage.setItem('optc-collection', JSON.stringify(emptyCollection));
-            return emptyCollection;
-        } catch (e) {
-            console.error("Error loading collection", e);
-            return {'-1': 'SYSTEM_INIT'};
-        }
+            const saved = localStorage.getItem('optc-box-keys');
+            return saved? JSON.parse(saved): null;
+        } catch(e) { return null; }
     });
+
+
+    const [ownedItems, setOwnedItems] = useState(()=> {
+       try{
+        const saved = localStorage.getItem('optc-collection');
+        if(saved) {return JSON.parse(saved);}
+        return{'-1': 'SYSTEM_INIT'};
+       } catch(e){
+        return {'-1': 'SYSTEM_INIT'}
+       }
+    });
+
+    const [favorites, setFavorites] = useState(()=> {
+        try{
+            const stored = localStorage.getItem('optc-favorite-crews');
+            return stored ? JSON.parse(stored) : [];
+        } catch(error) {return []; }
+    });
+    
+   
+    const [viewingOther, setViewingOther] = useState(false);
+    const [otherBoxData, setOtherBoxData] = useState(null);
+    const [isLoadingOther, setIsLoadingOther] = useState(false);
+    const [isRestored, setIsRestored] = useState(false);
+
+    const updateTimeoutRef = useRef(null);
+
+    useEffect(()=> {
+        if(myKeys?.secretKey && !viewingOther){
+            const syncData = async()=> {
+                try{
+                    const res = await axios.post(`${BASE_URL}/api/box/restore`, {secretKey: myKeys.secretKey});
+                    if(res.data.success){
+                        setOwnedItems(res.data.boxData);
+                        setFavorites(res.data.favorites || []);
+                        localStorage.setItem('optc-collection', JSON.stringify(res.data.boxData));
+
+                        if(!myKeys.publicKey && res.data.publicKey){
+                            const updatedKeys = {...myKeys, publicKey: res.data.publicKey};
+                            setMyKeys(updatedKeys);
+                            localStorage.setItem('optc-box-keys', JSON.stringify(updatedKeys));
+                        }
+                    }
+                } catch(err){
+                    console.error("Sync failed (offline or invalid key):", err);
+                } finally{
+                    setIsRestored(true);
+                }
+            };
+            syncData();
+        } else {
+            setIsRestored(true);
+        }
+    }, []);
+
+    const saveToServer = useCallback(async (boxData, favData, keys) => {
+        if(!keys?.secretKey) return;
+        try{
+            await axios.post(`${BASE_URL}/api/box/update`, {
+                secretKey: keys.secretKey,
+                boxData: boxData,
+                favorites: favData
+            });
+            console.log("Cloud save success");
+        } catch (err){
+            console.error("Cloud save failed.", err);
+        }
+    }, []);
+
+    const createBox = useCallback(async (initialBoxData) => {
+        try{
+            const res = await axios.post(`${BASE_URL}/api/box/create`, {
+                initialData: initialBoxData,
+                favorites: favorites
+            });
+            if(res.data.success){
+                const newKeys = {publicKey: res.data.publicKey, secretKey: res.data.secretKey};
+                setMyKeys(newKeys);
+                setOwnedItems(initialBoxData);
+                localStorage.setItem('optc-box-keys', JSON.stringify(newKeys));
+                localStorage.setItem('optc-box-collection', JSON.stringify(initialBoxData));
+                setIsRestored(true);
+                return newKeys;
+            }
+        } catch(err){
+            console.error("Create box failed:", err);
+            return null;
+        }
+    }, [favorites]);
+
+    const loginWithSecret = useCallback(async (secretKey) => {
+        try{
+            const res = await axios.post(`${BASE_URL}/api/box/restore`, {secretKey});
+            if(res.data.success){
+                const newKeys = {publicKey: res.data.publicKey, secretKey: secretKey};
+                setMyKeys(newKeys);
+
+                setOwnedItems(res.data.boxData);
+                setFavorites(res.data.favorites || []);
+
+                setViewingOther(false);
+                setIsRestored(true);
+
+                localStorage.setItem('optc-box-keys', JSON.stringify(newKeys));
+                localStorage.setItem('optc-collection', JSON.stringify(res.data.boxData));
+                localStorage.setItem('optc-favorite-crews', JSON.stringify(res.data.favorites));
+                return true;
+            }
+        } catch(err){
+            return false;
+        }
+    }, []);
+
+    const fetchOtherBox = useCallback(async (publicKey) => {
+        setIsLoadingOther(true);
+        try{
+            const res = await axios.get(`${BASE_URL}/api/box/view/${publicKey}`);
+            setOtherBoxData(res.data.boxData);
+            setViewingOther(true);
+            return true;
+        } catch (err){
+            console.error("View box failed", err);
+            return false;
+        } finally {
+            setIsLoadingOther(false);
+        }
+    }, []);
+
+    const exitOtherView = useCallback(()=> {
+        setViewingOther(false);
+        setOtherBoxData(null);
+    }, []);
+
+    const visibleItems = useMemo(()=> {
+        return viewingOther ? (otherBoxData || {}): ownedItems;
+    }, [viewingOther, otherBoxData, ownedItems]);
 
     useEffect(()=> {
         localStorage.setItem('optc-collection', JSON.stringify(ownedItems));
-    }, [ownedItems]);
+        localStorage.setItem('optc-favorite-crews', JSON.stringify(favorites));
 
-    const toggleChar = useCallback((id, type) => {
+        if(myKeys && !viewingOther){
+            if(updateTimeoutRef.current) clearTimeout(updateTimeoutRef.current);
+            if (!isRestored) return;
+            updateTimeoutRef.current = setTimeout(()=>{
+                saveToServer(ownedItems, favorites, myKeys);
+            }, 2000);
+        }
+    }, [ownedItems, favorites, myKeys, viewingOther, saveToServer, isRestored]);
+
+    const toggleFavorite = useCallback((crewId) => {
+        setFavorites(prev => {
+
+            const currentFavs = Array.isArray(prev) ? prev : [];
+            const newFavs = currentFavs.includes(crewId)
+            ? currentFavs.filter(id=> id !== crewId)
+            : [...currentFavs, crewId];
+        return newFavs;
+        });
+    }, []);
+
+    const isFavorite = useCallback((crewId)=> {
+        return Array.isArray(favorites) && favorites.includes(crewId);
+    }, [favorites]);
+
+    const toggleChar = useCallback((id, type)=> {
         if(!id) return;
-        const numericId = Number(id);
 
+        if(viewingOther) return;
+
+        const numericId = Number(id);
         const cleanType = normalizeType(type);
 
         setOwnedItems(prev => {
             const next = {...prev};
-            if(next['-1']){
-                delete next['-1'];
-            }
+            if(next['-1']) delete next['-1'];
 
             if(next[numericId]){
                 delete next[numericId];
             } else {
                 next[numericId] = cleanType;
             }
-            return next; 
-        });
-    }, []);
 
-    const importCollection = useCallback((newCollection) => {
-        try{
-            if(typeof newCollection === 'object' && newCollection !== null){
-                setOwnedItems(newCollection);
-                return { success: true, count: Object.keys(newCollection).length};
-            }
-            return {success: false, error: 'Invalid data format'};
-        } catch(e){
-            console.error("Import failed",e);
-            return { success: false, error: e.message};
-        }
-    }, []);
+            return next;
+        });
+    }, [viewingOther]);
+
 
     const isOwned = useCallback((id)=>{
         if(!id) return true;
         if(Number(id) === -1) return false;
-        return !!ownedItems[Number(id)];
-    }, [ownedItems])
+        return !!visibleItems[Number(id)];
+    }, [visibleItems])
 
     const getOwnedCountByCategory = useCallback((uiCategory, subCategory, isPlus) => {
         if(!uiCategory) return 0;
 
-        const realItems = Object.entries(ownedItems).filter(([key, val]) => key !== '-1');
+        const realItems = Object.entries(visibleItems).filter(([key, val]) => key !== '-1');
 
         if(uiCategory === 'all'){
             return realItems.length;
@@ -120,15 +266,30 @@ export function CollectionProvider({children}){
         }
         const realValues = realItems.map(([key,value])=> value);
         return realValues.filter(storedType => { return targetTypes.includes(storedType);}).length;
-    }, [ownedItems]);
+    }, [visibleItems]);
+
+    const importCollection = useCallback((newCollectionData) => {
+        if(viewingOther) return;
+        setOwnedItems(newCollectionData);
+    }, [viewingOther]);
 
     const contextValue = useMemo(()=> ({
-        ownedItems,
+        ownedItems: visibleItems,
+        myKeys,
+        createBox,
+        viewingOther,
         toggleChar,
         isOwned,
         getOwnedCountByCategory,
-        importCollection
-    }), [ownedItems, toggleChar, isOwned, getOwnedCountByCategory, importCollection]);
+        loginWithSecret,
+        fetchOtherBox,
+        exitOtherView,
+        isLoadingOther,
+        importCollection,
+        favorites,
+        toggleFavorite,
+        isFavorite
+    }), [visibleItems, myKeys, createBox, viewingOther, toggleChar, isOwned, getOwnedCountByCategory, loginWithSecret, fetchOtherBox, exitOtherView, isLoadingOther, importCollection, favorites, toggleFavorite, isFavorite]);
 
     return (
         <CollectionContext.Provider value = {contextValue}>
@@ -138,3 +299,8 @@ export function CollectionProvider({children}){
 }
 
 export const useCollection = () => useContext(CollectionContext);
+
+export const useFavorites = () => {
+    const {favorites, toggleFavorite, isFavorite} = useContext(CollectionContext);
+    return { favorites, toggleFavorite, isFavorite};
+};
