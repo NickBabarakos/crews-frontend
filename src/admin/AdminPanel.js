@@ -4,6 +4,7 @@ import InsertCharacter from './InsertCharacter';
 import InsertCrew from "./InsertCrew";
 import ApproveCrews from "./ApproveCrews";
 import ManageReports from "./ManageReports";
+import InsertBanner from "./InsertBanner";
 
 function AdminPanel() {
     const [isAuthenticated, setIsAuthenticated] = useState(()=> { return !!sessionStorage.getItem('admin_secret');});
@@ -72,8 +73,7 @@ function AdminPanel() {
                 <button
                     className={`admin-tab ${activeTab === 'insert_banner' ? 'active' : ''}`}
                     onClick = {()=> setActiveTab('insert_banner')}
-                    disabled
-                >Insert Banner (Coming Soon)</button>
+                >Insert Banner</button>
 
                 <button 
                     className={`admin-tab ${activeTab === 'manage_reports' ? 'active' : ''}`}
@@ -95,6 +95,8 @@ function AdminPanel() {
                 {activeTab === 'manage_reports' && (
                     <ManageReports adminSecret={secretInput}/>
                 )}
+
+                {activeTab === 'insert_banner' && <InsertBanner adminSecret={secretInput}/>}
             </div>
         </div>
     );

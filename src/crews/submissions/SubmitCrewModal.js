@@ -3,6 +3,8 @@ import axios from "axios";
 import { toast, Toaster } from 'react-hot-toast';
 import './SubmitCrewModal.css';
 import CharacterSelector from "./CharacterSelector";
+import { useCollection } from "../../CollectionContext";
+import TextGuideEditor from "./TextGuideEditor";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -35,13 +37,18 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
     const [editingSlot, setEditingSlot] = useState(null);
     const [selectedChar, setSelectedChar] = useState(null);
     const [videoUrl, setVideoUrl] = useState('');
-    const [socialUrl, setSocialUrl] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [crewTitle, setCrewTitle] = useState('');
-    const [userName, setUserName] = useState('');
     const [textGuideData, setTextGuideData] = useState(INITIAL_TEXT_GUIDE);
-
     const [crewData, setCrewData] = useState(INITIAL_CREW_DATA);
+    const {myKeys} = useCollection();
+    const [verificationStep, setVerificationStep] = useState('idle'); //'idle', 'checking', 'found', 'not_found', 'valid_key_no_creator', 'confirmed'
+    const [creatorIdentity, setCreatorIdentity] = useState(null);
+    const [manualName, setManualName] = useState('');
+    const [inputType, setInputType] = useState('handle');
+    const [socialInput, setSocialInput] = useState('');
+    const [keyInput, setKeyInput] = useState('');
+    const isNewCreator = verificationStep === 'not_found' || verificationStep === 'valid_key_no_creator';
     
     useEffect(() => {
         if(!isOpen){
@@ -54,9 +61,13 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
                 setGuideType('video');
                 setVideoUrl('');
                 setCrewTitle('');
-                setUserName('');
-                setSocialUrl('');
                 setIsSubmitting(false);
+                setVerificationStep('idle');
+                setCreatorIdentity(null);
+                setManualName('');
+                setSocialInput('');
+                setKeyInput('');
+                setInputType('handle');
             },300);
             return ()=> clearTimeout(timer);
         }
@@ -110,6 +121,12 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
                 toast.error("Video URL is required!");
                 return;
             }
+            
+            if( guideType === 'video'){
+                handleSubmit();
+                return;
+            }
+
             if (guideType === 'text'){
                 const hasNotes = textGuideData.notes.length >0;
                 const hasStages = textGuideData.stages.length >0;
@@ -122,109 +139,65 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
         }
     };
 
-    const addNote = (text) => {
-        if(!text.trim()) return;
-        setTextGuideData(prev => ({...prev, notes: [...prev.notes, text]}));
-    };
 
-    const updateNote = (index, text) => {
-        const newNotes = [...textGuideData.notes];
-        newNotes[index] = text;
-        setTextGuideData(prev => ({...prev, notes: newNotes}));
-    };
-
-    const addStage = (stageName) => {
-        if(!stageName.trim()) return;
-        setTextGuideData(prev=> ({
-            ...prev,
-            stages: [...prev.stages, { stage: stageName, instructions: []}]
-        }));
-    };
-
-    const updateStageName = (index, name) => {
-        const newStages = [...textGuideData.stages];
-        newStages[index].stage = name;
-        setTextGuideData(prev=> ({...prev, stages: newStages}));
-    };
-
-    const addInstruction = (stageIndex, text) => {
-        if(!text.trim()) return;
-        const newStages = [...textGuideData.stages];
-        newStages[stageIndex].instructions.push(text);
-        setTextGuideData(prev => ({...prev, stages: newStages}));
-    };
-
-    const updateInstruction = (stageIndex, instrIndex, text) => {
-        const newStages = [...textGuideData.stages];
-        newStages[stageIndex].instructions[instrIndex] = text;
-        setTextGuideData(prev => ({...prev, stages: newStages}));
-    };
-
-    const deleteNote = (index) => {
-        setTextGuideData(prev => ({
-            ...prev,
-            notes: prev.notes.filter((_,i) => i !== index)
-        }));
-    };
-
-    const deleteStage = (index) => {
-        toast((t)=>(
-            <div className="toast-confirm-container">
-                <span className="toast-message">Delete stage?</span>
-                <div className="toast-actions">
-                    <button 
-                        className="toast-btn confirm"
-                        onClick={(e)=> {
-                            e.stopPropagation();
-                            setTextGuideData(prev=> ({
-                            ...prev,
-                            stages: prev.stages.filter((_,i) => i !== index)
-                        }));
-                        toast.dismiss(t.id);
-                    }}>Yes </button>
-                    <button 
-                        
-                        className="toast-btn cancel"
-                        onClick={(e)=> {
-                            e.stopPropagation();
-                            toast.dismiss(t.id)
-                        }}>No</button>
-            </div>
-            </div>
-
-
-        ), {duration: 4000, position: 'top-center', className: 'toast-custom-popup'});
-    };
-
-    const deleteInstruction = (stageIndex, instrIndex) =>{
-        const newStages = [...textGuideData.stages];
-        newStages[stageIndex].instructions = newStages[stageIndex].instructions.filter((_,i) => i !== instrIndex);
-        setTextGuideData(prev => ({...prev, stages: newStages}));
-    };
 
     const handleSubmit = async() => {
-        if(guideType === 'video' && !videoUrl.trim()){
-            toast.error("Video URL is required");
-            return;
+
+        if(guideType !== 'video' && !crewTitle.trim()){
+            toast.error("Crew Name is required");
+            return; 
         }
 
-        if(!crewTitle.trim() || !userName.trim()){
-            toast.error("Crew Name and Your name are required");
+        const isVerified = verificationStep === 'confirmed';
+        const isNew = verificationStep === 'not_found' || verificationStep === 'valid_key_no_creator';
+
+
+        if(guideType === 'text'){
+            if(!isVerified && !isNew){
+                toast.error("Please complete the creator verification process first.");
+                return;
+            }
+            if(isNew && !manualName.trim()){
+                toast.error("Please enter a name for your creator profile");
+                return;
+            }
+        }
+
+
+        if(isNew){
+            try{
+                const checkRes = await axios.get(`${BASE_URL}/api/creators/check-name/${encodeURIComponent(manualName.trim())}`);
+                 if (checkRes.data.exists){
+                toast.error("This name " + manualName + "is already taken.Please use a different name.");
+                return;
+            }
+        } catch(e) {
+            console.error("Name check failed",e);
+            toast.error("Could not verify name availability. Please try again");
             return;
         }
+    }
+
+        let finalUserName = '';
+        if(isVerified) finalUserName = creatorIdentity.name;
+        else if(isNew) finalUserName = manualName.trim();
+        else finalUserName = guideType === 'video' ? 'Video Submitter' : (manualName || 'Anonymous');
 
         setIsSubmitting(true);
 
         try{
             const payload ={
                 stage_id: stageId,
-                title: crewTitle,
-                user_name: userName,
+                title: guideType === 'video' ? `Video Guide: ${stageName}` : crewTitle,
+                user_name: finalUserName,
                 crew_data: crewData,
-                social_url: socialUrl,
                 guide_type: guideType,
                 video_url: guideType === 'video' ? videoUrl: null,
-                text_guide_details: guideType === 'text' ? textGuideData: null
+                text_guide_details: guideType === 'text' ? textGuideData: null,
+                creator_url: inputType === 'handle' ? socialInput: null,
+                creator_key: inputType === 'key' ? keyInput: null,
+                confirmed_creator_id: isVerified ? creatorIdentity.id: null
+                
             };
 
             const response = await axios.post(`${BASE_URL}/api/crews/submit`, payload);
@@ -240,6 +213,53 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
             toast.error("Faied to submit crew. Please try again");
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    const verifyHandle = async() => {
+        if(!socialInput.trim()) return;
+        setVerificationStep('checking');
+        try{
+            const res = await axios.post(`${BASE_URL}/api/creators/verify-handle`, {social_url: socialInput});
+            if(res.data.status === 'FOUND'){
+                setCreatorIdentity(res.data.creator);
+                setVerificationStep('found');
+            } else {
+                setVerificationStep('not_found');
+            }
+        } catch(err){
+            console.error(err);
+            toast.error("Verification failed");
+            setVerificationStep('idle');
+        }
+    };
+
+    const verifyKey = async () => {
+        if(!keyInput.trim()) return;
+        setVerificationStep('checking');
+        try{
+            const res = await axios.post(`${BASE_URL}/api/creators/verify-key`, {public_key: keyInput});
+            if(res.data.status === 'CREATOR_FOUND'){
+                setCreatorIdentity(res.data.creator);
+                setVerificationStep('found');
+            } else if(res.data.status === 'VALID_KEY_NO_CREATOR'){
+                setVerificationStep('valid_key_no_creator');
+            } else {
+                toast.error("Invalid Public Key. This key does not exist in our database");
+                setVerificationStep('idle');
+            }
+        } catch(err){
+            console.error(err);
+            toast.error("Verification failed");
+            setVerificationStep('idle');
+        }
+    };
+
+    const handleAutoFillKey = () => {
+        if(myKeys?.publicKey){
+            setKeyInput(myKeys.publicKey);
+        } else {
+            toast.error("No Public Key found in your browser storage");
         }
     };
 
@@ -273,7 +293,7 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
 
                     {editingSlot ? (
                         selectedChar ? (
-                            <div className="step-container" style={{height: '100%'}}>
+                            <div className="step-container">
                                 <CharacterDetailsView 
                                     character={selectedChar}
                                     isSupport={isSupportSlot}
@@ -362,7 +382,7 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
                             <p className="hint-text">Click on a slot to select characters. Don't forget supports!</p>
                         </div>
                     ): activeStep === 2 ? (
-                        <div className="step-container full-height">
+                        <div className="step-container">
 
                             {guideType === 'video' ? (
                                 <div className="video-input-wrapper">
@@ -382,84 +402,23 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
                                             type="text"
                                             className="modal-input glass-input"
                                             placeholder="e.g. youtube.com/@{handle}..."
-                                            value={socialUrl}
-                                            onChange={(e)=>setSocialUrl(e.target.value)}
+                                            value={socialInput}
+                                            onChange={(e)=>setSocialInput(e.target.value)}
                                         />
                                     </div>
                                 </div>
                             ):(
-                                <div className="text-guide-workspace">
-                                    <div className="guide-section notes-container">
-                                        <div className="section-title">
-                                            Strategy Notes 
-                                        </div>
-                                        {textGuideData.notes.map((note, idx) => (
-                                            <EditableInput
-                                                key={`note-${idx}`}
-                                                value={note}
-                                                onSave={(val)=> updateNote(idx, val)}
-                                                onDelete={()=> deleteNote(idx)}
-                                                placeholder="Enter note..."
-                                            />
-                                        ))}
-                                        <EditableInput
-                                            isNew 
-                                            onSave={addNote}
-                                            placeholder="Add a note(e.g. Ship, Pontential Abilities etc.)"
-                                        />
-                                    </div>
-
-                                    <div className="stages-wrapper">
-                                        {textGuideData.stages.map((stage, sIdx) => (
-                                            <div key={`stage-${sIdx}`} className="stage-card">
-                                                <div className="stage-card-header">
-                                                    <EditableInput 
-                                                        value={stage.stage}
-                                                        onSave={(val)=> updateStageName(sIdx, val)}
-                                                        onDelete={()=> deleteStage(sIdx)}
-                                                        isHeader
-                                                    />
-                                                </div>
-                                                <div className="stage-card-body">
-                                                    {stage.instructions.map((instr, iIdx)=> (
-                                                       <div key={`instr-${sIdx}-${iIdx}`} className="instruction-row">
-                                                        <span className="step-number">{iIdx+1}.</span>
-                                                        <EditableInput
-                                                            value={instr}
-                                                            onSave={(val)=> updateInstruction(sIdx, iIdx, val)}
-                                                            onDelete={()=> deleteInstruction(sIdx, iIdx)}
-                                                            placeholder="Describe the action..."
-                                                        />
-                                                    </div> 
-                                                    ))}
-                                                    <div className="instruction-row new">
-                                                        <span className="step-number">•</span>
-                                                        <EditableInput
-                                                            isNew
-                                                            onSave={(val) => addInstruction(sIdx, val)}
-                                                            placeholder="Add step..."
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                        
-                                        <div className="add-stage-btn-wrapper">
-                                            <EditableInput
-                                                isNew
-                                                onSave={addStage}
-                                                placeholder="+ Add New Stage"
-                                                icon=""
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
+                               
+                                <TextGuideEditor 
+                                    initialData={textGuideData}
+                                    onSave={(newData) => setTextGuideData(newData)}
+                                />
                             )}
                         </div>
                             ):(
-                                <div className="step-container center-content">
-                                    <div className="form-grid">
-                                        <div className="input-group">
+                                <div className="step-container">
+                                    <div className="form-grid verification-mode">
+                                        <div className="input-group full-width">
                                             <label>Crew Name <span style={{color: '#ef4444'}}>*</span></label>
                                             <input 
                                                 type="text"
@@ -470,32 +429,120 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
                                             />
                                         </div>
 
-                                        <div className="input-group">
-                                            <label>Your Name <span style={{color:'#ef4444'}}>*</span></label>
-                                            <input
-                                                type="text"
-                                                className="modal-input glass-input"
-                                                placeholder="Nickname"
-                                                value={userName}
-                                                onChange={(e)=> setUserName(e.target.value)}
-                                            />
+                                        <div className="section-divider full-width">
+                                            <span>Creator Verification</span>
                                         </div>
 
-                                        <div className="input-group full-width">
-                                            <label>Social Media (Optional)</label>
-                                            <input 
-                                                type="text"
-                                                className="modal-input glass-input"
-                                                placeholder="Discord ID, Twitter handle, Youtube handle, etc."
-                                                value={socialUrl}
-                                                onChange={(e)=> setSocialUrl(e.target.value)}
-                                            />
-                                            <p className="hint-text">
-                                                Used for the Fleet Captain Leaderboard verification.
-                                            </p>
+                                        <div className="verification-tabs full-width">
+                                            <button 
+                                                className={`tab-btn ${inputType === 'handle' ? 'active' : ''}`}
+                                                onClick={()=> {setInputType('handle'); setVerificationStep('idle'); }}
+                                            >Link Social Handle
+                                            </button>
+                                            {guideType === 'text' && (
+                                                <button 
+                                                    className={`tab-btn ${inputType === 'key' ? 'active' : ''}`}
+                                                    onClick={()=> {setInputType('key'); setVerificationStep('idle');}}
+                                                >Use Box Public Key
+                                                </button>
+                                            )}
+                                </div>
+
+                                <div className="verification-input-area full-width">
+                                    {verificationStep === 'confirmed' ? (
+                                        <div className="verified-badge">
+                                            <div className="badge-content">
+                                                <span className="check-icon">✓</span>
+                                                <div className="badge-info">
+                                                    <span className="label">verified Creator</span>
+                                                    <span className="name">{creatorIdentity.name}</span>
+                                                </div>
+                                            </div>
+                                            <button className="change-btn" onClick={()=> setVerificationStep('idle')}>Change</button>
                                         </div>
+
+                                    ):(
+                                        <div className="search-box-wrapper">
+                                            {inputType === 'handle' ? (
+                                                <div className="input-group full-width">
+                                                    <label>Social Handle /URL</label>
+                                                <input 
+                                                    type="text"
+                                                    className="modal-input glass-input"
+                                                    placeholder="Youtube/Twitter/Discord Url or Handle..."
+                                                    value={socialInput}
+                                                    onChange={(e)=> setSocialInput(e.target.value)}
+                                                />
+                                                </div>
+                                            ): (
+                                                <div className="input-group full-width">
+                                                    <label>Box Public Key</label>
+                                                    <div className="key-input-group">
+                                                    <input 
+                                                        type="text"
+                                                        className="modal-input glass-input"
+                                                        placeholder="Enter Public Key"
+                                                        value={keyInput}
+                                                        onChange={(e)=> setKeyInput(e.target.value)}
+                                                    />
+                                                    <button className="paste-key-btn" onClick={handleAutoFillKey} title="Use My Key">Paste My Key</button>
+                                                </div>
+                                            </div>
+                                                
+                                            )}
+
+                                            <button 
+                                                className="verify-action-btn"
+                                                onClick={inputType === 'handle' ? verifyHandle : verifyKey}
+                                                disabled={inputType === 'handle' ? !socialInput : !keyInput}
+                                            >
+                                                Verify    
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            {verificationStep === 'found' && (
+                               <div className="verification-result full-width">
+                                <p className="verification-prompt">Is this you?</p>
+
+                                <div className="creator-card-mini modern-card">
+                                    <div className="creator-avatar-placeholder">
+                                        {creatorIdentity.name.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div className="creator-info-block">
+                                        <span className="creator-name-large">{creatorIdentity.name}</span>
+                                        <span className="creator-id-display">ID: {creatorIdentity.id}</span>
                                     </div>
                                 </div>
+
+                                <div className="verification-actions">
+                                    <button className="confirm-btn-small modern" onClick={()=> setVerificationStep('confirmed')}>Yes, it's me</button>
+                                    <button className="reject-btn-small modern" onClick={()=>setVerificationStep('idle')}>No</button>
+                                </div>
+                            </div>
+                            )}
+
+                            {(verificationStep === 'not_found' || verificationStep === 'valid_key_no_creator') && (
+                                <div className="manual-name-input full-width fade-in">
+                                    <div className="alert-box info">
+                                        {verificationStep === 'not_found'
+                                            ? "Creator not found. Enter your name to create a new profile."
+                                            : "Valid Key found! Enter your name to create your Creator Profile"
+                                        }
+                                        </div>
+                                        <label>Your Name <span style={{color: '#ef4444'}}>*</span></label>
+                                        <input 
+                                            type="text"
+                                            className="modal-input glass-input"
+                                            placeholder="Enter your nickname..."
+                                            value={manualName}
+                                            onChange={(e)=> setManualName(e.target.value)}
+                                        />
+                                    </div>
+                            )}
+
+                        </div>
+                    </div>
                     ))}
 
                 {!editingSlot && (
@@ -509,12 +556,28 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
                     ): activeStep === 2 ? (
                         <>
                             <button className="cancel-btn" onClick={()=> setActiveStep(1)}>Back</button>
-                            <button className="next-btn" onClick={handleNext}>Next</button>
+                            <button className="next-btn" onClick={handleNext}>
+                                {guideType === 'video'
+                                    ? (isSubmitting ? 'Sending...' : 'Submit')
+                                    : 'Next'
+                                }</button>
                         </>
                     ) : (
                          <>
                             <button className="cancel-btn" onClick={()=> setActiveStep(2)}>Back</button>
-                            <button className="next-btn" onClick={handleSubmit} disabled={isSubmitting}>{isSubmitting ? 'Sending...': 'Submit'}</button>
+                            <button 
+                                className="next-btn" 
+                                onClick={handleSubmit} 
+                                disabled={
+                                    isSubmitting ||
+                                    (guideType === 'text' && (
+                                        !['confirmed', 'not_found', 'valid_key_no_creator'].includes(verificationStep) ||
+                                        ((verificationStep === 'not_found' || verificationStep === 'valid_key_no_creator') &&
+                                        !manualName.trim())
+                                    ))
+                                }
+                            >{isSubmitting ? 'Sending...': 'Submit'}
+                            </button>
                         </>
 
                     )}
@@ -591,84 +654,6 @@ function CharacterDetailsView( {character, isSupport, onConfirm, onBack }){
                 <button className="confirm-btn" onClick={handleSave}>Confirm</button>
             </div>
         </div>
-    );
-}
-
-function EditableInput({value, onSave, onDelete, placeholder, isNew= false, isHeader= false, icon = "+"}){
-    const [isEditing, setIsEditing] = useState(false);
-    const [tempValue, setTempValue] = useState(value || '');
-
-    const handleClick = () => {
-        setIsEditing(true);
-        setTempValue(value || '');
-    };
-
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter'){
-            handleBlur();
-        }
-    };
-
-    const handleBlur = () => {
-        if (tempValue.trim()) {
-            onSave(tempValue);
-            if (isNew) setTempValue('');
-        }
-        setIsEditing(false);
-    };
-
-    if(isEditing){
-        return(
-            <input
-                autoFocus
-                type="text"
-                className={`editable-input ${isHeader ? 'header-mode' : ''}`}
-                value={tempValue}
-                onChange={(e)=> setTempValue(e.target.value)}
-                onBlur={handleBlur}
-                onKeyDown={handleKeyDown}
-                placeholder= {placeholder}
-            />
-        );
-    }
-
-    if (isNew){
-        return (
-            <div className="editable-box placeholder" onClick={handleClick}>
-                <span className="plus-icon">{icon}</span>
-                <span className="placeholder-text">{placeholder}</span>
-            </div>
-        );
-    }
-
-    return(
-        <div 
-            className={`editable-box saved ${isHeader ? 'header-mode' : ''}`}
-            onClick={handleClick}
-            title="Click to edit"
-            style={{width: '100%'}}
-        >
-        <span className="saved-text" style={{flex:1}}>{value}</span>
-        {onDelete && (
-            <span 
-                className="delete-icon-indicator"
-                onClick={(e)=> {
-                    e.stopPropagation();
-                    onDelete();
-                }}
-                title="Delete"
-            >
-                <svg 
-                    width="16" height="16" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" strokeWidth="2"
-                    strokeLinecap="round" strokeLinejoin="round"
-                >
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                </svg>
-            </span>
-        )}
-    </div>
     );
 }
 

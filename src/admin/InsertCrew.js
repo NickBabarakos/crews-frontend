@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import './Admin.css';
+import TextGuideEditor from '../crews/submissions/TextGuideEditor';
+import TextGuideModal from '../crews/TextGuideModal';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -24,6 +26,7 @@ function InsertCrew({ adminSecret, prefilledData = null, onCancel=null, onApprov
     });
 
     const [creatorStatus, setCreatorStatus] = useState({
+        inputType: 'url', // 'url' or 'key'
         urlInput: '',
         step: 'search',
         data: null,
@@ -32,18 +35,24 @@ function InsertCrew({ adminSecret, prefilledData = null, onCancel=null, onApprov
 
     const [members, setMembers] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+    const [isVisualEditorOpen, setIsVisualEditorOpen] = useState(false);
 
     const handleChange = (e) => {
         setFormData({...formData, [e.target.name]: e.target.value});
     };
 
     const handleCheckCreator = async ()=> {
-        if(!creatorStatus.urlInput) return alert("Please enter a URL");
+        if(!creatorStatus.urlInput) return alert("Please enter a value");
 
         try{
+            const payload = creatorStatus.inputType === 'key'
+                ? {public_key: creatorStatus.urlInput}
+                : {social_url: creatorStatus.urlInput};
+
             const res = await axios.post(
                 `${BASE_URL}/api/admin/check-creator`,
-                { social_url: creatorStatus.urlInput },
+                payload,
                 { headers: { 'x-admin-secret': adminSecret }}
             );
 
@@ -69,12 +78,15 @@ function InsertCrew({ adminSecret, prefilledData = null, onCancel=null, onApprov
         if(!creatorStatus.tempName) return alert("Please enter a name");
 
         try{
+            const payload ={
+                name: creatorStatus.tempName,
+                social_url: creatorStatus.inputType === 'url' ? creatorStatus.urlInput: null,
+                public_key: creatorStatus.inputType === 'key' ? creatorStatus.urlInput: null
+            };
+
             const res = await axios.post(
                 `${BASE_URL}/api/admin/create-creator`,
-                {
-                    name: creatorStatus.tempName,
-                    social_url: creatorStatus.urlInput
-                },
+                payload,
                 {headers: {'x-admin-secret': adminSecret}}
             );
 
@@ -242,28 +254,47 @@ function InsertCrew({ adminSecret, prefilledData = null, onCancel=null, onApprov
 
             setGuideType(prefilledData.guide_type);
 
+            const keyToUse = prefilledData.creator_key;
             const urlToUse = prefilledData.creator_url || prefilledData.social_url || prefilledData.user_social_url || '';
 
-            if(urlToUse){
+            if(keyToUse){
                 setCreatorStatus(prev => ({
                     ...prev,
+                    inputType: 'key',
+                    urlInput: keyToUse,
+                    step: 'search',
+                    tempName: prefilledData.user_name
+                }));
+            } else if(urlToUse){
+                setCreatorStatus(prev => ({
+                    ...prev,
+                    inputType: 'url',
                     urlInput: urlToUse,
                     step: 'search',
                     tempName: prefilledData.guide_type === 'text' ? prefilledData.user_name : ''
                 }));
             }
+    
 
             if(prefilledData.crew_data){
                 const mappedMembers = {};
                 Object.entries(prefilledData.crew_data).forEach(([pos,data]) => {
                     if(data && data.id){
-                        let notes ='';
-                        if (data.level && data.level !== 'No') notes += `Lv.${data.level}`;
-                        if(data.supportType) notes += `(${data.supportType})`;
+                        let notes =null;
+                        
+                        if(pos.toLowerCase().includes('support')){
+                            if(data.supportType === 'optional'){
+                                notes = 'optional';
+                            }
+                        } else {
+                            if(data.level && data.level !== 'No'){
+                                notes = data.level;
+                            }
+                        }
 
                         mappedMembers[pos] = {
                             character_id: data.id,
-                            notes: notes.trim()
+                            notes: notes
                         };
                     }
                 });
@@ -351,6 +382,19 @@ function InsertCrew({ adminSecret, prefilledData = null, onCancel=null, onApprov
                 ):(
                     <div className="form-group">
                         <label>Text Guide (JSON Format)</label>
+
+                        <div className="json-actions-row" style={{marginBottom: '10px', display: 'flex', gap: '10px'}}>
+                            <button 
+                                className="admin-ctrl-btn preview"
+                                onClick={()=>setIsPreviewOpen(true)}
+                                type="button">Check Preview</button>
+                            
+                            <button 
+                                className="admin-ctrl-btn edit"
+                                onClick={()=> setIsVisualEditorOpen(true)}
+                                type="button"
+                            >Visual Editor</button>
+                        </div>
                         <textarea 
                             className="json-editor"
                             name="text_guide_json"
@@ -368,11 +412,15 @@ function InsertCrew({ adminSecret, prefilledData = null, onCancel=null, onApprov
 
                     {creatorStatus.step === 'search' && (
                         <div className="search-row">
+                            <span style={{color:'white', marginRight: '10px', fontSize: '0.8rem'}}>
+                                {creatorStatus.inputType === 'key' ? 'Public Key' : 'URL'}
+                            </span>
+
                             <input 
                                 type="text"
                                 value={creatorStatus.urlInput}
                                 onChange={(e)=> setCreatorStatus({...creatorStatus, urlInput: e.target.value})}
-                                placeholder="Channel URL (e.g https://youtube.com/@Toadskii"
+                                placeholder={creatorStatus.inputType === 'key' ? "Enter Box Public Key" : "Channel URL"}
                             />
                             <button 
                                 className="submit-btn search-btn"
@@ -386,7 +434,7 @@ function InsertCrew({ adminSecret, prefilledData = null, onCancel=null, onApprov
                             <p className="warning-text">Creator not found in Database</p>
 
                             <div className="form-group">
-                                <label>Channel URL (Read Only)</label>
+                                <label>{creatorStatus.inputType === 'key' ? 'Public Key' : 'Channel URL'} (Read Only)</label>
                                 <input type="text" value={creatorStatus.urlInput} disabled />
                             </div>
 
@@ -444,7 +492,42 @@ function InsertCrew({ adminSecret, prefilledData = null, onCancel=null, onApprov
                             </button>
                             </div>
                         </div>
+                         </div>
+
+
+        {isPreviewOpen && (
+            <TextGuideModal 
+                isOpen={true}
+                onClose={()=> setIsPreviewOpen(false)}
+                crewData={{
+                    title: formData.title,
+                    creator_name: creatorStatus.data?.name || "Preview Mode",
+                    text_guide: formData.text_guide_json
+                }}
+            />
+        )}
+
+        {isVisualEditorOpen && (
+            <div className="modal-overlay" style={{zIndex: 9999}}>
+                <div className="admin-visual-editor-container">
+                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems:'center', marginBottom:'20px'}}>
+                        <h3 style={{color: '#a78bfa', margin:0}}>Visual Guide Editor</h3>
+                        <button 
+                            onClick={()=> setIsVisualEditorOpen(false)}
+                            style={{background: '#ef4444', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold'}}>Close & Done</button>
+                            </div>
+                    <TextGuideEditor 
+                        initialData={(()=> {
+                            try { return JSON.parse(formData.text_guide_json);}
+                            catch {return {notes:[], stages:[]}; }
+                        })()}
+                        onSave={(newData) => {
+                            setFormData({...formData, text_guide_json: JSON.stringify(newData, null, 2)});
+                        }}
+                    />
+                </div>
             </div>
+        )}   
      </div>
     );
 }
