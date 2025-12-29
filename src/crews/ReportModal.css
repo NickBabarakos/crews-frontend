@@ -14,14 +14,14 @@
 }
 
 .report-modal-content{
-    background: linear-gradient(145deg, #1e293b, #0f172a);
+    background: linear-gradient(145deg, var(--bg-card), var(--bg-surface));
     width: 90%;
     max-width: 500px;
     max-height: 90vh;
     max-height: 90vh;
     overflow-y: auto;
     border-radius: 16px;
-    border: 1px solid rgba(167, 139, 250, 0.3);
+    border: 1px solid rgba(var(--rgb-accent),0.3);
     box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
     display: flex;
     flex-direction: column;
@@ -30,23 +30,23 @@
 
 .report-header{
     padding: 20px 24px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(15, 23, 42, 0.4);
+    border-bottom: 1px solid var(--border-light);
+    background: rgba(var(--rgb-surface),0.8);
 }
 
 .report-header h3{
     margin: 0 0 5px 0;
-    color: #f1f5f9;
+    color: var(--text-main);
     font-size: 1.25rem;
 }
 
 .report-subtitle{
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 0.9rem;
 }
 
 .subtitle-label{
-    color: #a78bfa;
+    color: var(--text-accent);
     font-weight: 600;
 }
 
@@ -57,18 +57,18 @@
 .report-instruction{
     margin-top: 0;
     margin-bottom: 20px;
-    color: #cbd5e1;
+    color: var(--text-muted);
     font-size: 0.95rem;
     line-height: 1.6;
 }
 
 .report-input{
     width: 100%;
-    background-color: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(var(--rgb-surface),0.6);
+    border: 1px solid var(--border-light);
     border-radius: 8px;
     padding: 12px;
-    color: #fff;
+    color: var(--text-main);
     font-size: 1rem;
     resize: vertical;
     box-sizing: border-box;
@@ -78,14 +78,14 @@
 
 .report-input:focus{
     outline: none;
-    border-color: #a78bfa;
-    background-color: rgba(15, 23, 42, 0.8);
+    border-color: var(--text-accent);
+    background-color: rgba(var(--rgb-surface),0.8);
 }
 
 .report-footer{
     padding: 16px 24px;
-    background: rgba(15,23,42,0.4);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--bg-glass);
+    border-top: 1px solid var(--border-light);
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -96,7 +96,7 @@
 .report-footer .cancel-btn{
     background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #cbd5e1;
+    color: var(--text-muted);
     padding: 8px 16px;
     border-radius: 6px;
     cursor: pointer;
@@ -112,12 +112,12 @@
 }
 
 .report-footer .cancel-btn:hover{
-    background: rgba(255, 255, 255, 0.05);
-    color: #fff;
+    background: var(--border-subtle);
+    color: var(--text-main);
 }
 
 .report-footer .submit-btn{
-    background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+    background: linear-gradient(135deg, var(--text-accent) 0%, var(--primary-base) 100%);
     border: none;
     color: white;
     padding: 8px 20px;
@@ -136,7 +136,7 @@
 
 .report-footer .submit-btn:hover{
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    box-shadow: 0 4px 12px rgba(var(--rgb-primary),0.3);
 }
 
 .report-footer .submit-btn:disabled{

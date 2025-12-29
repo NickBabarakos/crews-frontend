@@ -25,7 +25,7 @@
   border-radius: 4px;
   overflow: hidden;
   border: 1px solid rgba(255,255,255,0.1);
-  background-color: #0f172a;
+  background-color: var(--bg-surface);
   position: relative;
   z-index: 1;
   transition: transform 0.2s ease, opacity 0.2s ease;
@@ -38,8 +38,8 @@
 @media(hover:hover){
 .character-card:hover {
   transform: scale(1.05);
-  box-shadow: 0 15px 30px rgba(0,0,0,0.5), 0 0 15px rgba(139, 92, 246, 0.4);
-  border-color: #8b5cf6;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.5), 0 0 15px rgba(var(--color-brand-glow));
+  border-color: var(--primary-base);
   z-index: 100;
 }
 
@@ -63,7 +63,7 @@
 .results-counter {
   font-size: 16px;
   font-weight: bold;
-  color: #E0E1E6;
+  color: var(--text-main);
 }
 
 .character-category-buttons {

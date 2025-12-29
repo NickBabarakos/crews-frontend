@@ -1,7 +1,7 @@
 .banner-modal.glass-effect {
-    background: rgba(15, 23, 42, 0.95);
+    background: rgba(var(--rgb-surface),0.95);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-light);
     box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
     border-radius: 20px;
     padding: 0;
@@ -14,7 +14,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(30,41,59,0.4);
+    background: rgba(var(--rgb-card),0.4);
 }
 
 .modal-title-area {
@@ -25,7 +25,7 @@
 
 .modal-title-area h2 {
     margin: 0;
-    color: #fff;
+    color: var(--text-main);
     font-size: 22px;
 }
 
@@ -34,20 +34,20 @@
     align-items: center;
     gap: 8px;
     background: linear-gradient(90deg, rgba(124, 58, 237, 0.2), rgba(129, 92, 246, 0.1));
-    border: 1px solid rgba(139, 92, 246, 0.3);
+    border: 1px solid rgba(var(--rgb-primary),0.3);
     padding: 4px 12px;
     border-radius: 99px;
 }
 
 .chance-label {
-    color: #a78bfa;
+    color: var(--text-accent);
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
 }
 
 .chance-number{
-    color: #fff;
+    color: var(--text-main);
     font-weight: 800;
     font-size: 14px;
 }
@@ -56,7 +56,7 @@
     background: transparent;
     border: none;
     cursor: pointer;
-    color: #94a3b8;
+    color: var(--text-muted);
     padding: 8px;
     border-radius: 50%;
     display: flex;
@@ -66,8 +66,8 @@
 }
 
 .close-btn:hover{
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
+    background: var(--border-light);
+    color: var(--text-main);
 }
 
 .banner-details-container {
@@ -81,7 +81,7 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb{
-    background-color: #475569;
+    background-color: var(--color-slate-700);
     border-radius: 10px;
 }
 
@@ -97,8 +97,8 @@
     aspect-ratio: 1/1;
     border-radius: 6px;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background-color: #1e293b;
+    border: 1px solid var(--border-light);
+    background-color: var(--bg-card);
     cursor: pointer;
     transition: transform 0.2s ease, border-color 0.2s;
     position: relative;
@@ -106,7 +106,7 @@
 
 .character-card.small:hover{
     transform: scale(1.1);
-    border-color: #8b5cf6;
+    border-color: var(--primary-base);
     z-index: 10;
     box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }

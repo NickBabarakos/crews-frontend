@@ -3,18 +3,21 @@ import axios from 'axios';
 import './Admin.css';
 import TextGuideEditor from '../crews/submissions/TextGuideEditor';
 import TextGuideModal from '../crews/TextGuideModal';
+import CharacterSelector from '../crews/submissions/CharacterSelector';
+import { CharacterDetailsView } from '../crews/submissions/SubmitCrewModal';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
-const MAIN_POSITIONS = [
-    'Friend Captain', 'Captain',
-    'Crewmate4', 'Crewmate1', 'Crewmate3', 'Crewmate2'
+const CREW_LAYOUT = [
+    { mainId: 'Friend Captain', label: 'Friend Captain', hasSupport: false},
+    { mainId: 'Captain', label: 'Captain', hasSupport: true, supportId: 'Support Captain'},
+    { mainId: 'Crewmate4', label: 'Crewmate 4', hasSupport: true, supportId: 'Support4'},
+    { mainId: 'Crewmate1', label: 'Crewmate 1', hasSupport: true, supportId: 'Support1'},
+    { mainId: 'Crewmate3', label: 'Crewmate 3', hasSupport: true, supportId: 'Support3'},
+    { mainId: 'Crewmate2', label: 'Crewmate 2', hasSupport: true, supportId: 'Support2'}
 ];
 
-const SUPPORT_POSITIONS = [
-    'Support Captain',
-    'Support1', 'Support4', 'Support2', 'Support3'
-]
+const LEVELS = ['No', '150', '110', '120', '130', '150'];
 
 function InsertCrew({ adminSecret, prefilledData = null, onCancel=null, onApproveSuccess = null }) {
     const [guideType, setGuideType ] = useState('video');
@@ -34,6 +37,8 @@ function InsertCrew({ adminSecret, prefilledData = null, onCancel=null, onApprov
     });
 
     const [members, setMembers] = useState({});
+    const [editingSlot, setEditingSlot] = useState(null);
+    const [selectedChar, setSelectedChar] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
     const [isVisualEditorOpen, setIsVisualEditorOpen] = useState(false);
@@ -121,30 +126,9 @@ function InsertCrew({ adminSecret, prefilledData = null, onCancel=null, onApprov
         }));
     };
 
-    const renderMemberInput = (position) => {
-        const memberData = members[position] || { character_id: '', notes: ''};
-
-        return(
-            <div className="member-card" key={position}>
-                <label className="position-label">{position}</label>
-                <div className="member-inputs">
-                    <input 
-                        type="number"
-                        placeholder="Char ID"
-                        value={memberData.character_id}
-                        onChange={(e)=> handleMemberChange(position, 'character_id', e.target.value)}
-                        className="char-id-input"
-                    />
-                    <input 
-                        type="text"
-                        placeholder="Notes (optional)"
-                        value={memberData.notes}
-                        onChange={(e)=> handleMemberChange(position, 'notes', e.target.value)}
-                        className="notes-input"
-                    />
-                </div>
-            </div>
-        );
+    const handleSlotClick = (slotId) => {
+        setEditingSlot(slotId);
+        setSelectedChar(null);
     };
 
     const handleSubmit = async() => {
@@ -173,15 +157,20 @@ function InsertCrew({ adminSecret, prefilledData = null, onCancel=null, onApprov
 
         const membersArray = [];
 
-        const ALL_POSITIONS = [...MAIN_POSITIONS, ...SUPPORT_POSITIONS];
+        Object.entries(members).forEach(([pos, data]) => {
+            if(data && data.id){
+                let notes = null;
 
-        ALL_POSITIONS.forEach(pos => {
-            const memberData = members[pos];
-            if(memberData && memberData.character_id) {
+                if(pos.toLowerCase().includes('support')){
+                    notes = data.supportType === 'optional' ? 'optional' : null;
+                } else {
+                    notes = (data.level && data.level !== 'No') ? data.level: null;
+                }
+
                 membersArray.push({
                     position: pos,
-                    character_id: parseInt(memberData.character_id),
-                    notes: memberData.notes
+                    character_id: parseInt(data.id),
+                    notes: notes
                 });
             }
         });
@@ -293,6 +282,7 @@ function InsertCrew({ adminSecret, prefilledData = null, onCancel=null, onApprov
                         }
 
                         mappedMembers[pos] = {
+                            ...data,
                             character_id: data.id,
                             notes: notes
                         };
@@ -403,7 +393,7 @@ function InsertCrew({ adminSecret, prefilledData = null, onCancel=null, onApprov
                             rows={10}
                             placeholder='{ "notes": [], "stages": [] }'
                         />
-                        <small style={{color: '#94a3b8'}}>Paste valid JSON here.</small>
+                        <small style={{color: 'var(--text-muted)'}}>Paste valid JSON here.</small>
                     </div>
                 )}
                 
@@ -471,28 +461,68 @@ function InsertCrew({ adminSecret, prefilledData = null, onCancel=null, onApprov
                     )}
                 </div>
 
-                <div className="members-section">
-                        <h4 className="section-title">Main Crew (Positions)</h4>
-                        <div className="members-grid">
-                            {MAIN_POSITIONS.map(pos=> renderMemberInput(pos))}
-                        </div>
+                <div className="members-section admin-visual-members">
+                    <h4 className="section-title">Crew Layout </h4>
 
-                        <h4 className="section-title mt-20">Supports</h4>
-                        <div className="members-grid supports">
-                            {SUPPORT_POSITIONS.map(pos => renderMemberInput(pos))}
-                        </div>
-
-                        <div className="submit-container">
-                            <button 
-                                className="submit-btn big-btn" 
-                                onClick={handleSubmit}
-                                disabled={isSubmitting}
-                                >
-                                {isSubmitting ? 'SUBMITTING...': 'SUBMIT CREW'}
-                            </button>
+                        {!editingSlot ? (
+                            <div className="submission-grid">
+                                {CREW_LAYOUT.map((slot) => (
+                                    <div key={slot.mainId} className="grid-slot-wrapper">
+                                        <div className="submission-slot main-slot" onClick={()=> handleSlotClick(slot.mainId)}>
+                                            {members[slot.mainId] ? (
+                                                <>
+                                                    <img src = {`${members[slot.mainId].image_url}.png`} alt="char" className="selected-char-img" />
+                                                        {members[slot.mainId].level && members[slot.mainId].level !== 'No' && (
+                                                            <div className="level-badge">Lv.{members[slot.mainId].level}</div>
+                                                        )}
+                                                </>
+                                                ): <div className="empty-slot-indicator">+</div>}
                             </div>
-                        </div>
-                         </div>
+                            <div className="mini-label">{slot.label}</div>
+
+                            {slot.hasSupport && (
+                                <div className="submission-slot support-slot" onClick={()=> handleSlotClick(slot.supportId)}>
+                                    {members[slot.supportId] ? (
+                                        <>
+                                            <img src={`${members[slot.supportId].image_url}.png`} alt="sup" className="selected-char-img" />
+                                            {members[slot.supportId].supportType === 'optional' && <div className="optional-indicator">!</div>}
+                                        </>
+                                    ): <div className="empty-slot-indicator small">+</div>}
+                                </div>
+                            )}
+                        </div> 
+                                ))}
+                        </div> 
+                        ):(
+                            selectedChar ? (
+                                <CharacterDetailsView 
+                                    character={selectedChar}
+                                    isSupport={editingSlot.includes('Support')}
+                                    onConfirm={(details) => {
+                                        setMembers(prev => ({...prev, [editingSlot]: {...selectedChar, ...details }}));
+                                        setSelectedChar(null);
+                                        setEditingSlot(null);
+                                    }}
+                                    onBack={()=> setSelectedChar(null)}
+                                />
+                            ):(
+                               <CharacterSelector 
+                                    onSelect={(char) => setSelectedChar(char)}
+                                    onBack={()=> setEditingSlot(null)}
+                            />
+                            )
+                        )}
+                    </div>
+                </div>
+
+        {!editingSlot && (
+            <div className="submit-container">
+                <button className="submit-btn big-btn" onClick={handleSubmit} disabled={isSubmitting}>
+                    {isSubmitting ? 'SUBMITTING...' : 'SUBMIT CREW'}
+                </button>
+            </div>
+        )}
+
 
 
         {isPreviewOpen && (
@@ -511,10 +541,10 @@ function InsertCrew({ adminSecret, prefilledData = null, onCancel=null, onApprov
             <div className="modal-overlay" style={{zIndex: 9999}}>
                 <div className="admin-visual-editor-container">
                     <div style={{display: 'flex', justifyContent: 'space-between', alignItems:'center', marginBottom:'20px'}}>
-                        <h3 style={{color: '#a78bfa', margin:0}}>Visual Guide Editor</h3>
+                        <h3 style={{color: 'var(--text-accent)', margin:0}}>Visual Guide Editor</h3>
                         <button 
                             onClick={()=> setIsVisualEditorOpen(false)}
-                            style={{background: '#ef4444', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold'}}>Close & Done</button>
+                            style={{background: 'var(--color-danger)', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold'}}>Close & Done</button>
                             </div>
                     <TextGuideEditor 
                         initialData={(()=> {

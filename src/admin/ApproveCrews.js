@@ -1,112 +1,110 @@
-import React, {useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import InsertCrew from './InsertCrew';
+import './Admin.css';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
-const CHAR_TYPES = [
-    'Super Sugo-Fest Only', 'Anniversary', 'Pirate Rumble Sugo-Fest Only', 'Treasure Sugo-Fest Only', 'Pirate Alliance Kizuna Clash Sugo-Fest Only',
-    'Exchange Only', 'Sugo Rare', '6+ Legend', 'Rare Recruit', 'Treasure Map Rare Recruit', 'Kizuna Clash Limited Character',
-    'Rumble Rare Recruit', 'Support Character', '5+ Rare Recruit'
-];
-
-function InsertCharacter({adminSecret}) {
-    const [formData, setFormData] = useState({
-        id: '',
-        name: '',
-        info_url: '',
-        type: 'Rare Recruit'
-    });
-    const [status, setStatus] = useState({type:'', msg: ''});
+function ApproveCrews({adminSecret}) {
+    const [pendingCrews, setPendingCrews] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [selectedCrew, setSelectedCrew] = useState(null);
 
-    const handleChange = (e) => {
-        setFormData({...formData, [e.target.name]: e.target.value});
-    };
+    useEffect(()=> {
+        fetchPendingCrews();
+    }, []);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const fetchPendingCrews = async () => {
         setLoading(true);
-        setStatus({type:'', msg: ''});
-
         try{
-            const response = await axios.post(
-                `${BASE_URL}/api/admin/character`,
-                formData,
-                {headers: {'x-admin-secret': adminSecret}}
-            );
-
-            setStatus({type: 'success', msg: response.data.message});
-            setFormData(prev=> ({...prev, id:'', name:'', info_url: ''}));
-        } catch(err){
-            const errorMsg = err.response?.data?.error || 'Something went wrong';
-            setStatus({type: 'error', msg: errorMsg});
-        } finally{
+            const res = await axios.get(`${BASE_URL}/api/admin/pending-crews`, {
+                headers: { 'x-admin-secret': adminSecret}
+            });
+            setPendingCrews(res.data);
+        } catch (err){
+            console.error("Failed to fetch pending crews", err);
+            alert("Erro fetching pending list");
+        } finally {
             setLoading(false);
         }
     };
 
+    const handleProcessComplete = async (processedId) => {
+        if(processedId && selectedCrew) {
+            try{
+                await axios.delete(`${BASE_URL}/api/admin/pending-crews/${selectedCrew.id}`,{
+                    headers: {'x-admin-secret': adminSecret}
+                } );
+            } catch (err){
+                console.error("Warning: Crew approved but failed to delete from pending list", err);
+                alert("Crew Approved, but clean-up of pending list failed. Please delete manually");
+            }
+        }
+
+        setSelectedCrew(null);
+        fetchPendingCrews();
+
+    };
+
+    if(selectedCrew){
+        return(
+            <InsertCrew 
+                adminSecret={adminSecret}
+                prefilledData={selectedCrew}
+                onCancel={()=> setSelectedCrew(null)}
+                onApproveSuccess={handleProcessComplete}
+            />
+        );
+    }
+
     return(
-        <div className="insert-char-container">
-            <h3>Insert New Character</h3>
-            <form onSubmit={handleSubmit} className="admin-form" autoComplete="off">
-                <div className="form-group">
-                    <label>ID (In-Game ID)</label>
-                    <input 
-                        type="number"
-                        name="id"
-                        value={formData.id}
-                        onChange={handleChange}
-                        placeholder="e.g 4483"
-                        required
-                        autoComplete = "off"
-                    />
+        <div className="approve-container">
+            <div className="review-header">
+                <h2 className="review-title">Pending Submissions ({pendingCrews.length})</h2>
+                <button className="back-btn-list" onClick={fetchPendingCrews}>Refresh</button>
+            </div>
+
+            {loading ? (
+                <div style={{color: 'white', textAlign: 'center', marginTop: '20px'}}>Loading...</div>
+            ): pendingCrews.length === 0 ? (
+                <div className="placeholder-section">
+                    <h4>No pending crews found. Good job!</h4>
                 </div>
+            ):(
+                <div className="pending-grid">
+                    {pendingCrews.map(crew => (
+                        <div 
+                            key={crew.id}
+                            className="pending-card"
+                            onClick={()=> setSelectedCrew(crew)}
+                        >
+                            <div className="card-header">
+                                <span className={`type-badge ${crew.guide_type}`}>
+                                    {crew.guide_type === 'video' ? 'VIDEO' : 'TEXT'}
+                                </span>
+                                <span className="date-text">
+                                    {new Date(crew.submitted_at).toLocaleDateString()}
+                                </span>
+                            </div>
 
-                <div className="form-group">
-                    <label>Name</label>
-                    <input 
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        placeholder="e.g. Sanji & Reiju"
-                        required
-                        autoComplete = "off"
-                    />
-                </div>
+                            <h4>{crew.title || "Untitled Strategy"}</h4>
+                            <p style={{color: 'var(--text-accent)', fontSize: '0.9rem', fontWeight: 'bold'}}>
+                                {crew.stage_name || `STAGE ID: ${crew.stage_id}`}
+                            </p>
+                            <p className="user-info">
+                                By: {crew.user_name}
+                                {crew.confirmed_creator_id && <span style={{color: '#4ade80'}}>(Verified)</span>}
+                            </p>
 
-                <div className="form-group">
-                    <label>Type</label>
-                    <select name="type" value={formData.type} onChange={handleChange}>
-                        {CHAR_TYPES.map(t=> <option key={t} value={t}>{t}</option>)}
-                    </select>
-                </div>
-
-                <div className="form-group">
-                    <label>Info URL (DB Link)</label>
-                    <input 
-                        type="text"
-                        name="info_url"
-                        value={formData.info_url}
-                        onChange={handleChange}
-                        placeholder="https://..."
-                        required
-                        autoComplete = "off"
-                    />
-                </div>
-
-                <button type="submit" className="submit-btn" disabled={loading}>
-                    {loading ? 'Inserting...' : 'Add Character'}
-                </button>
-
-                {status.msg && (
-                    <div className={`status-msg ${status.type}`}>
-                        {status.msg}
-                    </div>
-                )}
-            </form>
+                            <div clasName="card-footer">
+                                Click to Review & Approve
+                            </div>
+                        </div>
+                    ))}  
+                </div>  
+            )}
         </div>
     );
 }
 
-export default InsertCharacter;
+export default ApproveCrews;

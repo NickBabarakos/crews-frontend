@@ -11,8 +11,8 @@
 }
 
 .dt-modal{
-    background: #1e293b;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
     border-radius: 20px;
     padding: 0;
     width: 95%;
@@ -23,9 +23,9 @@
 }
 
 .dt-header{
-    background: rgba(15,23, 42, 0.6);
+    background: rgba(var(--rgb-surface),0.6);
     padding: 16px 24px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--border-subtle);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -33,14 +33,14 @@
 
 .dt-header h3{
     margin: 0;
-    color: #f1f5f9;
+    color: var(--text-main);
     font-size: 1.25rem;
 }
 
 .dt-close{
     background: none;
     border: none;
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 24px;
     cursor: pointer;
     line-height: 1;
@@ -54,10 +54,10 @@
 }
 
 .keys-container{
-    background: #0f172a;
+    background: var(--bg-surface);
     border-radius: 12px;
     padding: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-subtle);
 }
 
 .key-row{
@@ -71,7 +71,7 @@
 
 .key-label{
     width: 80px;
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 0.85rem;
     font-weight: 600;
     flex-shrink: 0;
@@ -79,10 +79,10 @@
 
 .key-value{
     flex: 1;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--border-subtle);
     padding: 6px 10px;
     border-radius: 6px;
-    color: #a78bfa;
+    color: var(--text-accent);
     font-family: monospace;
     font-size: 0.9rem;
     overflow: hidden;
@@ -96,8 +96,8 @@
 
 .copy-btn{
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #94a3b8;
+    border: 1px solid var(--border-light);
+    color: var(--text-muted);
     border-radius: 6px;
     width: 32px;
     height: 32px;
@@ -110,8 +110,8 @@
 }
 
 .copy-btn:hover:not(:disabled){
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
+    background: var(--border-light);
+    color: var(--text-main);
 }
 
 .copy-btn:disabled{
@@ -122,7 +122,7 @@
 .dt-divider{
     border: 0;
     height: 1px;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--border-light);
     margin: 0;
 }
 
@@ -134,13 +134,13 @@
 
 .action-card h4{
     margin: 0 0 6px 0;
-    color: #e2e8f0;
+    color: var(--text-main);
     font-size: 1rem;
 }
 
 .action-card p {
     margin: 0 0 12px 0;
-    color: #64748b;
+    color: var(--text-500);
     font-size: 0.9rem;
     line-height: 1.4;
 }
@@ -148,8 +148,8 @@
 .primary-btn {
     width: 100%;
     padding: 12px;
-    background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
-    color: #fff;
+    background: linear-gradient(135deg, var(--primary-base) 0%, var(--color-brand-700) 100%);
+    color: var(--text-main);
     border: none;
     border-radius: 8px;
     font-weight: 600;
@@ -161,34 +161,39 @@
 
 .input-group{
     display: flex;
-    gap: 10px;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .input-group input{
-    flex: 1;
-    background: #0f172a;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
     border-radius: 8px;
     padding: 10px;
-    color: #fff;
+    color: var(--text-main);
     font-size: 0.9rem;
 }
 
 .secondary-btn{
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
+    background: var(--border-light);
+    color: var(--text-main);
     border: none;
     border-radius: 8px;
-    padding: 0 20px;
+    padding: 12px;
+    width: 100%;
+    display: flex; 
+    justify-content: center;
+    align-items: center;
     font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
 }
 
 .secondary-btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.2);}
-.secondary-btn:disavled {opacity: 0.5; cursor: not-allowed;}
+.secondary-btn:disabled {opacity: 0.5; cursor: not-allowed;}
 
-.warning {color: #f87171; font-weight: 600;}
+.warning {color: var(--color-danger); font-weight: 600;}
 
 .button-row { 
     display: flex;
@@ -220,6 +225,37 @@
 }
 
 .unselect-all:hover {background: rgba(244, 63, 94, 0.2);}
+
+.change-box-btn{
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, rgba(37,99, 235, 0.1) 100%);
+    color: var(--color-info);
+    border: 1px solid rgba(96, 165, 250, 0.3);
+    border-radius: 8px;
+    padding: 12px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+.change-box-btn:hover:not(:disabled){
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(37, 99, 235, 0.2) 100%);
+    border-color: rgba(96, 165, 250, 0.8);
+    color: #bfdbfe;
+    transform: translateY(-1px);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+}
+
+.change-box-btn:disabled{
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(0.8);
+}
 
 @keyframes fadeIn {from {opacity: 0;} to {opacity: 1;}}
 @keyframes slideUp {from {transform: translateY(20px); opacity:0;} to {transform: translateY(0); opacity:1;}}

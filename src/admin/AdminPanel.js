@@ -1,24 +1,40 @@
 import React, {useState, useEffect } from "react";
+import axios from 'axios';
 import './Admin.css';
 import InsertCharacter from './InsertCharacter';
 import InsertCrew from "./InsertCrew";
 import ApproveCrews from "./ApproveCrews";
 import ManageReports from "./ManageReports";
 import InsertBanner from "./InsertBanner";
+import ManageContent from "./ManageContent";
 
-function AdminPanel() {
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
+function AdminPanel({onExit}) {
     const [isAuthenticated, setIsAuthenticated] = useState(()=> { return !!sessionStorage.getItem('admin_secret');});
     const [secretInput, setSecretInput] = useState(()=> {return sessionStorage.getItem('admin_secret') || '';});
     const [activeTab, setActiveTab] = useState('insert_char');
 
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
+
         if(secretInput.length > 5){
-            sessionStorage.setItem('admin_secret', secretInput);
-            setIsAuthenticated(true);
-        } else {
+            try{
+                await axios.get(`${BASE_URL}/api/admin/reports`, {
+                    headers: {'x-admin-secret': secretInput}
+                });
+
+                sessionStorage.setItem('admin_secret', secretInput);
+                setIsAuthenticated(true);
+            }catch(err){
+                alert("Wrong Admin Secret! Access Denied.");
+                setSecretInput('');
+                if(onExit) onExit();
+            }
+            } else {
             alert("Password too short");
+            if (onExit) onExit();
         }
     };
 
@@ -79,6 +95,11 @@ function AdminPanel() {
                     className={`admin-tab ${activeTab === 'manage_reports' ? 'active' : ''}`}
                     onClick={()=> setActiveTab('manage_reports')}
                 >Reports</button>
+
+                <button 
+                    className={`admin-tab ${activeTab === 'manage_content' ? 'active' : ''}`}
+                    onClick={()=> setActiveTab('manage_content')}
+                >Manage Content</button>
             </div>
 
             <div className="admin-content">
@@ -97,6 +118,8 @@ function AdminPanel() {
                 )}
 
                 {activeTab === 'insert_banner' && <InsertBanner adminSecret={secretInput}/>}
+
+                {activeTab === 'manage_content' && <ManageContent adminSecret={secretInput} />}
             </div>
         </div>
     );

@@ -26,8 +26,41 @@ function DataTransferModal({isOpen, onClose}){
 
     const handleCopy = (text, label) => {
         if(!text) return;
-        navigator.clipboard.writeText(text);
-        toast.success(`${label} copied`);
+        
+        const copyFallback =() =>{
+            try{
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+
+                textArea.style.position = "fixed";
+                textArea.style.left = "-9999px";
+                textArea.style.top = "0px";
+
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+
+                const successful = document.execCommand('copy');
+                document.body.removeChild(textArea);
+
+                if(successful){
+                    toast.success(`${label} copied`);
+                } else{
+                    toast.error(`Failed to copy ${label}`)
+                }
+            } catch(err){
+                console.error('Fallback copy failed', err);
+                toast.error("Browser blocked copy action");
+            }
+        };
+
+        if(navigator.clipboard && navigator.clipboard.writeText){
+            navigator.clipboard.writeText(text)
+                .then(() => toast.success(`${label} copied`))
+                .catch(()=> copyFallback());
+        } else {
+            copyFallback();
+        }
     };
 
     const handleCreateBox = async () => {
@@ -158,7 +191,7 @@ function DataTransferModal({isOpen, onClose}){
                         <div className="action-section">
                             <div className="action-card login">
                                 <h4>Switch Account</h4>
-                                <p>Want to load a different box? Enter its Secret Key Bellow</p>
+                                <p>Want to load a different box? Enter its Secret Key Below:</p>
                                 <div className="input-group">
                                     <input
                                         type="text"
@@ -167,7 +200,7 @@ function DataTransferModal({isOpen, onClose}){
                                         onChange={(e)=> setSecretInput(e.target.value)}
                                     />
                                     <button 
-                                        className="secondary-btn"
+                                        className="change-box-btn"
                                         onClick={handleLogin}
                                         disabled={isLoading || !secretInput}
                                     >

@@ -34,7 +34,7 @@ function InsertBanner({adminSecret}) {
                     characters: (cat.character_ids || cat.characters_id || []).map(id => ({
                         id: id,
                         name: `ID: ${id}`,
-                        image_url: `/unit_icons/${id}`,
+                        image_url: `/unit_icons/${String(id).padStart(4,'0')}`,
                         type: 'UNKNOWN'
                     }))
                 }))

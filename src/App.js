@@ -1,5 +1,7 @@
+import './styles/Variables.css'; 
 import './App.css';
 import { CollectionProvider } from './CollectionContext';
+import HomeView from './home/HomeView.js';
 import Header from './Header.js';
 import CrewsView from './crews/CrewsView.js';
 import CharactersView from './characters/CharactersView.js';
@@ -19,6 +21,7 @@ import SubmitCrewModal from './crews/submissions/SubmitCrewModal';
 import ReportModal from './crews/ReportModal.js';
 import TextGuideModal from './crews/TextGuideModal';
 import {Toaster} from 'react-hot-toast';
+import landscapeWarning from './assets/landscape-warning.png';
 
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -61,7 +64,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [lastSearch, setLastSearch] = useState(null);
-  const [viewMode, setViewMode] = useState(() => { return localStorage.getItem('savedViewMode') || 'grandVoyage';});
+  const [viewMode, setViewMode] = useState(() => { return localStorage.getItem('savedViewMode') || 'home';});
   const [characterCategory, setCharacterCategory] = useState('all');
   const [subCategory, setSubCategory] = useState('null');
   const [isPlus, setIsPlus]= useState(false);
@@ -109,7 +112,7 @@ function App() {
     if (viewMode === 'coliseum' && selectedBoss){ params.stage = selectedBoss.name;}
 
     try {
-      const response = await axios.get(`${BASE_URL}/api/stage-info`, {
+      const response = await axios.get(`${BASE_URL}/api/stages/info`, {
         params: params
       });
       setGuideData(response.data.guide);
@@ -194,7 +197,7 @@ function App() {
     };
 
     try{
-      const response = await axios.get(`${BASE_URL}/api/stage-info`, {
+      const response = await axios.get(`${BASE_URL}/api/stages/info`, {
         params: params
       });
 
@@ -679,13 +682,27 @@ function App() {
   return (
     <CollectionProvider>
       <div className="App">
+
+        <div className="landscape-warning">
+          <div className="warning-content">
+            <img src={landscapeWarning} alt="Usopp Panic" className="usopp-img" />
+            <div className="text-container">
+              <h1>NAMIIIII! WE'RE OFF COURSE!</h1>
+              <p>
+              The log pose is broken in landscape mode! <br />
+              Please rotate your device back to <strong>Portrait</strong> to continue the adventure.
+            </p>
+            <small>(Landscape support coming soon! Let the Great Captain Usopp handle it)</small>
+            </div>
+          </div>
+        </div>
         
         <Toaster
           positin="bottom-center"
           toastOptions={{
             style: {
-              background: '#333',
-              color: '#fff'
+              background: 'var(--border-light)',
+              color: 'var(--text-main)'
             },
           }}
         />
@@ -693,7 +710,10 @@ function App() {
    
     <div className="app-container"> 
     
-      <Header onToggleMobileMenu={()=> setIsMobileMenuOpen(!isMobileMenuOpen)}/>
+      <Header 
+        onToggleMobileMenu={()=> setIsMobileMenuOpen(!isMobileMenuOpen)} 
+        onHomeClick={()=> handleViewChange('home')}
+        />
 
       <div className = "content-wrapper">
 
@@ -704,6 +724,18 @@ function App() {
           onClose={()=> setIsMobileMenuOpen(false)}  
         />
         <div className={`main-content view-mode-${viewMode}`}>
+
+          {viewMode === 'home' &&  (
+            <HomeView 
+              onViewChange={handleViewChange}
+              onBuildTeam={()=> {
+                setIsSubmitModalOpen(true);
+              }}
+              onSyncBox={()=>{}}
+            />
+          )}
+
+          {viewMode !== 'home' && viewMode !== 'banners' && (
           <Toolbar 
             viewMode={viewMode}
             config={viewConfig[viewMode]}
@@ -728,6 +760,7 @@ function App() {
             onToggleSort={handleToggleSort}
 
           />
+          )}
 
           {error && <p className="error-message">{error}</p>}
 
@@ -749,7 +782,7 @@ function App() {
               >
                 <span> Back</span>
               </button>
-              <h3 style={{margin:0, color: '#a78bfa', fontSize: '18px'}}> {selectedBoss.name}</h3>
+              <h3 style={{margin:0, color: 'var(--text-accent)', fontSize: '18px'}}> {selectedBoss.name}</h3>
             </div>
            )}
 
@@ -820,7 +853,9 @@ function App() {
           />
 
           {!isLoading && !error && viewMode === 'admin' && (
-            <AdminPanel/>
+            <AdminPanel
+              onExit={()=> setViewMode('grandVoyage')}
+            />
           )}
           
           <SubmitCrewModal 

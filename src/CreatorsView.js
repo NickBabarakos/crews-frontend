@@ -75,6 +75,7 @@ function CreatorsView({creators, onPageSizeChange, currentPage, pageSize}){
                                     </span>
                                 </td>
                                 <td className="captain-col">
+                                    {creator.social_url ? (
                                     <a 
                                         href={creator.social_url}
                                         target="_blank"
@@ -84,6 +85,12 @@ function CreatorsView({creators, onPageSizeChange, currentPage, pageSize}){
                                         <span className="captain-name">{creator.name}</span>
                                         <span className="external-icon"></span>
                                     </a>
+                                    ): (
+                                        <div className="captain-link" style={{cursor: 'default'}}>
+                                            <span className="captain-name">{creator.name}</span>
+                                        </div>
+                                    
+                                    )}
                                 </td>
                                 <td className="bounty-col bounty-col-cell">
                                     <div className="bounty-container">

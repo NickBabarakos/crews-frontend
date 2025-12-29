@@ -31,6 +31,8 @@ const INITIAL_CREW_DATA = {
 
 const INITIAL_TEXT_GUIDE = {notes:[], stages: []};
 
+const DYNAMIC_STAGE_IDS = [281, 284, 287, 290, 291, 292, 293, 294, 295];
+
 function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
     const [activeStep, setActiveStep] = useState(1);
     const [guideType, setGuideType] = useState('video');
@@ -48,7 +50,31 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
     const [inputType, setInputType] = useState('handle');
     const [socialInput, setSocialInput] = useState('');
     const [keyInput, setKeyInput] = useState('');
+    const [displayStageName, setDisplayStageName] = useState(stageName);
     const isNewCreator = verificationStep === 'not_found' || verificationStep === 'valid_key_no_creator';
+
+    useEffect(()=> {
+        if(isOpen){
+            setDisplayStageName(stageName);
+
+            if(DYNAMIC_STAGE_IDS.includes(Number(stageId))) {
+                axios.get(`${BASE_URL}/api/stages/event-names`)
+                    .then(res=> {
+                        const trueName = res.data[stageId];
+                        if(trueName) {
+                            let finalName = trueName;
+                            if([281,284].includes(Number(stageId))) finalName += " (HEX)";
+                            if([290, 287].includes(Number(stageId))) finalName += " (Boss)";
+                            if(Number(stageId) === 291) finalName += " (Intrusion)";
+
+                            setDisplayStageName(finalName);
+                        }
+
+                    })
+                    .catch(err => console.error("Error fetching dynamic stage name:", err));
+            }
+        }
+    }, [isOpen, stageId, stageName]);
     
     useEffect(() => {
         if(!isOpen){
@@ -283,7 +309,7 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
                     <div className="modal-header">
                         <div className="header-title-group">
                             <span className="header-prefix">Strategy:</span>
-                            <h2 className="header-stage-name">{stageName}</h2>
+                            <h2 className="header-stage-name">{displayStageName}</h2>
                         </div>
                         <button className="close-btn" onClick={onClose}>&times;</button>
                     </div>
@@ -387,7 +413,7 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
                             {guideType === 'video' ? (
                                 <div className="video-input-wrapper">
                                     <div className="input-group">
-                                        <label>Video_Url <span style={{color: '#ef4444'}}>*</span></label>
+                                        <label>Video_Url <span style={{color: 'var(--color-danger)'}}>*</span></label>
                                         <input
                                             type="text"
                                             className="modal-input glass-input"
@@ -419,7 +445,7 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
                                 <div className="step-container">
                                     <div className="form-grid verification-mode">
                                         <div className="input-group full-width">
-                                            <label>Crew Name <span style={{color: '#ef4444'}}>*</span></label>
+                                            <label>Crew Name <span style={{color: 'var(--color-danger)'}}>*</span></label>
                                             <input 
                                                 type="text"
                                                 className="modal-input glass-input"
@@ -530,7 +556,7 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
                                             : "Valid Key found! Enter your name to create your Creator Profile"
                                         }
                                         </div>
-                                        <label>Your Name <span style={{color: '#ef4444'}}>*</span></label>
+                                        <label>Your Name <span style={{color: 'var(--color-danger)'}}>*</span></label>
                                         <input 
                                             type="text"
                                             className="modal-input glass-input"
@@ -590,7 +616,7 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
     )
 };
 
-function CharacterDetailsView( {character, isSupport, onConfirm, onBack }){
+export function CharacterDetailsView( {character, isSupport, onConfirm, onBack }){
     const [level, setLevel] = useState('No');
     const [supportType, setSupportType] = useState('mandatory');
 

@@ -144,7 +144,7 @@ function CharactersToolbar({totalCount, characterCategory, onCategoryChange, sub
                     onToggle={()=> setIsMobileDropdownOpen(!isMobileDropdownOpen)}
                 />
             </div>
-            <hr style={{width: '100%', borderColor:'rgba(255, 255, 255, 0.1)'}}/>
+            <hr style={{width: '100%', borderColor:'var(--border-light)'}}/>
             {renderFilters(true)}
             </FilterModal>
         </>

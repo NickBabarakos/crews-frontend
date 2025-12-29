@@ -35,7 +35,7 @@ function BannerModal({isOpen, onClose, data, loading}){
 
                 <div className="banner-details-container custom-scrollbar">
                     {loading ? (
-                        <div style={{padding:'40px', textAlign:'center', color:'#94a3b8'}}> Loading Data...</div>
+                        <div style={{padding:'40px', textAlign:'center', color:'var(--text-muted)'}}> Loading Data...</div>
                     ): data ? (
                         <div className="banner-categories-list">
                             {data.categories && data.categories.map((cat, idx) => (

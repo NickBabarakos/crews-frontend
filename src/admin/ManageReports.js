@@ -71,7 +71,7 @@ function ManageReports({adminSecret}) {
                 </div>
 
                 <div className="button-row">
-                    <button className="cancel-button" onClick={()=> setSelectedReport(null)}>Cancel</button>
+                    <button className="cancel-btn" onClick={()=> setSelectedReport(null)}>Cancel</button>
                     <button className="submit-btn" onClick={()=> handleResolve(selectedReport.id)}>Cheched(Delete)</button>
                 </div>
             </div>

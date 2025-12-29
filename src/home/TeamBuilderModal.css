@@ -1,0 +1,131 @@
+.quantity-grid{
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.quantity-btn{
+    width: 120px;
+    height: 140px;
+    background: rgba(var(--rgb-surface),0.6);
+    border: 2px solid var(--border-light);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0 , 0.2, 1);
+    color: var(--text-muted);
+}
+
+.quantity-btn:hover{
+    background: rgba(124, 58, 237, 0.1);
+    border-color: var(--text-accent);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.3);
+}
+
+.quantity-btn .qty-num {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 5px;
+}
+
+.quantity-btn .qty-label {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.quantity-btn:hover .qty-num{
+    color: var(--text-accent);
+}
+
+.export-container.flex-mode{
+    flex-direction: row;
+    gap: 10px !important;
+}
+
+.export-container.grid-mode{
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    width: 1400px !important;
+    gap: 10px !important;
+}
+
+.export-container .crew-members-grid{
+    gap: 15px !important;
+    margin-bottom: 25px;
+}
+
+.export-container .member-slot{
+    padding: 6px !important;
+    background-color: var(--bg-card) !important;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.8) !important;
+}
+
+.export-container .level-badge{
+    font-size: 12px !important;
+    padding: 2px 6px !important;
+    bottom: 4px !important;
+    left: 4px !important;
+    border-width: 1px !important;
+    transform: none !important;
+}
+
+.export-container .role-badge{
+    font-size: 13px !important;
+    padding: 4px 8px !important;
+    top: -16px !important;
+    z-index: 20;
+    padding-bottom:10px !important;
+}
+
+.export-container .crew-card{
+    padding: 20px !important;
+    border-radius: 16px !important;
+    border-bottom: none !important;
+    background: #111827 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    width: 380px;
+    overflow:hidden;
+} 
+
+.export-container .crew-card h4{
+    font-size: 1.3rem !important;
+    margin: -20px -20px 25px -20px !important;
+    padding: 12px 10px !important;
+    background: linear-gradient(90deg, rgba(var(--rgb-card),0.9) 0%, rgba(51, 65, 85, 0.6) 50%, rgba(30,41, 59, 0.9) 100%);
+    border-bottom: 1px solid var(--border-light);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+    text-align: center;
+    color: var(--text-main);
+    font-weight: 700;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.export-container .optional-indicator{
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 16px !important;
+    border-width: 2px !important;
+}
+
+
+
+
+
+@media(max-width: 600px){
+    .quantity-btn{
+        width: 100px;
+        height: 120px;
+    }
+}

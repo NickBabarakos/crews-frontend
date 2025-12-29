@@ -7,7 +7,7 @@ const StarIcon = ({filled}) => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         {filled ? (
             <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-            fill="#fbbf24" stroke="#fbbf24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            fill="var(--color-gold)" stroke="var(--color-gold)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         ):(
             <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
             stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -28,7 +28,7 @@ const CommentIcon = () => (
     </svg>
 );
 
-function MemberSlot({main, support, role}) {
+function MemberSlot({main, support, role, exportMode}) {
     const {isOwned, toggleChar} = useCollection();
    
     const mainId = main?.character_id;
@@ -37,10 +37,10 @@ function MemberSlot({main, support, role}) {
  
 
     const isEmpty = !main;
-    const isMainOwned = isOwned(mainId);
+    const isMainOwned = isOwned(mainId) || exportMode;
     const mainLevel = (rawMainNotes && rawMainNotes !== 'optional') ? rawMainNotes: null;
 
-    const isSupportOwned = isOwned(supportId);
+    const isSupportOwned = isOwned(supportId) || exportMode;
     const isSupportOptional = support?.notes === 'optional';
     
 
@@ -64,6 +64,8 @@ function MemberSlot({main, support, role}) {
                     alt={main.name} 
                     title={main.name} 
                     className={`character-image ${isMainOwned ? '': 'missing'}`}
+                    crossOrigin = "anonymous"
+                    loading="eager"
                 />  
             </InteractiveChar>
         )}
@@ -83,6 +85,8 @@ function MemberSlot({main, support, role}) {
                     src={`${support.image_url}.png`} 
                     alt={support.name} 
                     className={`support-image ${isSupportOwned ? '' : 'missing'}`}
+                    crossOrigin="anonymous"
+                    loading="eager"
                 />
 
                 {support && isSupportOptional && (
@@ -99,7 +103,7 @@ function MemberSlot({main, support, role}) {
     );
 }
 
-function CrewCard({crew, onReport}) {
+function CrewCard({crew, onReport, exportMode = false}) {
     const captain = crew.members.find(m=>m.position === 'Captain');
     const crewmate1 = crew.members.find(m => m.position === 'Crewmate1');
     const crewmate2 = crew.members.find(m => m.position === 'Crewmate2');
@@ -157,6 +161,7 @@ function CrewCard({crew, onReport}) {
 
     return(
         <div className="crew-card">
+            {!exportMode &&(
             <div className="card-actions">
                 <button 
                     className="action-btn report-btn"
@@ -190,16 +195,18 @@ function CrewCard({crew, onReport}) {
 
            
         </div>
+            )}
 
-            <h4>&nbsp;</h4>
+            <h4>{exportMode ? (crew.title || crew.crew_title): '\u00A0'}</h4>
             <div className="crew-members-grid">
-                <MemberSlot main={friendCaptain} role="FC"/>
-                <MemberSlot main={captain} support={supportCaptain} role="Captain" />
-                <MemberSlot main={crewmate4} support={support4} />
-                <MemberSlot main={crewmate1} support={support1} /> 
-                <MemberSlot main={crewmate3} support={support3} />
-                <MemberSlot main={crewmate2} support={support2} /> 
+                <MemberSlot main={friendCaptain} role="FC" exportMode={exportMode}/>
+                <MemberSlot main={captain} support={supportCaptain} role="Captain" exportMode={exportMode}/>
+                <MemberSlot main={crewmate4} support={support4} exportMode={exportMode} />
+                <MemberSlot main={crewmate1} support={support1} exportMode={exportMode} /> 
+                <MemberSlot main={crewmate3} support={support3} exportMode={exportMode} />
+                <MemberSlot main={crewmate2} support={support2} exportMode={exportMode} /> 
             </div>
+
         </div>
     );
 

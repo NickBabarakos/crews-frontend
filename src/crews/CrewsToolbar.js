@@ -1,14 +1,21 @@
 import '../Toolbar.css';
-import {useState, useRef, useMemo} from 'react';
+import {useState, useRef, useMemo, useEffect, useLayoutEffect } from 'react';
+import axios from 'axios';
 import Dropdown from '../Dropdown';
 import PillSelector from '../PillSelector';
 import FilterModal from '../FilterModal';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 function CrewsToolbar({config, crewFilterValues, onCrewFiltersChange, onOpenGuide, showOnlyOwned, onToggleOwned, showActions, disabled, sortBy, onToggleSort}){
     const [openToolbarDropdown, setOpenToolbarDropdown] = useState(null);
+    const [eventNames, setEventNames] = useState({});
     const [openModalDropdown, setOpenModalDropdown] = useState(null);
     const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+    const [scrollStates, setScrollStates] = useState({});
     const dropdownsRef = useRef([]);
+    const pillsRefs = useRef({});
+
 
     const SortIcon = () => (
          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{marginRight: '8px'}}>
@@ -16,13 +23,82 @@ function CrewsToolbar({config, crewFilterValues, onCrewFiltersChange, onOpenGuid
         </svg>
     );
 
+    useEffect(()=> {
+        const fetchEventNames = async () => {
+            try{
+                const res = await axios.get(`${BASE_URL}/api/stages/event-names`);
+                setEventNames(res.data);
+
+                if(config.mode === 'treasure_map' && !crewFilterValues.boss){
+                    onCrewFiltersChange({boss: res.data[290]});
+                } else if (config.mode === 'pirate_king_adventures' && !crewFilterValues.bosses){
+                    onCrewFiltersChange({bosses: res.data[281]});
+                } else if (config.mode === 'kizuna_clash' && !crewFilterValues.boss){
+                    onCrewFiltersChange({boss: res.data[292]});
+                }
+
+            } catch(err) {console.error("Error fetching event names", err);}
+        };
+        fetchEventNames();
+    }, [config.mode]);
+
+
+   const handleWheel = (e) => {
+    if(e.currentTarget){
+        e.currentTarget.scrollBy({
+            left: e.deltaY,
+            behavior: 'smooth'
+        });
+    }
+   };
+
+    const dynamicConfig = useMemo(()=> {
+        if(!config || Object.keys(eventNames).length === 0) return config;
+
+        const newConfig = {...config, dropdowns: config.dropdowns.map(d=> ({...d}))};
+
+        if(config.mode === 'pirate_king_adventures'){
+            const bossFilter = newConfig.dropdowns.find(d => d.id === 'bosses');
+            if(bossFilter){
+                bossFilter.options = [
+                    `${eventNames[281]} (Hex)`,
+                    `${eventNames[284]} (Hex)`,
+                    `${eventNames[287]} (Boss)`
+                ];
+            }
+        }
+
+        if(config.mode === 'treasure_map'){
+            const tmFilter = newConfig.dropdowns.find(d=> d.id === 'boss');
+            if(tmFilter) {
+                tmFilter.options = [
+                    `${eventNames[290]} (Boss)`,
+                    `${eventNames[291]} (Intrusion)`
+                ];
+            }
+        }
+
+        if(config.mode === 'kizuna_clash'){
+            const kizunaFilter = newConfig.dropdowns.find(d => d.id === 'boss');
+            if(kizunaFilter) {
+                const options = [eventNames[292], eventNames[293]];
+                if(eventNames[294] && eventNames[294].toLowerCase() !== 'no'){
+                    options.push(eventNames[294], eventNames[295]);
+                }
+                kizunaFilter.options = options;
+            }
+        }
+
+        return newConfig;
+    }, [config, eventNames]);
+
     const {mobileLayoutStrategy, isPillsOnly } = useMemo(()=> {
         let dropdownCount = 0;
         let pillCount = 0;
-        if (!config?.dropdowns) return {mobileLayoutStrategy: 'collapse-all', isPillsOnly: false};
+        if (!dynamicConfig?.dropdowns) return {mobileLayoutStrategy: 'collapse-all', isPillsOnly: false};
 
-        config.dropdowns.forEach(filter => {
-            const isPill = filter.options?.length <= 5 && !filter.dependentOn;
+        dynamicConfig.dropdowns.forEach(filter => {
+            const isPill = filter.options?.length <= 7 && !filter.dependentOn;
             if(isPill) pillCount++;
             else dropdownCount++;
         });
@@ -32,9 +108,37 @@ function CrewsToolbar({config, crewFilterValues, onCrewFiltersChange, onOpenGuid
         if (dropdownCount === 0 && pillCount === 4) return {mobileLayoutStrategy: 'keep-pills', isPillsOnly: _isPillsOnly};
 
         return {mobileLayoutStrategy: 'collapse-all', isPillsOnly: _isPillsOnly};
-    }, [config]);
+    }, [dynamicConfig]);
 
-    const renderFilterControl = (filterConfig, selectedValue, onSelect, isDependent = false, isMobileModal=false) => {
+    const checkScroll = (element, filterId) => {
+        if(!element) return;
+        const {scrollLeft, scrollWidth, clientWidth} = element;
+
+        let newState = 'start';
+        if(scrollLeft > 0 && scrollLeft + clientWidth < scrollWidth -1){
+            newState= 'middle';
+        } else if (scrollLeft + clientWidth >= scrollWidth -1 && scrollLeft > 0){
+            newState = 'end';
+        } else if (scrollLeft === 0 && scrollWidth > clientWidth) {
+            newState = 'start';
+        } else {
+            newState = 'none'
+        }
+
+        setScrollStates(prev => {
+            if (prev[filterId] === newState) return prev;
+            return {...prev, [filterId]: newState};
+        });
+    };
+
+    useLayoutEffect(()=>{
+        Object.keys(pillsRefs.current).forEach((key) => {
+            const el = pillsRefs.current[key];
+            if(el) checkScroll(el,key);
+        });
+    }, [dynamicConfig, crewFilterValues, isPillsOnly]);
+
+    const renderFilterControl = (filterConfig, selectedValue, onSelect, isDependent = false, isMobileModal=false, showLabel=false) => {
         let options = filterConfig.options;
         if (isDependent){
             const parentFilterId = filterConfig.dependentOn;
@@ -45,13 +149,41 @@ function CrewsToolbar({config, crewFilterValues, onCrewFiltersChange, onOpenGuid
 
         const disabledStyle = disabled ? { opacity: 0.5, pointerEvents: 'none', filter: 'grayscale(1)'} : {};
 
-        if(options.length <= 5) {
+        if(options.length <= 7) {
+
+            const displaySelectedValue = (selectedValue && (dynamicConfig.mode === 'pirate_king_adventures' || dynamicConfig.mode === 'treasure_map'))
+                ? options.find(opt => opt.startsWith(selectedValue))
+                : selectedValue;
+
+                const scrollMode = scrollStates[filterConfig.id] || 'start';
+                const maskClass = scrollMode === 'none'
+                    ? ''
+                    : (scrollMode === 'middle' ? 'mask-middle' : (scrollMode === 'end' ? 'mask-end' : 'mask-start'));
+
             return (
                     <div style={disabledStyle} key={filterConfig.id}>
-                        {isMobileModal && <label style={{display:'block', marginBottom: '6px', fontSize:'12px', color:'#94a3b8'}}>
+                        {isMobileModal && <label style={{display:'block', marginBottom: '6px', fontSize:'12px', color:'var(--text-muted)'}}>
                             {filterConfig.placeholder}</label>}
-                        <PillSelector options={options} selectedOption={selectedValue} onSelect={(option) => onSelect({
-                [filterConfig.id]:option })} />
+
+                        <div 
+                            className={`pills-scroll-wrapper ${maskClass}`} 
+                            onWheel={handleWheel}
+                            onScroll={(e) => checkScroll(e.target, filterConfig.id)}
+                            ref={(el) => (pillsRefs.current[filterConfig.id] = el)}
+                            >
+                            
+                            <PillSelector 
+                                options={options} 
+                                selectedOption={displaySelectedValue} 
+                                onSelect={(option) => {
+                                    let cleanValue = option;
+                                    if(dynamicConfig.mode === 'pirate_king_adventures' || dynamicConfig.mode === 'treasure_map'){
+                                        cleanValue = option.replace(' (Hex)', '').replace(' (Boss)', '').replace(' (Intrusion)', '');
+                                 }
+                                    onSelect({ [filterConfig.id]: cleanValue});
+                            }}
+                        />
+                </div>
                 </div>
                  );
             } else {
@@ -78,24 +210,52 @@ function CrewsToolbar({config, crewFilterValues, onCrewFiltersChange, onOpenGuid
             }
         };
 
+        const firstFilter = dynamicConfig.dropdowns[0];
+        const isFirstDropdown = firstFilter && (firstFilter.options?.length > 7 || !!firstFilter.dependentOn);
+
+        const scrollableFilters = isFirstDropdown ? dynamicConfig.dropdowns.slice(1) : dynamicConfig.dropdowns;
+
         return(
             <div className="crew-controls">
                 {!disabled && (
-                    <div className={`filters-container ${isPillsOnly ? 'scrollable-pills-container' : ''} ${mobileLayoutStrategy === 'collapse-all' ? 'hide-on-mobile': ''}`}>
-                        {config.dropdowns.map((filter, index) => (
-                            <div className="filter-group" key={filter.id}>
-                                {!isPillsOnly && <label>{filter.placeholder}</label>}
+                    <div 
+                        className={`filters-container ${mobileLayoutStrategy === 'collapse-all' ? 'hide-on-mobile': ''}`}
+                        >
+                            {isFirstDropdown && (
+                                <div className="fixed-filter-group">
+                                    {renderFilterControl(
+                                        firstFilter,
+                                        crewFilterValues[firstFilter.id],
+                                        onCrewFiltersChange,
+                                        false, //isDependent
+                                        false, //isMobileModal
+                                        false //showLabel
+                                    )}
+                    </div>
+                )}
+
+                <div className="scrollable-filters-list">
+                    {scrollableFilters.map((filter, index) => {
+                        const realIndex = isFirstDropdown ? index + 1 : index;
+
+                            return(
+                            <div 
+                                className="filter-group" key={filter.id}>
                                 {renderFilterControl (
                                     filter,
                                     crewFilterValues[filter.id],
                                     onCrewFiltersChange,
-                                    index>0 && !!filter.dependentOn,
-                                    false
+                                    realIndex>0 && !!filter.dependentOn,
+                                    false,
+                                    !isPillsOnly && filter.options?.length <=7 
                             )}
                         </div>
-                    ))}
+                        );
+                    })}
                 </div>
+            </div>
                 )}
+               
 
                 {mobileLayoutStrategy === 'collapse-all' &&  (
                     <div className={`mobile-toolbar-grid show-on-mobile-only ${disabled ? 'stage-mode' : ''}`} >
@@ -199,7 +359,7 @@ function CrewsToolbar({config, crewFilterValues, onCrewFiltersChange, onOpenGuid
                             Sort By: {sortBy === 'default' ? 'Default' : 'Owned'}</button>
                     </div>
                 )}
-                {config.dropdowns.map((filter, index) => (
+                {dynamicConfig.dropdowns.map((filter, index) => (
                     renderFilterControl (
                         filter,
                         crewFilterValues[filter.id],

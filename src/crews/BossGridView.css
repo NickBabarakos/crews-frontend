@@ -15,8 +15,8 @@
 .boss-card{ 
     display: flex;
     align-items: center;
-    background-color: #1e293b;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-light);
     border-radius: 8px;
     overflow: hidden;
     cursor: pointer;
@@ -28,7 +28,7 @@
 .boss-card:hover{
     transform: translateY(-3px);
     background-color: #334115;
-    border-color: #8b5cf6;
+    border-color: var(--primary-base);
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
@@ -36,7 +36,7 @@
     width: 70px;
     height: 100%;
     flex-shrink: 0;
-    background-color: #0f172a;;
+    background-color: var(--bg-surface);;
 }
 
 .boss-image-wrapper img {
@@ -52,7 +52,7 @@
 }
 
 .boss-name{
-    color: #f1f5f9;
+    color: var(--text-main);
     font-size: 13px;
     font-weight: 600;
     line-height: 1.3;

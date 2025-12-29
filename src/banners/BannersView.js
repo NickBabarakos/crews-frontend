@@ -14,7 +14,8 @@ function BannerCard({banner, onClick}){
             year: 'numeric',
             hour: '2-digit',
             minute: '2-digit',
-            hour12: false
+            hour12: false,
+            timeZoneName: 'short'
         });
     };
 
@@ -46,7 +47,7 @@ function BannersView({banners, onPageSizeChange, onBannerClick}){
 
     const calculatedSize = useResponsiveGrid(gridRef, {
         cardWidth: 320,
-        cardHeight: 250,
+        cardHeight: 260,
         gap: 24,
         minRows: 2
     });

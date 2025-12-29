@@ -1,11 +1,11 @@
 .sidebar{
     width: 280px;
     flex-shrink: 0;
-    background-color: #0f172a;
+    background-color: var(--bg-surface);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    border-right: 1px solid var(--border-subtle);
     padding: 24px 16px;
     box-sizing: border-box;
     font-family: 'Inter', sans-serif;
@@ -23,7 +23,7 @@
     min-height: 0;
     padding-right: 4px;
     scrollbar-width: thin;
-    scrollbar-color: #334155 transparent;
+    scrollbar-color: var(--color-slate-700) transparent;
 }
 
 .sidebar-button {
@@ -35,9 +35,9 @@
     padding: 0 20px;
     border-radius: 8px;
 
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-subtle);
 
-    color: #94a3b8;
+    color: var(--text-muted);
     font-size: 14px;
     font-weight: 800;
     text-transform: uppercase;
@@ -47,7 +47,7 @@
     position: relative;
     z-index: 1;
     text-align: left;
-    background-color: #1e293b;
+    background-color: var(--bg-card);
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
@@ -79,7 +79,7 @@
 .sidebar-accent{
     width: 4px;
     height: 4px;
-    background-color: #64748b;
+    background-color: var(--text-500);
     border-radius: 50%;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 0 5px rgba(0,0,0,0.5);
@@ -87,7 +87,7 @@
 
 .sidebar-button:not(.active):hover {
     background-color: rgba(255, 255, 255, 0.2);
-    color: #f1f5f9;
+    color: var(--text-main);
     transform: translateX(4px);
 }
 
@@ -97,14 +97,14 @@
 }
 
 .sidebar-button:not(.active):hover .sidebar-accent{
-    background-color: #f1f5f9;
+    background-color: var(--text-main);
     box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
 }
 
 .sidebar-button.active{
-    color: #FFFFFF;
-    border-color: #8b5cf6;
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+    color: var(--color-white);
+    border-color: var(--primary-base);
+    box-shadow: 0 0 20px rgba(var(--rgb-primary),0.3);
     text-shadow: 0 2px 4px 4gba(0,0,0,0.8);
     pointer-events: none;
     cursor: default;
@@ -120,7 +120,7 @@
     content: '';
     position: absolute;
     top: 0; left:0; right:0; bottom:0;
-    background: linear-gradient(90deg, rgba(109, 40, 217, 0.9) 0%, rgba(139,92,246,0.4), transparent 100%);
+    background: linear-gradient(90deg, rgba(109, 40, 217, 0.9) 0%, rgba(var(--rgb-primary),0.4), transparent 100%);
     z-index: -1;
     border-radius: 6px;
 }
@@ -129,8 +129,8 @@
     height: 24px;
     width: 4px;
     border-radius: 2px;
-    background-color: #fff;
-    box-shadow: 0 0 10px #8b5cf6, 0 0 20px #8b5cf6;
+    background-color: var(--text-main);
+    box-shadow: 0 0 10px var(--primary-base), 0 0 20px var(--primary-base);
 }
 
 .sidebar-footer{
@@ -144,7 +144,7 @@
 
 .footer-separator{
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    background: linear-gradient(90deg, transparent, var(--border-light), transparent);
     width: 100%;
 }
 
@@ -160,8 +160,8 @@
     height: 44px;
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(30, 41, 59, 0.4);
-    color: #94a3b8;
+    background: rgba(var(--rgb-card,0.4));
+    color: var(--text-muted);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -175,27 +175,27 @@
 }
 
 .footer-btn:hover{
-    color: #fff;
+    color: var(--text-main);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 .footer-btn.youtube:hover{
-    background: linear-gradient(135deg, rgba(220,38,38,0.2), rgba(30,41,59,0.4));
+    background: linear-gradient(135deg, rgba(220,38,38,0.2), rgba(var(--rgb-card),0.4));
     border-color: rgba(220, 38, 38, 0.5);
     box-shadow: 0 0 15px rgba(220, 38, 38, 0.2);
-    color: #f87171;
+    color: var(--color-danger);
 }
 
 .footer-btn.discord:hover{
-    background: linear-gradient(135deg, rgba(88, 101,242, 0.2), rgba(30,41,59,0.4));
+    background: linear-gradient(135deg, rgba(88, 101,242, 0.2), rgba(var(--rgb-card),0.4));
     border-color: rgba(88, 101, 242, 0.5);
     box-shadow: 0 0 15px rgba(88, 101, 242, 0.2);
     color: #818cf8;
 }
 
 .footer-btn.database:hover{
-    background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(30,41,59,0.4));
+    background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(var(--rgb-card),0.4));
     border-color: rgba(16,185, 129, 0.5);
     box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
     color: #34d399;
@@ -207,12 +207,12 @@
     left: 50%;
     transform: translateX(-50%) scale(0.8);
     padding: 6px 10px;
-    background: #0f172a;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
     border-radius: 6px;
     font-size: 11px;
     font-weight: 600;
-    color: #fff;
+    color: var(--text-main);
     opacity: 0;
     visibility: hidden;
     transition: all 0.2s ease;
@@ -235,14 +235,14 @@
     justify-content: space-between;
     padding-bottom: 20px;
     margin-bottom: 10px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--border-light);
     flex-shrink: 0;
 }
 
 .sidebar-logo{
     font-size: 20px;
     font-weight: 800;
-    color: #fff;
+    color: var(--text-main);
     letter-spacing: 1px;
     text-transform: uppercase;
 }
@@ -250,7 +250,7 @@
 .sidebar-close-btn {
     background: transparent;
     border: none;
-    color: #94a3b8;
+    color: var(--text-muted);
     cursor: pointer;
     padding: 8px;
     display: flex;
@@ -261,8 +261,8 @@
 }
 
 .sidebr-close-btn:hover{
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
+    background: var(--border-light);
+    color: var(--text-main);
 }
 
 @media (max-width: 1024px){
@@ -318,7 +318,7 @@
 }
 
 .footer-btn.transfer:hover{
-    background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(30,41,59,0.4));
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(var(--rgb-card),0.4));
     border-color: rgba(6, 182, 212, 0.5);
     box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
     color: #22d3ee;

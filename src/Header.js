@@ -1,6 +1,6 @@
 import './App.css';
 
-function Header({onToggleMobileMenu}){
+function Header({onToggleMobileMenu, onHomeClick}){
 
     return(
         <div className="header-bar">
@@ -14,7 +14,8 @@ function Header({onToggleMobileMenu}){
 
             <div 
                 className="logo-container"
-                    style={{userSelect:'none'}}
+                style={{userSelect:'none', cursor: 'pointer'}}
+                onClick={onHomeClick}
             >
                 <h1>
                     <span className="logo-accent">OPTC</span>

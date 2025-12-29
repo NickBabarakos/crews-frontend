@@ -1,0 +1,93 @@
+:root{
+/* ==============================
+       1. Base Palette
+=================================*/
+
+/* --- Neutrals / Dark Backgrounds(Slate) --- */
+--color-slate-950: #020617;    /*Deepest Dark (Main BG) */
+--color-slate-900: #0f172a;    /*Panels, Sidebar, Inputs */
+--color-slate-800: #1e293b;    /*Cards, Headers */
+--color-slate-700: #334155;    /*Borders Strong, Scrollbar Thumb */
+
+
+/* --- Text Color --- */
+--color-white: #ffffff;
+--color-text-100: #f1f5f9;     /*Main Title / Body */
+--color-text-200: #e2e8f0;     /*Secondary */
+--color-text-300: #cbd5e1;     /*Descriptions */
+--color-text-400: #94a3b8;     /*Muted / Labels */
+--color-text-500: #64748b;     /*Disabled / Dark Muted */
+
+/* -- Brand Color (Purple/Violet) --- */
+--color-brand-300: #c4b5fd;   /*Soft Accent */
+--color-brand-400: #a78bfa;   /*Text Highlight, Icons */
+--color-brand-500: #8b5cf6;   /*Primary Buttons, Borders */
+--color-brand-600: #7c3aed;   /*Active States */
+--color-brand-700: #6d28d9;   /*Darker Gradients */
+--color-brand-glow: rgba(139, 92, 246, 0.4);  
+
+/* --- Functional Color --- */
+--color-danger: #ef4444;       /*Error, Defeated, Cancel */
+--color-danger-dark: #dc2626; 
+--color-success: #10b981;      /* Emerald Green (Tech/Success) */
+--color-warning: #f59e0b;      /* Amber (Warnings, Stars) */
+--color-info: #38bdf8;         /* Sky Blue (Info, Share) */
+--color-gold: #fbbf24;         /* Rank1, Favorites */
+
+--rgb-primary: 139, 92, 246;     /* brand-500 */
+--rgb-accent: 167, 139, 250;     /* brand-400 */
+--rgb-surface: 15, 23, 42;       /* slate-900 */
+--rgb-card: 30, 41, 59;          /* slate-800 */
+--rgb-danger: 239, 68, 68;
+--rgb-success: 16, 185, 129;
+--rgb-info: 56, 189, 248;  
+
+/* ==============================
+       2. Semantic Variables
+=================================*/
+
+/* --- Backgrounds --- */
+--bg-app:        var(--color-slate-950);
+--bg-surface:    var(--color-slate-900);
+--bg-card:       var(--color-slate-800);
+--bg-card-hover: #2d3748;
+--bg-overlay:    rgba(0, 0, 0, 0.75);
+--bg-glass:      rgba(15, 23, 42, 0.85); /* For headers/toolbars */
+--bg-input:      rgba(15,23, 42, 0.6);  
+
+/* --- Typography --- */
+--font-main: 'Inter', sans-serif;
+--font-header: 'Montserrat', sans-serif;
+--font-mono: 'Roboto Mono', monospace;
+
+--text-main:      var(--color-text-100);
+--text-secondary: var(--color-text-300);
+--text-muted:     var(--color-text-400);
+--text-accent:    var(--color-brand-400);
+
+/* --- Borders & Seperators --- */
+--border-subtle: rgba(255, 255, 255, 0.05); 
+--border-light:  rgba(255, 255, 255, 0.1);
+--border-strong: rgba(255, 255, 255, 0.2); 
+--border-accent:   var(--color-brand-500);
+
+/* ---Interactive --- */
+--primary-base:     var(--color-brand-500);
+--primary-hover:    var(--color-brand-400);
+--primary-gradient: linear-gradient(135deg, var(--color-brand-500) 0%, var(--color-brand-700) 100%);
+
+/* --- Z-Index Layers --- */
+--z-negative: -1;
+--z-base: 1;
+--z-card-hover: 10;
+--z-toolbar: 40;
+--z-header: 50;
+--z-sidebar: 60;
+--z-dropdown: 200;
+--z-modal-backdrop: 1000;
+--z-modal-content: 1001;
+--z-tooltip: 2000;
+--z-toast: 3000;
+--z-max: 99999;
+
+}

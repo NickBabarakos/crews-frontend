@@ -13,8 +13,8 @@
     align-items: center;
     gap: 15px;
     padding-bottom: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    background-color: #1e293b;
+    border-bottom: 1px solid var(--border-light);
+    background-color: var(--bg-card);
     z-index: 10;
 }
 
@@ -24,7 +24,7 @@
     gap: 5px;
     background: transparent;
     border: none;
-    color: #94a3b8;
+    color: var(--text-muted);
     cursor: pointer;
     font-size: 14px;
     font-weight: 600;
@@ -35,7 +35,7 @@
 
 .back-arrow-btn:hover{
     color: white;
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--border-subtle);
 }
 
 .selector-search-wrapper{
@@ -44,8 +44,8 @@
 
 .selector-search-input{
     width: 100%;
-    background-color: #0f172a;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-light);
     color: white;
     padding: 10px 15px;
     border-radius: 6px;
@@ -54,7 +54,7 @@
 }
 
 .selector-search-input:focus {
-    border-color: #a78bfa;
+    border-color: var(--text-accent);
 }
 
 .selector-grid{
@@ -77,8 +77,8 @@
     border-radius: 6px;
     overflow: hidden;
     cursor: pointer;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background-color: #0f172a;
+    border: 1px solid var(--border-light);
+    background-color: var(--bg-surface);
     position: relative;
 }
 
@@ -97,7 +97,7 @@
     grid-column: 1/-1;
     text-align: center;
     padding: 20px;
-    color: #94a3b8;
+    color: var(--text-muted);
     font-style: italic;
 }
 
@@ -121,7 +121,7 @@
 }
 
 .selector-grid::-webkit-scrollbar-thumb{
-    background-color: #475569;
+    background-color: var(--color-slate-700);
     border-radius: 4px;
-    border: 2px solid #0f172a;
+    border: 2px solid var(--bg-surface);
 }
