@@ -1,12 +1,12 @@
 import { useRef, useEffect, useState, memo } from 'react';
-import {useCollection} from '../CollectionContext';
+import { useCollection } from '../context/CollectionContext';
 import './CharactersView.css';
 import { useResponsiveGrid } from '../hooks/useResponsiveGrid';
-import InteractiveChar from '../InteractiveChar';
+import InteractiveChar from '../components/common/InteractiveChar';
 
 
 const CharacterCard = memo(({character, isMobile}) =>{
-    const {isOwned, toggleChar } = useCollection();
+    const {isOwned} = useCollection();
     const owned = isOwned(character.id);
 
     return(

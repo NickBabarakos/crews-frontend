@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import './HomeView.css';
-import DataTransferModal from '../DataTransferModal';
+import DataTransferModal from '../components/modals/DataTransferModal';
 import TeamBuilderModal from './TeamBuilderModal';
+import { getHomeStats, getActiveEvents, getLatestUnits, getChangelog } from '../api/homeService';
+import { useEventTimer } from '../hooks/useEventTimer';
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const MissionIcon = () => (
     <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -33,21 +34,39 @@ const TimerIcon = () => (
     </svg>
 );
 
-const calculateProgress = (start, end) => {
-        const startDate = new Date(start).getTime();
-        const endDate = new Date(end).getTime();
-        const now = new Date().getTime();
+const EventRow = ({event, onClick}) => {
+    const {status, countdown, progress} = useEventTimer(event.start_time, event.end_time);
+    if(status==='ended') return null;
 
-        if (now < startDate) return 0;
-        if (now > endDate) return 100;
+    return(
+        <div 
+            className={`event-row ${status}`}
+            onClick={()=> onClick(event.mode)}
+            style={{cursor: event.mode ? 'pointer' : 'default'}}
+        >
+            {status === 'active' && (
+                <div 
+                    className="event-progress-bar"
+                    style={{width: `${100-progress}%`}}
+                ></div> 
+            )}
 
-        const totalDuration = endDate-startDate;
-        const elapsed = now - startDate;
+            <div className="event-info">
+                <span className="event-name">{event.name}</span>
+            </div>
 
-        return  (elapsed/totalDuration)*100;
-    };
+            <div className="event-timer">
+                <TimerIcon/>
+                <span>
+                    {status === 'upcoming' ? `Starts in: ${countdown}` : countdown}
+                </span>
+            </div>
+        </div>
+    );
+};
 
-function HomeView({onViewChange}) {
+function HomeView() {
+    const navigate = useNavigate();
     const [stats, setStats] = useState({ totalCrews: 0});
     const [events, setEvents] = useState([]);
     const [latestUnits, setLatestUnits] = useState([]);
@@ -70,16 +89,16 @@ function HomeView({onViewChange}) {
         const fetchData = async () => {
             try{
                 const [statsRes, eventsRes, unitsRes, logRes] = await Promise.all([
-                    axios.get(`${BASE_URL}/api/home/stats`),
-                    axios.get(`${BASE_URL}/api/home/events`),
-                    axios.get(`${BASE_URL}/api/home/latest-unit`),
-                    axios.get(`${BASE_URL}/api/home/changelog`)
+                    getHomeStats(),
+                    getActiveEvents(),
+                    getLatestUnits(),
+                    getChangelog()
                 ]);
 
-                setStats(statsRes.data);
-                setEvents(eventsRes.data);
-                setLatestUnits(unitsRes.data);
-                setChangelog(logRes.data);
+                setStats(statsRes);
+                setEvents(eventsRes);
+                setLatestUnits(unitsRes);
+                setChangelog(logRes);
             } catch (error){
                 console.error("Failed to load home data", error);
             } finally{
@@ -88,15 +107,6 @@ function HomeView({onViewChange}) {
         };
         fetchData();
     }, []);
-
-    const getTimeRemaining = (endTime) => {
-        const total = Date.parse(endTime) - Date.parse(new Date());
-        if(total <= 0) return "Ended";
-        const days = Math.floor(total / (1000*60*60*24));
-        const hours = Math.floor((total/(1000*60*60)%24));
-        const minutes = Math.floor((total/1000/60)%60);
-        return `${days}d ${hours}h ${minutes}m`;
-    };
 
     
 
@@ -114,7 +124,7 @@ function HomeView({onViewChange}) {
             case 'forest_of_training': targetView = 'forestOfTraining'; break;
             default: targetView = 'grandVoyage';
         }
-        onViewChange(targetView);
+        navigate(`/${targetView}`);
     };
 
     if(loading) return <div className="home-loader">Loading HQ Data...</div>
@@ -173,39 +183,13 @@ function HomeView({onViewChange}) {
                                 <small>Check back later captain!</small>
                             </div>
                         )}
-                        {filteredEvents.map(event => {
-                            const progress = calculateProgress(event.start_time, event.end_time);
-                            const isActive = event.status === 'active';
-
-                            return(
-                            <div 
+                        {filteredEvents.map(event => (
+                            <EventRow 
                                 key={event.id}
-                                className={`event-row ${event.status}`}
-                                onClick={()=> handleEventClick(event.mode)}
-                                style={{cursor: event.mode ? 'pointer' : 'default'}}
-                            >
-                                {isActive && (
-                                    <div
-                                        className="event-progress-bar"
-                                        style={{width: `${100 - progress}%`}}
-                                    ></div>
-                                )}
-
-                                <div className="event-info">
-                                    <span className="event-name">{event.name}</span>
-                                </div>
-                                <div className="event-timer">
-                                    <TimerIcon/>
-                                    <span>
-                                    {event.status === 'active'
-                                        ? getTimeRemaining(event.end_time)
-                                        : `Starts in: ${getTimeRemaining(event.start_time)}`
-                                    }
-                                    </span>
-                                </div>
-                            </div>
-                            );
-                        })}
+                                event={event}
+                                onClick={handleEventClick}
+                            />
+                        ))}
                     </div>
                 </div>
 

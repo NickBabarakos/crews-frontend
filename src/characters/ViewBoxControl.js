@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { useCollection } from '../CollectionContext';
+import { useCollection } from '../context/CollectionContext';
 import './ViewBoxControl.css';
 import toast from 'react-hot-toast';
 

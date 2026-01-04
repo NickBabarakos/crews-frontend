@@ -1,39 +1,25 @@
-.banner-modal.glass-effect {
-    background: rgba(var(--rgb-surface),0.95);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--border-light);
-    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-    border-radius: 20px;
-    padding: 0;
-    overflow: hidden;
-}
-
-.modal-header{
-    padding: 20px 32px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(var(--rgb-card),0.4);
-}
-
-.modal-title-area {
+/*--- Header & Title Group ---*/
+.banner-modal-title-group{
     display: flex;
     align-items: center;
     gap: 16px;
+    flex-wrap: wrap;
 }
 
-.modal-title-area h2 {
+.banner-modal-heading{
     margin: 0;
     color: var(--text-main);
-    font-size: 22px;
+    font-size: 1.2rem;
+    font-weight: 700;
 }
+
+/* --- Badge --- */
 
 .chance-badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(90deg, rgba(124, 58, 237, 0.2), rgba(129, 92, 246, 0.1));
+    background: rgba(var(--rgb-primary),0.15);
     border: 1px solid rgba(var(--rgb-primary),0.3);
     padding: 4px 12px;
     border-radius: 99px;
@@ -44,6 +30,7 @@
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .chance-number{
@@ -52,44 +39,53 @@
     font-size: 14px;
 }
 
-.close-btn{
-    background: transparent;
-    border: none;
-    cursor: pointer;
+/* --- States ---*/
+.banner-loading-state,
+.banner-empty-state{
+    padding: 40px;
+    text-align: center;
     color: var(--text-muted);
-    padding: 8px;
-    border-radius: 50%;
+    font-style: italic;
+    font-size: 0.95rem;
+}
+
+/* --- Categories List --- */
+.category-section{
+    margin-bottom: 24px;
+}
+
+.category-header{
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-subtle);
 }
 
-.close-btn:hover{
-    background: var(--border-light);
+.category-header h4{
+    margin: 0;
     color: var(--text-main);
+    font-size: 1rem;
+    font-weight: 600;
 }
 
-.banner-details-container {
-    padding: 32px;
-    overflow-y: auto;
-    flex: 1;
+.cat-chance{
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    color: var(--text-muted);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: var(--font-mono);
 }
 
-.custom-scrollbar::-webkit-scrollbar{
-    width: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb{
-    background-color: var(--color-slate-700);
-    border-radius: 10px;
-}
+/*--- Grid & Chance ---*/
 
 .category-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
     gap: 10px;
-    margin-top: 10px;
 }
 
 .character-card.small {
@@ -102,10 +98,11 @@
     cursor: pointer;
     transition: transform 0.2s ease, border-color 0.2s;
     position: relative;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .character-card.small:hover{
-    transform: scale(1.1);
+    transform: translateY(-2px) scale(1.05);
     border-color: var(--primary-base);
     z-index: 10;
     box-shadow: 0 4px 12px rgba(0,0,0,0.5);
@@ -120,5 +117,21 @@
 
 .character-card.small.missing{
     filter: grayscale(100%);
-    opacity: 0.5;
+    opacity: 0.6;
+    border-style: dashed;
 }
+
+.character-card.small.missing:hover{
+    filter: grayscale(0%);
+    opacity: 1;
+    border-style: solid;
+}
+
+
+
+
+
+
+
+
+

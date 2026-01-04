@@ -267,11 +267,11 @@
     position: absolute;
     bottom: 0; left: 0; 
     height: 100%;
-    background: linear-gradient(90deg, rgba(45, 212, 191, 0.15) 0%, rgba(59,130,246,0.5) 100%);
+    background: linear-gradient(90deg, rgba(45, 212, 191, 0.25) 0%, rgba(59,130,246,0.6) 100%);
     opacity: 1;
     z-index: 0;
     transition: width 1s linear;
-    border-right: none;
+    border-right: 1px solid rgba(59,130,246, 0.3);
 }
 
 .event-row.active {border-left: 3px solid #2dd4bf; box-shadow: inset 15px 0 20px -10px rgba(45, 212, 191, 0.1);}

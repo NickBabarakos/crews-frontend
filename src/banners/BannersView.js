@@ -1,40 +1,64 @@
 import {useRef, useEffect} from 'react';
 import './BannersView.css';
 import { useResponsiveGrid } from '../hooks/useResponsiveGrid';
+import { useEventTimer } from '../hooks/useEventTimer';
 
 function BannerCard({banner, onClick}){
-    const formatDate = (dateStr)=> {
-        if(!dateStr) return '-';
-        const date = new Date(dateStr);
-        if(isNaN(date.getTime())) return 'Invalid Date';
+    const {status, countdown, progress} = useEventTimer(banner.start_date, banner.end_date);
 
-        return date.toLocaleString(undefined, {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
+    const formatDisplayDate = (dateStr) => {
+        if(!dateStr) return '';
+        const date = new Date(dateStr.includes('Z') ? dateStr : `${dateStr} PST`);
+        return date.toLocaleString('en-GB', {
+            month: 'short',
+            day: 'numeric',
             hour: '2-digit',
             minute: '2-digit',
-            hour12: false,
-            timeZoneName: 'short'
+            hour12: false
         });
     };
 
+    let timerText = '';
+    if(status === 'active'){
+        timerText = `Ends: ${formatDisplayDate(banner.end_date)} (${countdown})`;
+    } else if(status === 'upcoming'){
+        timerText = `Starts: ${formatDisplayDate(banner.start_date)} (${countdown})`;
+    } else{
+        timerText = 'Ended'
+    }
+
     return (
-        <div className="banner-card" onClick={()=> onClick(banner.id)}>
+        <div className={`banner-card ${status}`} onClick={()=> onClick(banner.id)}>
             <div className="banner-image-container">
                 <img src={banner.image_url} alt={banner.title} loading="lazy" />
+
+                {status === 'active' && (
+                    <div className="banner-progress-overlay" style={{
+                        position: 'absolute',
+                        bottom: 0, left: 0, height: '4px',
+                        backgroundColor: 'var(--color-brand-500)',
+                        width: `${100-progress}%`,
+                        zIndex: 10,
+                        transition: 'width 1s linear'
+                    }} />
+                )}
             </div>
             <div className="banner-info">
                 <h3 className="banner-title">{banner.title}</h3>
-                <div className="banner-dates">
-                    <div className="date-box start">
-                        <span className="date-label">Start</span>
-                        <span className="date-value">{formatDate(banner.start_date)}</span>
-                    </div>
-                    <div className="date-box end">
-                        <span className="date-label">End</span>
-                        <span className="date-value">{formatDate(banner.end_date)}</span>
-                    </div>
+                <div className={`timer-badge ${status}`} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    fontSize: '0.85rem',
+                    color: status === 'active' ? 'var(--color-success)' : 'var(--text-muted)',
+                    fontWeight: 600,
+                    whiteSpace: 'nowrap'
+                }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="13" r="7" />
+                        <path d="M12 13V10" />
+                    </svg>
+                    <span>{timerText}</span>
                 </div>
             </div>
         </div>

@@ -2,11 +2,12 @@ import React, {useState, useRef, useEffect} from "react";
 import { toPng } from 'html-to-image';
 import download from 'downloadjs';
 import toast, {Toaster} from 'react-hot-toast';
-import '../crews/submissions/SubmitCrewModal.css';
+
+import "../crews/features/SubmitCrew/SubmitCrewModal.css";
 import './TeamBuilderModal.css';
-import CharacterSelector from "../crews/submissions/CharacterSelector";
-import CrewCard from "../crews/CrewCard";
-import { CharacterDetailsView } from "../crews/submissions/SubmitCrewModal";
+import CharacterSelector from "../crews/features/SubmitCrew/CharacterSelector";
+import CrewCard from "../crews/components/cards/CrewCard";
+import CharacterDetailsView from "../crews/features/SubmitCrew/CharacterDetailsView";
 
 const CREW_LAYOUT = [
     { mainId: 'Friend Captain', label: 'Friend Captain', hasSupport: false},
@@ -193,8 +194,6 @@ function TeamBuilderModal({isOpen, onClose}){
 
     return(
         <div className="modal-overlay" onClick={onClose}>
-            <Toaster position="top-center" containerStyle={{zIndex: 99999}}/>
-
             <div className="submit-modal-content" onClick={e => e.stopPropagation()}>
                 {!editingSlot && (
                     <div className="modal-header">

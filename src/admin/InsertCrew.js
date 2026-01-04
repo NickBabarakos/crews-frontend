@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import './Admin.css';
-import TextGuideEditor from '../crews/submissions/TextGuideEditor';
-import TextGuideModal from '../crews/TextGuideModal';
-import CharacterSelector from '../crews/submissions/CharacterSelector';
-import { CharacterDetailsView } from '../crews/submissions/SubmitCrewModal';
+import TextGuideEditor from '../crews/features/SubmitCrew/TextGuideEditor';
+import TextGuideModal from '../crews/components/modals/TextGuideModal';
+import CharacterSelector from '../crews/features/SubmitCrew/CharacterSelector';
+import CharacterDetailsView from '../crews/features/SubmitCrew/CharacterDetailsView';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -17,7 +17,6 @@ const CREW_LAYOUT = [
     { mainId: 'Crewmate2', label: 'Crewmate 2', hasSupport: true, supportId: 'Support2'}
 ];
 
-const LEVELS = ['No', '150', '110', '120', '130', '150'];
 
 function InsertCrew({ adminSecret, prefilledData = null, onCancel=null, onApproveSuccess = null }) {
     const [guideType, setGuideType ] = useState('video');
@@ -116,15 +115,6 @@ function InsertCrew({ adminSecret, prefilledData = null, onCancel=null, onApprov
         });
     };
 
-    const handleMemberChange = (position, field, value) => {
-        setMembers(prev => ({
-            ...prev,
-            [position]: {
-                ...prev[position],
-                [field]: value 
-            }
-        }));
-    };
 
     const handleSlotClick = (slotId) => {
         setEditingSlot(slotId);

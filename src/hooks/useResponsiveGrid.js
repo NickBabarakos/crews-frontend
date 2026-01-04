@@ -8,7 +8,8 @@ export const useResponsiveGrid = (containerRef, {
     maxRows,
     shouldKeepSquare=false,
     widthBuffer = 15,
-    heightBuffer= 10
+    heightBuffer= 10, 
+    onPageSizeChange
  }) => {
     const [pageSize, setPageSize] = useState(0);
     const timeoutRef = useRef(null);
@@ -45,8 +46,14 @@ export const useResponsiveGrid = (containerRef, {
         }
         const newSize = safeCols*safeRows;
 
-        setPageSize(prev => prev === newSize ? prev: newSize);
-    }, [cardWidth, cardHeight, gap, minRows, maxRows, shouldKeepSquare, containerRef])
+        if(newSize !== pageSize){
+            setPageSize(newSize);
+            if(typeof onPageSizeChange === 'function'){
+                onPageSizeChange(newSize);
+            }
+        }
+
+    }, [cardWidth, cardHeight, gap, minRows, maxRows, shouldKeepSquare, containerRef, onPageSizeChange])
 
     useEffect(()=> {
         calculate();

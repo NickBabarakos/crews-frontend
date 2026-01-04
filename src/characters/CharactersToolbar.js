@@ -1,9 +1,10 @@
-import '../Toolbar.css';
-import Dropdown from '../Dropdown';
+import '../components/Toolbar.css';
+import Dropdown from '../components/common/Dropdown';
 import { useState, useRef } from 'react';
-import { useCollection } from '../CollectionContext';
-import FilterModal from '../FilterModal';
+import { useCollection } from '../context/CollectionContext';
+import FilterModal from '../crews/components/modals/FilterModal';
 import ViewBoxControl from './ViewBoxControl';
+import { MobileFilterIcon, SearchIcon } from '../components/Icons';
 
 const LEGEND_OPTIONS = [
     'All Legends', 'Super Sugo-Fest Only', 'Anniversary', 'Pirate Rumble Sugo-Fest Only', 'Treasure Sugo-Fest Only', 
@@ -75,10 +76,7 @@ function CharactersToolbar({totalCount, characterCategory, onCategoryChange, sub
         <>
            <div className="toolbar-left">
             <div className="search-input-wrapper">
-                <svg className="search-icon" width="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="16.65" y2="16.64"></line>
-                </svg>
+                    <SearchIcon/>
                 <input 
                     type="text"
                     placeholder="Search Name or Id..."
@@ -99,13 +97,7 @@ function CharactersToolbar({totalCount, characterCategory, onCategoryChange, sub
            </div>
             <div className="mobile-filter-wrapper show-on-mobile-only">
             <button className="mobile-filter-btn" onClick={()=> setIsFilterModalOpen(true)}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
-                    <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
-                    <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
-                    <line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line>
-                    <line x1="17" y1="16" x2="16" y2="16"></line>
-                </svg>
+                <MobileFilterIcon/>
                 Filters
             </button>
             </div>
