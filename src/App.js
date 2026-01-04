@@ -3,6 +3,7 @@ import './styles/App.css';
 import { CollectionProvider } from './context/CollectionContext';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'react-hot-toast';
 
 import MainLayout from './layouts/MainLayout';
 import HomeView from './home/HomeView';
@@ -19,6 +20,31 @@ function App(){
     return(
     <QueryClientProvider client={queryClient}>
         <CollectionProvider>
+            <Toaster 
+                position="top-center"
+                containerStyle={{
+                    zIndex: 99999
+                }}
+                toastOptions={{
+                    className: 'toast-notification',
+
+                    success:{
+                        className: 'toast-notification success',
+                        iconTheme: {
+                            primary: 'var(--color-success)',
+                            secondary: 'var(--bg-card)',
+                        },
+                    },
+
+                    error: {
+                        className: 'toast-notification error',
+                        iconTheme: {
+                            primary: 'var(--color-danger)',
+                            secondary: 'var(--bg-card)'
+                        },
+                    },
+                }}
+            />
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<MainLayout/>}>

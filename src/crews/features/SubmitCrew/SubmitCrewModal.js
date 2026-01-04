@@ -1,5 +1,4 @@
 import React from "react";
-import { Toaster } from 'react-hot-toast';
 import './SubmitCrewModal.css';
 import CharacterSelector from "./CharacterSelector";
 import { useCollection } from "../../../context/CollectionContext";
@@ -95,16 +94,6 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
     // --- MAIN RENDER --- 
     return(
         <>
-            <Toaster
-                position="top-center"
-                containerStyle={{zIndex: 99999}}
-                toastOptions={{
-                    className: 'toast-notification',
-                    success: { className: 'toast-notification success',},
-                    error: { className: 'toast-notification error',}
-                }}
-            />
-
             <BaseModal
                 isOpen={isOpen}
                 onClose={onClose}

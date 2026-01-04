@@ -1,7 +1,7 @@
 import React, {useState, useRef, useEffect} from "react";
 import { toPng } from 'html-to-image';
 import download from 'downloadjs';
-import toast, {Toaster} from 'react-hot-toast';
+import toast from 'react-hot-toast';
 
 import "../crews/features/SubmitCrew/SubmitCrewModal.css";
 import './TeamBuilderModal.css';

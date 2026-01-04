@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Outlet, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import apiClient from "../api/client";
-import {Toaster } from 'react-hot-toast';
 import Header from "../components/layout/Header";
 import Sidebar from "../components/layout/Sidebar";
 import landscapeWarning from '../assets/landscape-warning.png';
@@ -72,16 +71,6 @@ const MainLayout = () => {
                     </div>
                 </div>
         
-                <Toaster
-                position="bottom-center"
-                toastOptions={{
-                    style: {
-                    background: 'var(--border-light)',
-                    color: 'var(--text-main)'
-                    
-                },
-            }}
-        />
     
       <Header 
         onToggleMobileMenu={()=> setIsMobileMenuOpen(!isMobileMenuOpen)} 
