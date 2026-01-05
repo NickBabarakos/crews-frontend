@@ -93,7 +93,7 @@ export function CollectionProvider({children}){
         } else {
             setIsRestored(true);
         }
-    }, []);
+    }, [myKeys, viewingOther]);
 
     const saveToServer = useCallback(async (boxData, favData, keys) => {
         if(!keys?.secretKey) return;
@@ -251,13 +251,13 @@ export function CollectionProvider({children}){
                 targetTypes = ['5+ Rare Recruit'];
             }
         } else if (uiCategory === 'legends'){
-            if (subCategory === 'All Legends'){
+            if (!subCategory || subCategory === 'All Legends' || subCategory === 'null'){
                 targetTypes = ALL_LEGEND_TYPES_DB;
             } else {
                 targetTypes = [subCategory];
             }
         } else if (uiCategory === 'rareRecruits'){
-            if(subCategory === 'All Rare Recruits'){
+            if(!subCategory || subCategory === 'All Rare Recruits' || subCategory === 'null'){
                 targetTypes = ALL_RR_TYPES_DB;
             } else{
                 const dbType = RR_MAPPING_DB[subCategory] || subCategory;

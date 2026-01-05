@@ -1,30 +1,44 @@
+import React, {useRef} from 'react';
 import '../components/Toolbar.css';
 import Dropdown from '../components/common/Dropdown';
-import { useState, useRef } from 'react';
-import { useCollection } from '../context/CollectionContext';
 import FilterModal from '../crews/components/modals/FilterModal';
 import ViewBoxControl from './ViewBoxControl';
 import { MobileFilterIcon, SearchIcon } from '../components/Icons';
 
-const LEGEND_OPTIONS = [
-    'All Legends', 'Super Sugo-Fest Only', 'Anniversary', 'Pirate Rumble Sugo-Fest Only', 'Treasure Sugo-Fest Only', 
-    'Pirate Alliance Kizuna Clash Sugo-Fest Only', 'Exchange Only', 'Sugo Rare'
-];
 
-const RR_OPTIONS = [
-    'All Rare Recruits', 'Treasure Map Rare Recruits', 'Treasure Map Limited Characters', 'Kizuna Clash Limited Characters',
-    'Rumble Rare Recruits', 'Support Characters', 'Other Rare Recruits'
-];
 
-function CharactersToolbar({totalCount, characterCategory, onCategoryChange, subCategory, onSubCategoryChange, isPlus, onIsPlusChange, searchTerm, onSearchChange, onAdminTrigger}){
-    const [isDesktopDropdownOpen, setIsDesktopDropdownOpen] = useState(false);
-    const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState(false);
-    const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+function CharactersToolbar({
+    //Data Props for Page/Hooks
+    totalCount,
+    ownedCount,
+    characterCategory,
+    subCategory,
+    isPlus,
+    searchTerm,
+
+    //Handlers
+    onCategoryChange,
+    onSubCategoryChange,
+    onIsPlusChange,
+    onSearchChange,
+    onAdminTrigger,
+
+    //Logic Props (from useCharacterToolbarLogic)
+    logic
+}){
     const dropdownRef = useRef(null);
-    const {getOwnedCountByCategory} = useCollection();
-    const ownedCount = getOwnedCountByCategory(characterCategory, subCategory, isPlus);
-    const currentOptions = characterCategory === 'rareRecruits' ? RR_OPTIONS: LEGEND_OPTIONS;
-    const isDropdownDisabled = characterCategory === 'all' || isPlus;
+    const{
+        isDesktopDropdownOpen, setIsDesktopDropdownOpen,
+        isMobileDropdownOpen, setIsMobileDropdownOpen,
+        isFilterModalOpen, setIsFilterModalOpen,
+        currentOptions,
+        isDropdownDisabled,
+        handleSubCategorySelect
+    } = logic; 
+    
+    //--- Default τιμη για το Dropdown---
+    // Αν το subCategory ειναι κενό, παίρνουμε την πρώτη επιλογή (π.χ. "All Legends")
+    const activeSubCategory = subCategory || currentOptions[0];
 
      const handleKeyDown = (e) => {
         if(e.key === 'Enter' && searchTerm.toLowerCase().trim() === 'admin'){
@@ -32,11 +46,7 @@ function CharactersToolbar({totalCount, characterCategory, onCategoryChange, sub
         }
      };
 
-     const handleSubCategorySelect = (selection) => {
-        onSubCategoryChange(selection);
-        setIsDesktopDropdownOpen(false);
-        setIsMobileDropdownOpen(false);
-    };
+     
 
     const handleMainCategoryClick = (category) => {
         if(characterCategory !== category){
@@ -95,6 +105,7 @@ function CharactersToolbar({totalCount, characterCategory, onCategoryChange, sub
 
             <ViewBoxControl/>
            </div>
+
             <div className="mobile-filter-wrapper show-on-mobile-only">
             <button className="mobile-filter-btn" onClick={()=> setIsFilterModalOpen(true)}>
                 <MobileFilterIcon/>
@@ -110,8 +121,8 @@ function CharactersToolbar({totalCount, characterCategory, onCategoryChange, sub
                 >
                     <Dropdown
                         options={currentOptions}
-                        selectedOption = {subCategory}
-                        onSelect = {handleSubCategorySelect}
+                        selectedOption = {activeSubCategory}
+                        onSelect =  {(val) => handleSubCategorySelect(onSubCategoryChange, val)}
                         isOpen={isDesktopDropdownOpen}
                         onToggle={()=> setIsDesktopDropdownOpen(!isDesktopDropdownOpen)}
                     />
@@ -130,8 +141,8 @@ function CharactersToolbar({totalCount, characterCategory, onCategoryChange, sub
                 <label style={{display:'block', marginBottom: '8px', color: '#aaa', fontSize:'12px'}}>Sub-Category</label>
                 <Dropdown
                     options={currentOptions}
-                    selectedOption={subCategory}
-                    onSelect={handleSubCategorySelect}
+                    selectedOption={activeSubCategory}
+                    onSelect={(val) => handleSubCategorySelect(onSubCategoryChange, val)}
                     isOpen={isMobileDropdownOpen}
                     onToggle={()=> setIsMobileDropdownOpen(!isMobileDropdownOpen)}
                 />

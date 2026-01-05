@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import { useCollection } from '../context/CollectionContext';
 import './ViewBoxControl.css';
 import toast from 'react-hot-toast';
+import ViewBoxModal from './components/ViewBoxModal';
 
 const EyeIcon = ({isOpen}) => (
        <svg width="24" height="24" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="0">
@@ -14,9 +15,8 @@ const EyeIcon = ({isOpen}) => (
 );
 
 function ViewBoxControl(){
-    const {viewingOther, fetchOtherBox, exitOtherView, isLoadingOther} = useCollection();
+    const {viewingOther, exitOtherView} = useCollection();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [inputKey, setInputKey] = useState('');
 
     const handleEyeClick = () => {
         if(viewingOther){
@@ -27,18 +27,6 @@ function ViewBoxControl(){
         }
     };
 
-    const handleSearch = async() => {
-        if(!inputKey.trim()) return;
-        const cleanKey = inputKey.trim();
-        const success = await fetchOtherBox(cleanKey);
-        if(success){
-            setIsModalOpen(false);
-            setInputKey('');
-            toast.success('Viewing User Box');
-        } else {
-            toast.error('Box not found');
-        }
-    };
 
     return (
         <>
@@ -51,34 +39,10 @@ function ViewBoxControl(){
                 {viewingOther && <span className="pulse-dot"></span>}
             </button>
 
-            {isModalOpen && (
-                <div className="vb-backdrop" onClick={()=> setIsModalOpen(false)}>
-                    <div className="vb-modal" onClick={e => e.stopPropagation()}>
-                        <h4>View Character Box</h4>
-                        <p>Enter the <strong>Public Key</strong> of the user you want to browse.</p>
-
-                        <input 
-                            type="text"
-                            placeholder="e.g. pub-a1b2-c3d4"
-                            value={inputKey}
-                            onChange={(e)=> setInputKey(e.target.value)}
-                            onKeyDown={(e)=> e.key === 'Enter' && handleSearch()}
-                        />
-
-                        <div className="vb-actions">
-                            <button onClick={()=> setIsModalOpen(false)} className="cancel-btn">Cancel</button>
-                            <button 
-                                onClick={handleSearch}
-                                className="search-btn"
-                                disabled={isLoadingOther}
-                            >
-                                {isLoadingOther ? 'Searching...': 'Search'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-            )}
+           <ViewBoxModal
+                isOpen={isModalOpen}
+                onClose={()=> setIsModalOpen(false)}
+            />
         
         </>
     );
