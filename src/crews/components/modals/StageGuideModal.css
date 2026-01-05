@@ -288,7 +288,7 @@
 .checkbox-custom {
     width: 24px;
     height: 24px;
-    border: 2px solid var(--color-500);
+    border: 2px solid var(--text-muted);
     border-radius: 6px;
     cursor: pointer;
     display: flex;
@@ -311,7 +311,7 @@
     opacity: 0.5;
     filter: grayscale(1);
     background: transparent !important;
-    border-left-color: var(--color-500) !important;
+    border-left-color: var(--text-muted) !important;
 }
 
 .gimmick-completed .gimmick-text { text-decoration: line-through; color: var(--text-muted);}

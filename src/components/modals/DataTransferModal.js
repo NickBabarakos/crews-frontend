@@ -3,6 +3,7 @@ import { useCollection } from '../../context/CollectionContext';
 import './DataTransferModal.css';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import BaseModal from './BaseModal';
 
 const CopyIcon = () => (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -118,15 +119,14 @@ function DataTransferModal({isOpen, onClose}){
     };
 
     return(
-        <div className="dt-backdrop" onClick={onClose}>
-            <div className="dt-modal" onClick={e=>e.stopPropagation()}>
-                <div className="dt-header">
-                    <h3> Sync & Manage Data</h3>
-                    <button className="dt-close" onClick={onClose}>&times;</button>
-                </div>
-
-                <div className="dt-content">
-
+        <BaseModal
+            isOpen={isOpen}
+            onClose={onClose}
+            title="Sync & Manage Data"
+            size="medium"
+        >
+            <div className="dt-content" style={{padding: 0}}>
+                
                     <div className="keys-container">
                         <div className="key-row">
                             <span className="key-label">Public Key:</span>
@@ -229,9 +229,8 @@ function DataTransferModal({isOpen, onClose}){
 
                     )}
                 </div>
-            </div>
-        </div>
+        </BaseModal>
     );
 }
-
 export default DataTransferModal;
+        

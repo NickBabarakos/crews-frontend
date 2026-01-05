@@ -35,6 +35,8 @@ import specialBindIcon from '../../assets/gimmicks/special-bind.png';
 import noHealingIcon from '../../assets/gimmicks/no-healing.png';
 import hitBarrierIcon from '../../assets/gimmicks/combo-barrier-hit.png';
 import perfectBarrierIcon from '../../assets/gimmicks/combo-barrier-perfect.png';
+import greatBarrierIcon from '../../assets/gimmicks/combo-barrier-great.png';
+import goodBarrierIcon from '../../assets/gimmicks/combo-barrier-good.png';
 import harderTapTimingIcon from '../../assets/gimmicks/harder-tap-timing.png';
 
 export const ICON_MAP ={
@@ -74,6 +76,8 @@ export const ICON_MAP ={
     'no_healing': noHealingIcon,
     'hit_barrier': hitBarrierIcon,
     'perfect_barrier': perfectBarrierIcon,
+    'great_barrier': greatBarrierIcon,
+    'good_barrier': goodBarrierIcon,
     'harder_tap_timing': harderTapTimingIcon,
     'default': null
 };

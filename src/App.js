@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 
 import MainLayout from './layouts/MainLayout';
-import HomeView from './home/HomeView';
+import HomePage from './pages/HomePage';
 import CharactersPage from './pages/CharactersPage';
 import BannersPage from './pages/BannersPage';
 import CreatorsPage from './pages/CreatorsPage';
@@ -50,7 +50,7 @@ function App(){
                     <Route path="/" element={<MainLayout/>}>
                         <Route index element={<Navigate to="/home" replace />} />
 
-                        <Route path="home" element={<HomeView />}/>
+                        <Route path="home" element={<HomePage />}/>
 
                         <Route path="characters" element={<CharactersPage />} />
                         <Route path="banners" element={<BannersPage/>} />

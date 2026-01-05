@@ -1,0 +1,93 @@
+
+.dashboard-card{
+    background: linear-gradient(
+        160deg,
+        rgba(var(--rgb-surface), 0.7) 0%,
+        rgba(var(--rgb-card), 0.3) 100%
+    );
+    backdrop-filter: blur(12px);
+
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 350px;
+
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dashboard-card:hover{
+    transform: translateY(-4px);
+    border-color: rgba(var(--rgb-accent),0.2);
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+}
+
+.card-header{
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    color: rgba(0,0,0,0.2);
+}
+
+.header-title-group{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-header h3{
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--text-main);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+}
+
+.header-icon{
+    color: var(--text-accent);
+    display: flex;
+    align-items: center;
+}
+
+.card-body{
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    position: relative;
+}
+
+.card-body.is-scrollable{
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-slate-700) transparent;
+}
+
+.card-body.is-scrollable::-webkit-scrollbar { width: 6px;}
+.card-body.is-scrollable::-webkit-scrollbar-thumb {
+    background-color: var(--color-slate-700);
+    border-radius: 10px;
+}
+
+@media(min-width: 1500px){
+    .dashboard-card{
+        height: 400px;
+    }
+}
+
+@media (max-width: 768px){
+    .dashboard-card{
+        height: auto !important;
+
+    }
+
+    .card-body.is-scrollable{
+        overflow-y: visible;
+    }
+}

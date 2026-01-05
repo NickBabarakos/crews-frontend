@@ -86,11 +86,30 @@ export const useCrewsPageData = ({
     const rawCrews = crewData?.crews || [];
     const sortedCrews = useCrewsSorting(rawCrews, sortBy);
 
+    //Calculate "Virtual" hasMore for pagination
+    //Logic: If we are not in "MyBox" mode (so adding crews is allowed),
+    //and the current page is completely full (length === pageSize),
+    //we force hasMore = true. This allows the user to click "Next" to go to
+    //a fresh page containing only the "Add New Crew" button.
+    const hasMoreCrews = useMemo(() => {
+        if(!crewData) return false;
+
+        //If showing only owned, strict API pagination applies (no Add button)
+        if(showOnlyOwned) return crewData.hasMore;
+
+        //If generic listing:
+        //1. API says there are more records -> True
+        //2. API says NO more records, BUT the current page is full -> True (for Add button page)
+        const isPageFull =(crewData.crews?.length || 0) >= pageSize;
+        return crewData.hasMore || isPageFull;
+    }, [crewData, showOnlyOwned, pageSize]);
+
     return{
         bossesData,
         isBossLoading,
         crewData,          // Χρήσιμο για το Pagination (hasMore)
         sortedCrews,       // Τα τελικα δεδομένα προς εμφάνιση
-        shouldFetchCrews   // Επιστρέφουμε το flag αν χρειαστεί για UI checks (π.χ. showActions)
+        shouldFetchCrews,   // Επιστρέφουμε το flag αν χρειαστεί για UI checks (π.χ. showActions)
+        hasMoreCrews
     }
 }

@@ -51,9 +51,9 @@ const CrewsPage = ({mode}) => {
     const{
         bossesData,
         isBossLoading,
-        crewData,
         sortedCrews,
-        shouldFetchCrews
+        shouldFetchCrews,
+        hasMoreCrews
     } = useCrewsPageData({
         mode,
         config,
@@ -146,7 +146,7 @@ const CrewsPage = ({mode}) => {
 
             <Footer 
                 currentPage={currentPage}
-                hasMore={mode === 'coliseum' && !selectedBoss ? bossesData?.hasMore : crewData?.hasMore}
+                hasMore={mode === 'coliseum' && !selectedBoss ? bossesData?.hasMore : hasMoreCrews}
                 onPageChange={(dir)=>{
                     clearUrlParams();
                     const newPage = dir === 'next' ? currentPage + 1 : currentPage -1;
