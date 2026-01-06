@@ -30,8 +30,10 @@
 --color-danger: #ef4444;       /*Error, Defeated, Cancel */
 --color-danger-dark: #dc2626; 
 --color-success: #10b981;      /* Emerald Green (Tech/Success) */
+--color-success-dark: #059669;
 --color-warning: #f59e0b;      /* Amber (Warnings, Stars) */
 --color-info: #38bdf8;         /* Sky Blue (Info, Share) */
+--color-info-darker: #0ea5e9;
 --color-gold: #fbbf24;         /* Rank1, Favorites */
 
 --rgb-primary: 139, 92, 246;     /* brand-500 */

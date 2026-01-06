@@ -1,12 +1,12 @@
-import React, {useState, useEffect } from "react";
+import React, {useState} from "react";
 import axios from 'axios';
 import './Admin.css';
-import InsertCharacter from './InsertCharacter';
-import InsertCrew from "./InsertCrew";
-import ApproveCrews from "./ApproveCrews";
-import ManageReports from "./ManageReports";
-import InsertBanner from "./InsertBanner";
-import ManageContent from "./ManageContent";
+import InsertCharacterView from "./InsertCharacterView";
+import InsertCrewView from "./InsertCrewView";
+import ApproveCrewsView from "./ApproveCrewsView";
+import ManageReportsView from "./ManageReportsView";
+import InsertBannerView from "./InsertBannerView";
+import ManageContentView from "./ManageContentView";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -63,10 +63,9 @@ function AdminPanel({onExit}) {
 
     return(
         <div className="admin-container">
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <div className="admin-header">
                 <h1>OPTC Database Admin</h1>
-                <button onClick={handleLogout} style={{background:'red', color:'white', border:'none', padding: '5px 10px',
-                    borderRadius:'4px', cursor:'pointer'}}>Logout</button>
+                <button onClick={handleLogout} className="logout-btn">Logout</button>
             </div>
 
             <div className="admin-nav">
@@ -103,23 +102,23 @@ function AdminPanel({onExit}) {
             </div>
 
             <div className="admin-content">
-                {activeTab === 'insert_char' && <InsertCharacter adminSecret={secretInput} />}
+                {activeTab === 'insert_char' && <InsertCharacterView adminSecret={secretInput} />}
 
                 {activeTab === 'insert_crew' && (
-                    <InsertCrew adminSecret={secretInput}/>
+                    <InsertCrewView adminSecret={secretInput}/>
                 )}
 
                 {activeTab === 'approve_crew' && (
-                    <ApproveCrews adminSecret={secretInput} />
+                    <ApproveCrewsView View adminSecret={secretInput} />
                 )}
 
                 {activeTab === 'manage_reports' && (
-                    <ManageReports adminSecret={secretInput}/>
+                    <ManageReportsView adminSecret={secretInput}/>
                 )}
 
-                {activeTab === 'insert_banner' && <InsertBanner adminSecret={secretInput}/>}
+                {activeTab === 'insert_banner' && <InsertBannerView adminSecret={secretInput}/>}
 
-                {activeTab === 'manage_content' && <ManageContent adminSecret={secretInput} />}
+                {activeTab === 'manage_content' && <ManageContentView adminSecret={secretInput} />}
             </div>
         </div>
     );
