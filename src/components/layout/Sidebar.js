@@ -69,18 +69,18 @@ function Sidebar({isOpen, onClose}){
                 <button 
                     className={`footer-btn youtube ${currentView === 'creators' ? 'active' : ''}`}
                     aria-label = "Creators"
-                    onClick={()=> navigate('/creators')}
+                    onClick={()=> {navigate('/creators'); onClose();}}
                     >
                         <YouTubeIcon/>
                     <span className="tooltip">Creators</span>
                 </button>
 
-                <button className="footer-btn discord" aria-label="Discord">
+                <button className="footer-btn discord" aria-label="Discord" onClick={onClose}>
                     <DiscordIcon/>
                     <span className="tooltip">Discord</span>
                 </button>
 
-                <button className="footer-btn transfer" aria-label="Sync Data" onClick={()=> setIsTransferModalOpen(true)}>
+                <button className="footer-btn transfer" aria-label="Sync Data" onClick={()=> {setIsTransferModalOpen(true); onClose();}}>
                     <TransferIcon/>
                     <span className="tooltip">Sync Data</span>
                 </button>

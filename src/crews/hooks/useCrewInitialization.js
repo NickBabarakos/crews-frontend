@@ -25,6 +25,7 @@ export const useCrewInitialization = (mode, config, pageSize) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [highlightedCrewId, setHighlightedCrewId] = useState(null);
     const [selectedBoss, setSelectedBoss] = useState(null);
+    const [targetRank, setTargetRank] = useState(null);
 
     // Ref to block 'useEffect' from overwriting URL while we are reading from it.
     const crewRankRef = useRef(null);
@@ -64,7 +65,10 @@ export const useCrewInitialization = (mode, config, pageSize) => {
                     const {mode: crewMode, rank} = res.data;
                     const targetRouteKey = Object.keys(viewConfig).find(key=> viewConfig[key].mode === crewMode);
 
-                    if(rank) crewRankRef.current = rank;
+                    if(rank){
+                        crewRankRef.current = rank;
+                        setTargetRank(rank);
+                    } 
 
                     // Redirect if crew belongs to a different game mode
                     if(targetRouteKey && targetRouteKey !== mode){
@@ -114,7 +118,11 @@ export const useCrewInitialization = (mode, config, pageSize) => {
             }
         //Apply calculated filters to state   
         setCrewFilters(filters);
-        setCurrentPage(initalPage);
+        if(!crewRankRef.current){
+            setCurrentPage(initalPage);
+        } else if (pageSize>0){
+            setCurrentPage(Math.ceil(crewRankRef.current/pageSize));
+        }
         
         //Restore selectedBoss only if 'stage' parameter actually exists in URL
         const stageParam = searchParams.get('stage');
@@ -145,10 +153,12 @@ export const useCrewInitialization = (mode, config, pageSize) => {
     }, [mode, crewIdParam, config, navigate]);
 
     useEffect(()=> {
+        const rankToUse = targetRank || crewRankRef.current;
+
         if(pageSize > 0 && crewRankRef.current){
-            setCurrentPage(Math.ceil(crewRankRef.current/pageSize));
+            setCurrentPage(Math.ceil(rankToUse/pageSize));
         }
-    }, [pageSize])
+    }, [pageSize, targetRank])
 
     // Helper to remove crew ID from URL (e.g when closing a modal or changing filter)
     const clearUrlParams = useCallback(() => {

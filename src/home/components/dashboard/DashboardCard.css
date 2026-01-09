@@ -87,6 +87,20 @@
 
     }
 
+    .card-header{
+        padding: 10px 15px;
+        gap: 10px;
+    }
+
+    .card-header h3 {
+        font-size: 0.95rem;
+    }
+
+    .header-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
     .card-body.is-scrollable{
         overflow-y: visible;
     }

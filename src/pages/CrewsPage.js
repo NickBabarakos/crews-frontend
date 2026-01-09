@@ -170,7 +170,7 @@ const CrewsPage = ({mode}) => {
                 stageName={activeStageName}
                 stageId={modals.submitStageId}
             />
-            )};
+            )}
             
             <Footer 
                 currentPage={currentPage}

@@ -14,7 +14,7 @@ function ViewBoxModal({isOpen, onClose}) {
         const cleanKey = inputKey.trim();
         const success = await fetchOtherBox(cleanKey);
 
-        if(success){
+        if(success !== false){
             onClose();
             setInputKey('');
             toast.success('Viewing User Box');

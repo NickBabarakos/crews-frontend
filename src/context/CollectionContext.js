@@ -125,7 +125,7 @@ export function CollectionProvider({children}){
         if(result.success){
             setOtherBoxData(result.boxData);
             setViewingOther(true);
-            return false;
+            return true;
         }
         return false;
     }, [getOtherBox]);

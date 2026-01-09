@@ -38,6 +38,8 @@
 --color-gold-light: #fde047;   /* Bright Highlight */
 --color-gold-dark: #d97706;    /* Deep Bronze/Amber */
 --color-gold-glow: rgba(251, 191, 36, 0.5); /*Glow Effect */
+--color-guide-text: var(--color-info);
+--color-guide-text-glow: rgba(56, 189, 248, 0.4);
 
 --rgb-primary: 139, 92, 246;     /* brand-500 */
 --rgb-accent: 167, 139, 250;     /* brand-400 */
