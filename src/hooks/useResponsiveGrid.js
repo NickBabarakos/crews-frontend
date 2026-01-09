@@ -53,7 +53,7 @@ export const useResponsiveGrid = (containerRef, {
             }
         }
 
-    }, [cardWidth, cardHeight, gap, minRows, maxRows, shouldKeepSquare, containerRef, onPageSizeChange])
+    }, [cardWidth, cardHeight, gap, minRows, maxRows, shouldKeepSquare, containerRef, onPageSizeChange, widthBuffer, heightBuffer, pageSize])
 
     useEffect(()=> {
         calculate();

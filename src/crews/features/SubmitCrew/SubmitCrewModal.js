@@ -31,7 +31,7 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
             handleBack,
             handleNext,
             handleSubmit
-    } = useSubmitCrew(myKeys, onClose, stageName, stageId, myKeys);
+    } = useSubmitCrew(isOpen, onClose, stageName, stageId, myKeys);
 
     if(!isOpen) return null;
 
