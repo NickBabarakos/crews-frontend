@@ -162,6 +162,7 @@ const CrewsPage = ({mode}) => {
                 crewData={modals.selectedReportCrew}
             />
 
+            {modals.isSubmitModalOpen && (
             <SubmitCrewModal
                 key={modals.isSubmitModalOpen ? 'submit-open' : 'submit-closed'}
                 isOpen={modals.isSubmitModalOpen}
@@ -169,7 +170,8 @@ const CrewsPage = ({mode}) => {
                 stageName={activeStageName}
                 stageId={modals.submitStageId}
             />
-
+            )};
+            
             <Footer 
                 currentPage={currentPage}
                 hasMore={mode === 'coliseum' && !selectedBoss ? bossesData?.hasMore : hasMoreCrews}
