@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useCreators } from "../hooks/useCreator";
 import CreatorsView from "../creators/CreatorsView";
 import Footer from "../components/layout/Footer";
@@ -16,9 +16,18 @@ const CreatorsPage = () => {
         const newPage = direction === 'next' ? currentPage + 1 : currentPage -1;
         if(newPage > 0){
             setCurrentPage(newPage);
-            window.scrollTo({top: 0, behavior: 'smooth'});
         }
     };
+
+    const handlePageSizeChange = useCallback((newSize) => {
+        setPageSize((prevSize) => {
+            if(prevSize !== newSize) {
+                setCurrentPage(1);
+                return newSize;
+            }
+            return prevSize;
+        });
+    }, []);
 
     return(
         <>
@@ -27,7 +36,7 @@ const CreatorsPage = () => {
             {!isLoading && !error && (
                 <CreatorsView
                     creators={data?.creators || []}
-                    onPageSizeChange={(newSize) =>{ setPageSize(newSize); setCurrentPage(1);} }
+                    onPageSizeChange={handlePageSizeChange}
                     currentPage = {currentPage}
                     pageSize={pageSize}
                 />

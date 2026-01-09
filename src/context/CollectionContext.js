@@ -1,8 +1,8 @@
 import React, { createContext, useState, useEffect, useContext, useCallback, useMemo, useRef } from 'react';
-import axios from 'axios';
+import { useBoxPersistence } from './useBoxPersistence';
+import { useBoxApi } from './useBoxApi';
 
 const CollectionContext = createContext();
-const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const ALL_LEGEND_TYPES_DB = [
   'Super Sugo-Fest Only', 'Anniversary', 'Pirate Rumble Sugo-Fest Only', 'Treasure Sugo-Fest Only', 
@@ -34,161 +34,117 @@ const normalizeType = (input) => {
 };
 
 export function CollectionProvider({children}){
-    const [myKeys, setMyKeys] = useState(()=> {
-        try{
-            const saved = localStorage.getItem('optc-box-keys');
-            return saved? JSON.parse(saved): null;
-        } catch(e) { return null; }
-    });
+    //1. Persistence  Hook
+    const{
+        myKeys, setMyKeys,
+        ownedItems, setOwnedItems,
+        favorites, setFavorites
+    } = useBoxPersistence();
+
+    //2. Api Hook
+    const{
+        restoreBox, updateBox, createBox: apiCreateBox, getOtherBox, isLoadingOther
+    } = useBoxApi();
 
 
-    const [ownedItems, setOwnedItems] = useState(()=> {
-       try{
-        const saved = localStorage.getItem('optc-collection');
-        if(saved) {return JSON.parse(saved);}
-        return{'-1': 'SYSTEM_INIT'};
-       } catch(e){
-        return {'-1': 'SYSTEM_INIT'}
-       }
-    });
-
-    const [favorites, setFavorites] = useState(()=> {
-        try{
-            const stored = localStorage.getItem('optc-favorite-crews');
-            return stored ? JSON.parse(stored) : [];
-        } catch(error) {return []; }
-    });
-    
-   
+    //3. UI States
     const [viewingOther, setViewingOther] = useState(false);
     const [otherBoxData, setOtherBoxData] = useState(null);
-    const [isLoadingOther, setIsLoadingOther] = useState(false);
     const [isRestored, setIsRestored] = useState(false);
 
     const updateTimeoutRef = useRef(null);
 
+    //--- ORCHESTRATION: Sync Logic ---
+
+    //Initial Sync on Load
     useEffect(()=> {
         if(myKeys?.secretKey && !viewingOther){
             const syncData = async()=> {
-                try{
-                    const res = await axios.post(`${BASE_URL}/api/box/restore`, {secretKey: myKeys.secretKey});
-                    if(res.data.success){
-                        setOwnedItems(res.data.boxData);
-                        setFavorites(res.data.favorites || []);
-                        localStorage.setItem('optc-collection', JSON.stringify(res.data.boxData));
+                const result = await restoreBox(myKeys.secretKey);
+                if(result.success){
+                    setOwnedItems(result.boxData);
+                    setFavorites(result.favorites);
 
-                        if(!myKeys.publicKey && res.data.publicKey){
-                            const updatedKeys = {...myKeys, publicKey: res.data.publicKey};
-                            setMyKeys(updatedKeys);
-                            localStorage.setItem('optc-box-keys', JSON.stringify(updatedKeys));
-                        }
+                    if(!myKeys.publicKey && result.publicKey){
+                        setMyKeys({...myKeys, publicKey: result.publicKey});
                     }
-                } catch(err){
-                    console.error("Sync failed (offline or invalid key):", err);
-                } finally{
-                    setIsRestored(true);
                 }
+                setIsRestored(true);
             };
             syncData();
         } else {
             setIsRestored(true);
         }
-    }, [myKeys, viewingOther]);
+    }, [myKeys, viewingOther, restoreBox, setOwnedItems, setFavorites, setMyKeys]);
+
+    //Auto-Save Logic
+    useEffect(()=> {
+        if(myKeys && !viewingOther){
+            if(updateTimeoutRef.current) clearTimeout(updateTimeoutRef.current);
+            if(!isRestored) return;
+
+            updateTimeoutRef.current = setTimeout(()=>{
+                updateBox(myKeys.secretKey, ownedItems, favorites);
+            }, 2000);
+        }
+    }, [ownedItems, favorites, myKeys, viewingOther, isRestored, updateBox]);
+
+    //---ACTIONS----
 
     const saveToServer = useCallback(async (boxData, favData, keys) => {
-        if(!keys?.secretKey) return;
-        try{
-            await axios.post(`${BASE_URL}/api/box/update`, {
-                secretKey: keys.secretKey,
-                boxData: boxData,
-                favorites: favData
-            });
-            console.log("Cloud save success");
-        } catch (err){
-            console.error("Cloud save failed.", err);
-        }
-    }, []);
+        await updateBox(keys.secretKey, boxData, favData);
+    }, [updateBox]);
 
     const createBox = useCallback(async (initialBoxData) => {
-        try{
-            const res = await axios.post(`${BASE_URL}/api/box/create`, {
-                initialData: initialBoxData,
-                favorites: favorites
-            });
-            if(res.data.success){
-                const newKeys = {publicKey: res.data.publicKey, secretKey: res.data.secretKey};
-                setMyKeys(newKeys);
-                setOwnedItems(initialBoxData);
-                localStorage.setItem('optc-box-keys', JSON.stringify(newKeys));
-                localStorage.setItem('optc-box-collection', JSON.stringify(initialBoxData));
-                setIsRestored(true);
-                return newKeys;
-            }
-        } catch(err){
-            console.error("Create box failed:", err);
-            return null;
+        const result = await apiCreateBox(initialBoxData, favorites);
+        if(result.success){
+            setMyKeys(result.keys);
+            setOwnedItems(initialBoxData);
+            setIsRestored(true);
+            return result.keys;
         }
-    }, [favorites]);
+        return null;
+    }, [favorites, apiCreateBox, setMyKeys, setOwnedItems]);
 
     const loginWithSecret = useCallback(async (secretKey) => {
-        try{
-            const res = await axios.post(`${BASE_URL}/api/box/restore`, {secretKey});
-            if(res.data.success){
-                const newKeys = {publicKey: res.data.publicKey, secretKey: secretKey};
-                setMyKeys(newKeys);
-
-                setOwnedItems(res.data.boxData);
-                setFavorites(res.data.favorites || []);
-
-                setViewingOther(false);
-                setIsRestored(true);
-
-                localStorage.setItem('optc-box-keys', JSON.stringify(newKeys));
-                localStorage.setItem('optc-collection', JSON.stringify(res.data.boxData));
-                localStorage.setItem('optc-favorite-crews', JSON.stringify(res.data.favorites));
-                return true;
-            }
-        } catch(err){
-            return false;
+        const result = await restoreBox(secretKey);
+        if(result.success){
+            const newKeys = {publicKey: result.publicKey, secretKey: secretKey};
+            setMyKeys(newKeys);
+            setOwnedItems(result.boxData);
+            setFavorites(result.favorites);
+            setViewingOther(false);
+            setIsRestored(true);
+            return true;
         }
-    }, []);
+        return false;
+    }, [restoreBox, setMyKeys, setOwnedItems, setFavorites]);
 
     const fetchOtherBox = useCallback(async (publicKey) => {
-        setIsLoadingOther(true);
-        try{
-            const res = await axios.get(`${BASE_URL}/api/box/view/${publicKey}`);
-            setOtherBoxData(res.data.boxData);
+        const result = await getOtherBox(publicKey);
+        if(result.success){
+            setOtherBoxData(result.boxData);
             setViewingOther(true);
-            return true;
-        } catch (err){
-            console.error("View box failed", err);
             return false;
-        } finally {
-            setIsLoadingOther(false);
         }
-    }, []);
+        return false;
+    }, [getOtherBox]);
 
     const exitOtherView = useCallback(()=> {
         setViewingOther(false);
         setOtherBoxData(null);
     }, []);
 
+    const importCollection = useCallback((newCollectionData) => {
+        if(viewingOther) return;
+        setOwnedItems(newCollectionData);
+    }, [viewingOther, setOwnedItems]);
+
+    //---BUSINESS LOGIC----
+
     const visibleItems = useMemo(()=> {
         return viewingOther ? (otherBoxData || {}): ownedItems;
     }, [viewingOther, otherBoxData, ownedItems]);
-
-    useEffect(()=> {
-        localStorage.setItem('optc-collection', JSON.stringify(ownedItems));
-        localStorage.setItem('optc-favorite-crews', JSON.stringify(favorites));
-
-        if(myKeys && !viewingOther){
-            if(updateTimeoutRef.current) clearTimeout(updateTimeoutRef.current);
-            if (!isRestored) return;
-            updateTimeoutRef.current = setTimeout(()=>{
-                saveToServer(ownedItems, favorites, myKeys);
-            }, 2000);
-        }
-    }, [ownedItems, favorites, myKeys, viewingOther, saveToServer, isRestored]);
 
     const toggleFavorite = useCallback((crewId) => {
         setFavorites(prev => {
@@ -199,7 +155,7 @@ export function CollectionProvider({children}){
             : [...currentFavs, crewId];
         return newFavs;
         });
-    }, []);
+    }, [setFavorites]);
 
     const isFavorite = useCallback((crewId)=> {
         return Array.isArray(favorites) && favorites.includes(crewId);
@@ -225,7 +181,7 @@ export function CollectionProvider({children}){
 
             return next;
         });
-    }, [viewingOther]);
+    }, [viewingOther, setOwnedItems]);
 
 
     const isOwned = useCallback((id)=>{
@@ -268,10 +224,7 @@ export function CollectionProvider({children}){
         return realValues.filter(storedType => { return targetTypes.includes(storedType);}).length;
     }, [visibleItems]);
 
-    const importCollection = useCallback((newCollectionData) => {
-        if(viewingOther) return;
-        setOwnedItems(newCollectionData);
-    }, [viewingOther]);
+
 
     const contextValue = useMemo(()=> ({
         ownedItems: visibleItems,
@@ -288,8 +241,9 @@ export function CollectionProvider({children}){
         importCollection,
         favorites,
         toggleFavorite,
-        isFavorite
-    }), [visibleItems, myKeys, createBox, viewingOther, toggleChar, isOwned, getOwnedCountByCategory, loginWithSecret, fetchOtherBox, exitOtherView, isLoadingOther, importCollection, favorites, toggleFavorite, isFavorite]);
+        isFavorite,
+        saveToServer
+    }), [visibleItems, myKeys, createBox, viewingOther, toggleChar, isOwned, getOwnedCountByCategory, loginWithSecret, fetchOtherBox, exitOtherView, isLoadingOther, importCollection, favorites, toggleFavorite, isFavorite, saveToServer]);
 
     return (
         <CollectionContext.Provider value = {contextValue}>
@@ -301,6 +255,13 @@ export function CollectionProvider({children}){
 export const useCollection = () => useContext(CollectionContext);
 
 export const useFavorites = () => {
-    const {favorites, toggleFavorite, isFavorite} = useContext(CollectionContext);
-    return { favorites, toggleFavorite, isFavorite};
+    const context = useContext(CollectionContext);
+    if(!context){
+        throw new Error("useFavorites must be used within a CollectionProvider");
+    }
+    return { 
+        favorites: context.favorites,
+        toggleFavorite: context.toggleFavorite, 
+        isFavorite: context.isFavorite
+    };
 };

@@ -11,7 +11,7 @@ export const useCharactersPageData = ({
     currentPage,
     pageSize
 }) => {
-    const {getOwnedCountByCategory, myKeys} = useCollection();
+    const {getOwnedCountByCategory, myKeys, ownedItems} = useCollection();
     const [debouncedSearch, setDebouncedSearch] = useState(searchTerm);
 
     //---Debounce Logic---
@@ -48,16 +48,20 @@ export const useCharactersPageData = ({
         search: debouncedSearch,
         page: currentPage,
         limit: pageSize,
-        userKey: myKeys?.secretKey
+        userKey: myKeys?.publicKey,
     });
 
     //---Owned Count Calculation---
     //Υπολογισμος ποσους χαρακτηρες εχει ο χαρακτηρας απο την τρέχουσα κατηγορια
     const ownedCount = useMemo(()=> {
-        return getOwnedCountByCategory(category, subCategory, isPlus);
-    }, [category, subCategory, isPlus, getOwnedCountByCategory]);
+        if(debouncedSearch && data?.matchingIds){
+            return data.matchingIds.filter(id => ownedItems[id]).length;
+        }
 
-    const displayOwnedCount = debouncedSearch ? (data?.ownedCount || 0) : ownedCount;
+        return getOwnedCountByCategory(category, subCategory, isPlus);
+    }, [category, subCategory, isPlus, getOwnedCountByCategory, debouncedSearch, data, ownedItems]);
+
+    const displayOwnedCount = ownedCount;
 
     return{
         characters: data?.characters || [],

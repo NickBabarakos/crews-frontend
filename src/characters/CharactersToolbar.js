@@ -56,9 +56,12 @@ function CharactersToolbar({
 
     const renderFilters = (isMobile = false) => (
         <div className={isMobile ? "filter-modal-body-content" : "toolbar-right desktop-only"}>
+
+            <div className="button-group">
             <button 
-                className={`pill-button ${characterCategory === 'all' ? 'active' : ''}`}
+                className={`group-main-btn single-btn ${characterCategory === 'all' ? 'active' : ''}`}
                 onClick={()=> handleMainCategoryClick('all')}> All Characters</button>
+            </div>
             
             <div className="button-group">
                 <button

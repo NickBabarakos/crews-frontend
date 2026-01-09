@@ -15,13 +15,15 @@ export const useCreatorManager = (adminSecret) => {
         setStatus({ inputType: 'url', urlInput: '', step: 'search', data: null, tempName: ''});
     };
 
-    const checkCreator = async () => {
-        if(!status.urlInput) return toast.error("Please enter a value");
+    const checkCreator = async (overrideParams = null) => {
+        const currentInput = overrideParams?.social_url || status.urlInput;
+
+        if(!currentInput) return toast.error("Please enter a value");
 
         try{
-            const payload = status.inputType === 'key'
-                ? { public_key: status.urlInput}
-                : { social_url: status.urlInput}
+            const payload = (status.inputType === 'key' && !overrideParams)
+                ? { public_key: currentInput}
+                : { social_url: currentInput}
             
                 const data = await adminService.checkCreator(payload, adminSecret);
 

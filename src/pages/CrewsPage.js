@@ -12,6 +12,7 @@ import ReportModal from "../crews/components/modals/ReportModal";
 import SubmitCrewModal from "../crews/features/SubmitCrew/SubmitCrewModal";
 import viewConfig from '../crews/utils/ViewConfig';
 import { useCrewFilterManager } from "../crews/hooks/useCrewFilterManager";
+import { useDynamicConfig } from "../crews/hooks/useDynamicConfig";
 
 /**
  * MAIN PAGE COMPONENT: Crews Listing
@@ -23,9 +24,10 @@ import { useCrewFilterManager } from "../crews/hooks/useCrewFilterManager";
 const CrewsPage = ({mode}) => {
     //1. CONFIGURATION LAYER
     // Loa the speicific settings for this game mode (e.g. Kizuna vs Grand Voyage)
-    const config = useMemo(()=> viewConfig[mode] || {}, [mode]); //Φόρτωση ρυθμίσεων για τη συγκεκριμένη σελίδα.
+    const staticConfig = useMemo(()=> viewConfig[mode] || {}, [mode]); //Φόρτωση ρυθμίσεων για τη συγκεκριμένη σελίδα.
     const eventNames = useEventNames();
-    const [pageSize, setPageSize] = useState(4);
+    const config = useDynamicConfig(staticConfig, eventNames);
+    const [pageSize, setPageSize] = useState(0);
     const [showOnlyOwned, setShowOnlyOwned] = useState(false);
     const [sortBy, setSortBy] = useState('default');
 
@@ -39,6 +41,7 @@ const CrewsPage = ({mode}) => {
         isInitializingRef,
         handleFilterChange,
         searchParams,
+        setSearchParams,
         clearUrlParams
     } = useCrewFilterManager(mode, config, pageSize, eventNames);
 
@@ -60,11 +63,18 @@ const CrewsPage = ({mode}) => {
         crewFilters,
         selectedBoss,
         currentPage,
-        pageSize,
+        pageSize: pageSize > 0 ? pageSize: 1,
         showOnlyOwned,
         sortBy,
         isInitializingRef
     });
+
+    const activeStageName = selectedBoss?.name 
+        || crewFilters.stage
+        || crewFilters.boss
+        || crewFilters.bosses 
+        || crewFilters.forest 
+        || crewFilters.challengeType;
 
 
 
@@ -90,15 +100,30 @@ const CrewsPage = ({mode}) => {
             {!isBossLoading && mode === 'coliseum' && !selectedBoss && (
                 <BossGridView
                     stages={bossesData?.stages || []}
-                    onBossClick={(boss) => {setSelectedBoss(boss); setCurrentPage(1);}}
-                    onPageSizeChange={()=>{}}
+                    onBossClick={(boss) => {
+                        const newParams = new URLSearchParams(searchParams);
+                        newParams.set('stage', boss.name);
+                        setSearchParams(newParams);
+                        setPageSize(0);
+                        setSelectedBoss(boss);
+                        setCurrentPage(1);
+                    }}
+                    onPageSizeChange={setPageSize}
                 />
             )}
 
             {mode === 'coliseum' && selectedBoss && (
                 <div style={{padding: '10px 40px', display: 'flex', alignItems: 'center', gap:'10px'}}>
                     <button 
-                        onClick={()=> {setSelectedBoss(null); clearUrlParams();}}
+                        onClick={()=> {
+                            setSelectedBoss(null);
+                            const newParams = new URLSearchParams(searchParams);
+                            newParams.delete('stage');
+                            newParams.delete('crew');
+                            setSearchParams(newParams);
+                            setPageSize(0);
+                            setCurrentPage(1);
+                        }}
                         className="pill-button active"
                     >Back</button>
                     <h3 style={{margin:0, color: 'var(--text-accent)'}}>{selectedBoss.name}</h3>
@@ -138,9 +163,10 @@ const CrewsPage = ({mode}) => {
             />
 
             <SubmitCrewModal
+                key={modals.isSubmitModalOpen ? 'submit-open' : 'submit-closed'}
                 isOpen={modals.isSubmitModalOpen}
                 onClose={modals.closeSubmit}
-                stageName={selectedBoss?.name || crewFilters.stage}
+                stageName={activeStageName}
                 stageId={modals.submitStageId}
             />
 

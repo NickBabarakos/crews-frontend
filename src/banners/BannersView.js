@@ -2,6 +2,7 @@ import {useRef, useEffect} from 'react';
 import './BannersView.css';
 import { useResponsiveGrid } from '../hooks/useResponsiveGrid';
 import { useEventTimer } from '../hooks/useEventTimer';
+import { ClockIcon } from '../components/Icons';
 
 function BannerCard({banner, onClick}){
     const {status, countdown, progress} = useEventTimer(banner.start_date, banner.end_date);
@@ -54,10 +55,7 @@ function BannerCard({banner, onClick}){
                     fontWeight: 600,
                     whiteSpace: 'nowrap'
                 }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <circle cx="12" cy="13" r="7" />
-                        <path d="M12 13V10" />
-                    </svg>
+                   <ClockIcon/>
                     <span>{timerText}</span>
                 </div>
             </div>

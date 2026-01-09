@@ -46,7 +46,7 @@ export const useCharacterInitialization = () => {
         newParams.delete('viewBox');
 
         Object.entries(updates).forEach(([key, value]) => {
-            if(value === null || value === false || value === 'all'){
+            if(value === null || value === false){
                 newParams.delete(key);
             } else{
                 newParams.set(key, value);
@@ -54,6 +54,18 @@ export const useCharacterInitialization = () => {
         });
         setSearchParams(newParams, {replace: true});
     }, [searchParams, setSearchParams]);
+
+    useEffect(()=> {
+        const params = new URLSearchParams(searchParams);
+
+        if([...params.keys()].length === 0){
+            updateUrl({
+                cat: category,
+                sub: subCategory,
+                plus: isPlus
+            });
+        }
+    }, [updateUrl, searchParams, category, subCategory, isPlus]);
 
     const handleCategoryChange = useCallback((newCategory) => {
         setCategory(newCategory);

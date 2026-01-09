@@ -68,6 +68,12 @@ function InsertCrewView({ adminSecret, prefilledData, onCancel, onApproveSuccess
                         name: prefilledData.creator_name || prefilledData.user_name 
                     }
                 });
+            } else if (prefilledData.creator_url){
+                updateCreatorState({
+                    step: 'search',
+                    urlInput: prefilledData.creator_url
+                });
+                checkCreator({social_url: prefilledData.creator_url});
             }
 
             if(prefilledData.crew_data){

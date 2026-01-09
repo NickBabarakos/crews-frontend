@@ -4,7 +4,23 @@ import { useCreatorVerification } from './useCreatorVerification';
 import { submitCrew } from '../../api/crewsService';
 import { getEventNames } from '../../api/stageService';
 import { useSubmitCrewState } from './useSubmitCrewState';
-import { isDynamicStage, getFormattedStageName } from '../utils/stageGuideUtils';
+import { isDynamicStage} from '../utils/stageGuideUtils';
+
+const isValidUrl = (string) => {
+    if(!string) return false;
+    try{
+        const url = new URL(string);
+        return url.protocol === "http:" || url.protocol === "https:";
+    } catch(_){
+        return false;
+    }
+};
+
+const isValidPublicKey = (key) => {
+    if(!key) return false;
+    const regex = /^pub-[a-fA-F0-9]{8}-[a-fA-F0-9]{8}$/;
+    return regex.test(key);
+};
 
 /**
  * SUBMIT MODAL CONTROLLER
@@ -47,8 +63,7 @@ export function useSubmitCrew(isOpen, onClose, stageName, stageId, myKeys){
                 .then(data=> {
                     const trueName = data[stageId];
                     if(trueName) {
-                        let finalName = getFormattedStageName(stageId, trueName);
-                        setDisplayStageName(finalName);
+                        setDisplayStageName(trueName);
                     }
         
                 })
@@ -60,13 +75,10 @@ export function useSubmitCrew(isOpen, onClose, stageName, stageId, myKeys){
     //2. Reset Form on Close
     useEffect(() => {
         if(!isOpen){
-            const timer = setTimeout(()=> {
                 resetForm();
                 setIsSubmitting(false);
                 verification.resetVerification(false);
-            },300);
-            return ()=> clearTimeout(timer);
-        }
+            }
     },[isOpen, resetForm, verification]);
 
 // --- HANDLERS ---
@@ -95,12 +107,17 @@ export function useSubmitCrew(isOpen, onClose, stageName, stageId, myKeys){
         setActiveStep(2);
        } else if(activeStep === 2){
         // Validation: Video URL or Text Guide content
-        if(formData.guideType === 'video' && !formData.videoUrl.trim()){
-            toast.error("Video URL is required!");
-            return;
-        }
-
         if(formData.guideType === 'video'){
+            if(!formData.videoUrl.trim()){
+                toast.error("Video URL is required");
+                return;
+            }
+
+            if(!isValidUrl(formData.videoUrl)){
+                toast.error("Please enter a valid URL (starting with http:// or https://)");
+                return;
+            }
+
             handleSubmit();
             return;
         }
@@ -128,6 +145,20 @@ export function useSubmitCrew(isOpen, onClose, stageName, stageId, myKeys){
         if(guideType !== 'video' && !crewTitle.trim()){
             toast.error("Crew Name is required");
             return; 
+        }
+
+        if(verification.inputType === 'handle' && verification.socialInput){
+            if(!isValidUrl(verification.socialInput)){
+                toast.error("Social Link must be a valid URL (http/https)");
+                return;
+            }
+        }
+
+        if(verification.inputType === 'key' && verification.keyInput){
+            if(!isValidPublicKey(verification.keyInput)){
+                toast.error("Invalid Key Format. It must look like: pub-xxxxxxxx-xxxxxxx");
+                return;
+            }
         }
 
         const isVerified = verification.verificationStep === 'confirmed';
@@ -191,7 +222,7 @@ export function useSubmitCrew(isOpen, onClose, stageName, stageId, myKeys){
             }
         } catch(error){
             console.error("Submission failed", error);
-            toast.error("Faied to submit crew. Please try again");
+            toast.error(error.response?.data?.error || "Failed to submit crew. Please try again");
         } finally {
             setIsSubmitting(false);
         }

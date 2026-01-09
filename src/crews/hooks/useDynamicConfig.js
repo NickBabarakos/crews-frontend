@@ -21,22 +21,24 @@ export const useDynamicConfig = (config, eventNames ) =>{
             if(config.mode === 'pirate_king_adventures'){
                 const bossFilter = newConfig.dropdowns.find(d => d.id === 'bosses');
                 if(bossFilter){
-                    bossFilter.options = [
-                        `${eventNames[281]} (Hex)`,
-                        `${eventNames[284]} (Hex)`,
-                        `${eventNames[287]} (Boss)`
-                    ];
+                    const dynamicOptions = [];
+                    if(eventNames[281]) dynamicOptions.push(eventNames[281]);
+                    if(eventNames[284]) dynamicOptions.push(eventNames[284]);
+                    if(eventNames[287]) dynamicOptions.push(eventNames[287]);
+
+                    if(dynamicOptions.length >0) bossFilter.options = dynamicOptions;
                 }
             }
             
             //2. Logic για TM
             if(config.mode === 'treasure_map'){
                 const tmFilter = newConfig.dropdowns.find(d=> d.id === 'boss');
-                if(tmFilter) {
-                    tmFilter.options = [
-                        `${eventNames[290]} (Boss)`,
-                        `${eventNames[291]} (Intrusion)`
-                    ];
+                if(tmFilter ) {
+                    const dynamicOptions = [];
+                    if(eventNames[290]) dynamicOptions.push(eventNames[290]);
+                    if(eventNames[291]) dynamicOptions.push(eventNames[291]);
+
+                    if(dynamicOptions.length>0) tmFilter.options = dynamicOptions;
                 }
             }
 

@@ -155,6 +155,7 @@
 
 
 
+
 .filters-container .pill-selector{
   flex-wrap: nowrap;
 }
@@ -408,11 +409,15 @@
   font-size: 13px;
   font-weight: 600;
   border: 1px solid var(--border-subtle);
-  background-color: rgba(var(--rgb-card,0.4));
-  color: var(--text-muted);
+  background-color: var(--bg-surface);
+  color: var(--text-500);
   border-radius: 8px;
   transition: all 0.2s ease;
   cursor: pointer;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .pill-button:hover{
@@ -852,6 +857,17 @@ input:checked:hover + .slider {
   text-align: center;
 }
 
+.group-main-btn.single-btn{
+  border-radius: 6px;
+  border-right: none;
+  width: 100%;
+}
+
+.filter-modal-body-content .pill-button{
+  width: 100%;
+  margin-bottom: 12px;
+  height: 40px;
+}
 
 .mobile-toolbar-grid {
   display: none;

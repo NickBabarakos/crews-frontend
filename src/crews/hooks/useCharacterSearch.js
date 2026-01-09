@@ -22,12 +22,10 @@ export const useCharacterSearch = (pageSize) => {
     // API Fetcher
     const fetchCharacters = useCallback(async (reset = false) => {
         if (loading) return;
-        if(pageSize === 0 && !reset) return;
         setLoading(true);
     
         const currentPage = reset ? 1 : page;
-        const calculatedLimit = pageSize > 0 ? Math.ceil((pageSize*3)/10)*10 : 60;
-        const actualLimit = Math.max(calculatedLimit, 60);
+        const actualLimit = 300;
     
         try{
             const data = await getCharacters ({
@@ -47,7 +45,7 @@ export const useCharacterSearch = (pageSize) => {
     } finally {
         setLoading(false);
     }
-    }, [page, searchTerm, loading, pageSize]);
+    }, [page, searchTerm, loading]);
 
     // Search Handler (Debounced)
     const handleSearch = (val) => {

@@ -7,33 +7,33 @@ import adminService from '../../api/adminService';
 export const useAdminAuth = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [secret, setSecret] = useState('');
+    const [token, setToken] = useState('');
 
     const navigate = useNavigate();
 
     useEffect(()=> {
-        const storedSecret = sessionStorage.getItem('admin_secret');
-        if(storedSecret){
-            verifySecret(storedSecret, true);
+        const storedToken = sessionStorage.getItem('admin_token');
+        if(storedToken){
+            verifyToken(storedToken, true);
         } else{
             setLoading(false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const verifySecret = async (inputSecret, isAutoLogin = false) => {
+    const verifyToken = async (inputToken, isAutoLogin = false) => {
         setLoading(true);
         try{
-            await adminService.verifyAuth(inputSecret);
+            await adminService.verifyAuth(inputToken);
 
             //Success
-            sessionStorage.setItem('admin_secret', inputSecret);
-            setSecret(inputSecret);
+            sessionStorage.setItem('admin_token', inputToken);
+            setToken(inputToken);
             setIsAuthenticated(true);
             if(!isAutoLogin) toast.success("Admin Access Granted");
         } catch (err){
             console.error("Auth failed", err);
-            sessionStorage.removeItem('admin_secret');
+            sessionStorage.removeItem('admin_token');
             setIsAuthenticated(false);
             
             if(!isAutoLogin){
@@ -45,18 +45,29 @@ export const useAdminAuth = () => {
         }
     };
 
-    const login = async (input) => {
-       if(!input) return toast.error("Please enter a secret");
-       await verifySecret(input);
+    const login = async (inputSecret) => {
+       if(!inputSecret) return toast.error("Please enter a secret");
+       
+       try{
+        setLoading(true);
+        const data = await adminService.login(inputSecret);
+
+        if(data.success && data.token){
+            await verifyToken(data.token);
+        }
+       } catch(err){
+        toast.error("Invalid Secret!");
+        setLoading(false);
+       }
     };
 
     const logout = () => {
-        sessionStorage.removeItem('admin_secret');
-        setSecret('');
+        sessionStorage.removeItem('admin_token');
+        setToken('');
         setIsAuthenticated(false);
         toast("Logged Out");
         navigate('/home');
     };
 
-    return {isAuthenticated, secret, login, logout, loading};
+    return {isAuthenticated, token, login, logout, loading};
 };

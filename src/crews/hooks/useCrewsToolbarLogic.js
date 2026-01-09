@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { useDynamicConfig } from "./useDynamicConfig";
 import { useToolbarLayout } from "./useToolbarLayout";
 import { usePillScroll } from "../../hooks/usePillScroll";
 
@@ -25,7 +24,7 @@ export const useCrewsToolbarLogic = ({
     const [openModalDropdown, setOpenModalDropdown] = useState(null);
     const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
     //--- Sub-Hooks Integration ---
-    const dynamicConfig = useDynamicConfig(config, eventNames);
+    const dynamicConfig = config;
     const {mobileLayoutStrategy, isPillsOnly} = useToolbarLayout(dynamicConfig);
     //2. UI/Scroll Logic Hook (Handles horizontal scrolling for pills)
     const {scrollStates, pillsRefs, checkScroll, handleWheel} = usePillScroll(dynamicConfig, crewFilterValues, isPillsOnly);

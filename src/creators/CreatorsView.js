@@ -1,49 +1,22 @@
-import React, {useRef, useEffect, useCallback} from 'react';
+import React, {useRef, useMemo} from 'react';
 import './CreatorsView.css';
+import { useTablePageSize } from './useTablePageSize';
 
 function CreatorsView({creators, onPageSizeChange, currentPage, pageSize}){
     const containerRef = useRef(null);
     const tableHeaderRef = useRef(null);
     const titleRef = useRef(null);
-    const resizeTimeoutRef = useRef(null);
 
-    const calculatePageSize = useCallback(()=> {
-        if(!containerRef.current) return;
-        const isMobile = window.innerWidth <= 768;
-        const containerHeight = containerRef.current.clientHeight;
+    const exclusionRefs = useMemo(()=> [titleRef, tableHeaderRef], []);
 
-        const titleHeight = titleRef.current ? titleRef.current.offsetHeight + (isMobile ? 15:50):150;
-        const tableHeaderHeight = tableHeaderRef.current? tableHeaderRef.current.offsetHeight : 60;
-        const paddingBuffer = isMobile ? 10: 40;
+    useTablePageSize(containerRef, exclusionRefs, {
+        onPageSizeChange,
+        mobileHeight: 55,
+        desktopHeight: 75,
+        mobileBuffer: 60, 
+        desktopBuffer: 100  
+    });
 
-        const availableHeight = containerHeight - titleHeight - tableHeaderHeight - paddingBuffer;
-        const estimatedRowHeight = isMobile ? 55:  75;
-
-        if (availableHeight <= 0 ) return;
-
-        const rowThatFit = Math.floor(availableHeight/estimatedRowHeight);
-        const newSize = Math.max(3,rowThatFit);
-        onPageSizeChange(newSize);
-    }, [onPageSizeChange]);
-
-    useEffect(()=>{
-        calculatePageSize();
-        
-        const observer = new ResizeObserver(()=> {
-            clearTimeout(resizeTimeoutRef.current);
-            resizeTimeoutRef.current = setTimeout(()=> {
-                calculatePageSize();
-            }, 100);
-        });
-
-        if(containerRef.current) { observer.observe(containerRef.current);}
-
-        return ()=> {
-            observer.disconnect();
-            clearTimeout(resizeTimeoutRef.current);
-        };
-
-}, [calculatePageSize]);
 
     if(!creators) return null;
 

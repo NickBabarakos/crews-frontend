@@ -1,5 +1,6 @@
 import { useRef} from 'react';
 import useOnClickOutside from '../../hooks/useOnClickOutside';
+import { ChevronDownIcon } from '../Icons';
 
 
 function Dropdown({options, selectedOption, onSelect, placeholder, isOpen, onToggle, className, disabled}){
@@ -14,6 +15,7 @@ function Dropdown({options, selectedOption, onSelect, placeholder, isOpen, onTog
     const handleSelectOption = (e, option) => { 
         e.stopPropagation();
         onSelect(option);
+        onToggle();
     };
 
     const handleToggleClick = (e) => {
@@ -39,9 +41,7 @@ function Dropdown({options, selectedOption, onSelect, placeholder, isOpen, onTog
                 type="button"
             >
                 <span title={selectedOption || placeholder}> {selectedOption || placeholder}</span>
-                <svg className="dropdown-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="https://www.w3.org/2000/svg">
-                    <path d="M4 6L8 10L12 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                <ChevronDownIcon className="dropdown-chevron"/>
             </button>
 
             {isOpen && (

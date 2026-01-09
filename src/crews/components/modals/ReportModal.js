@@ -66,6 +66,7 @@ function ReportModal({isOpen, onClose, crewData}){
                     value={message}
                     onChange={(e)=> setMessage(e.target.value)}
                     rows={5}
+                    maxLength={1000}
                 />
             </div>
         </BaseModal>

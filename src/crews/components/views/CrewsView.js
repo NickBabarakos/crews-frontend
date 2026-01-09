@@ -4,27 +4,9 @@ import PlaceholderCard from '../cards/Placeholder.js';
 import './CrewsView.css';
 import { useResponsiveGrid } from '../../../hooks/useResponsiveGrid.js';
 import EmptyCrewState from '../listing/EmptyCrewState.js';
+import { PlayIcon, DocIcon, PlusIcon } from '../../../components/Icons.js';
 
-const PlayIcon = () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{marginRight: '8px'}}>
-        <path d="M8 5V19L19 12L8 5Z" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-)
 
-const DocIcon = () => (
-    <svg width="20" height="20" viewbox = "0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{marginRight:'8px'}}>
-        <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L14 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M16 13H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M16 17H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M10 9H8"  stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-)
-
-const PlusIcon = () => (
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000.svg">
-        <path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-)
 
 const AddCrewCard = ({ onClick }) => (
     <div className="crew-container add-crew-slot" onClick={onClick}>
@@ -151,7 +133,7 @@ function CrewsView({crews, onPageSizeChange, showOnlyOwned, onAddCrewClick, onOp
                                     className="video-button text-guide-btn"
                                     onClick={()=> onOpenTextGuide(crewData)}
                                 >
-                                    <DocIcon/>Text Guide
+                                    <DocIcon style={{marginRight: '8px'}}/>Text Guide
                                 </button>
                             ):(
                                  <a 
@@ -159,7 +141,7 @@ function CrewsView({crews, onPageSizeChange, showOnlyOwned, onAddCrewClick, onOp
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="video-button">
-                                    <PlayIcon/>Video Guide
+                                    <PlayIcon style={{marginRight: '8px'}}/>Video Guide
                                 </a>
 
                             )}

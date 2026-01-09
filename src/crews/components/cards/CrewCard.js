@@ -1,19 +1,9 @@
 import InteractiveChar from '../../../components/common/InteractiveChar';
 import { useFavorites, useCollection } from '../../../context/CollectionContext';
-import { ArrowIcon, CommentIcon } from '../../../components/Icons';
+import { ArrowIcon, CommentIcon, FavoriteStarIcon as StarIcon } from '../../../components/Icons';
 import { useShareLink} from '../../../hooks/useShareLink';
 
-const StarIcon = ({filled}) => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {filled ? (
-            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-            fill="var(--color-gold)" stroke="var(--color-gold)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        ):(
-            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        )}
-    </svg>
-);
+
 
 
 /**

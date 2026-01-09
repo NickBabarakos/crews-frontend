@@ -27,6 +27,7 @@ export const useCrewInitialization = (mode, config, pageSize) => {
     const [selectedBoss, setSelectedBoss] = useState(null);
 
     // Ref to block 'useEffect' from overwriting URL while we are reading from it.
+    const crewRankRef = useRef(null);
     const isInitializingRef = useRef(false);
 
     /**
@@ -52,6 +53,7 @@ export const useCrewInitialization = (mode, config, pageSize) => {
             isInitializingRef.current = true;
 
             let filters = {};
+            let initalPage = 1;
 
             // PART A: Handle Shared Link (Dep Link to a specific Crew)
             if(crewId){
@@ -59,8 +61,10 @@ export const useCrewInitialization = (mode, config, pageSize) => {
                 try{
                     // Fetch context to see if this crew belongs to the current mode
                     const res = await apiClient.get(`/api/crews/${crewId}/context`);
-                    const {mode: crewMode} = res.data;
+                    const {mode: crewMode, rank} = res.data;
                     const targetRouteKey = Object.keys(viewConfig).find(key=> viewConfig[key].mode === crewMode);
+
+                    if(rank) crewRankRef.current = rank;
 
                     // Redirect if crew belongs to a different game mode
                     if(targetRouteKey && targetRouteKey !== mode){
@@ -70,13 +74,19 @@ export const useCrewInitialization = (mode, config, pageSize) => {
                     
 
                 }catch(err) { console.error("Error loading context", err);}
+            } else {
+                crewRankRef.current = null;
             }
+
             
             //PART B: Read Filters from URL (works for deep links and normal naviation)
             if(config.dropdowns){
                 config.dropdowns.forEach(d=> {
                     const val = searchParams.get(d.id);
-                    if(val) filters[d.id] = val;
+                    const hasOptions = d.options && Array.isArray(d.options);
+                    const optionsLoaded = hasOptions ? d.options.length > 0 : false;
+                    const isValidOption = hasOptions ? d.options.includes(val) : true;
+                    if(val && (!optionsLoaded || isValidOption)) filters[d.id] = val;
                 });
             }
 
@@ -104,7 +114,7 @@ export const useCrewInitialization = (mode, config, pageSize) => {
             }
         //Apply calculated filters to state   
         setCrewFilters(filters);
-        setCurrentPage(1);
+        setCurrentPage(initalPage);
         
         //Restore selectedBoss only if 'stage' parameter actually exists in URL
         const stageParam = searchParams.get('stage');
@@ -132,7 +142,13 @@ export const useCrewInitialization = (mode, config, pageSize) => {
 
     initialize();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [mode, crewIdParam, config, pageSize, navigate]);
+    }, [mode, crewIdParam, config, navigate]);
+
+    useEffect(()=> {
+        if(pageSize > 0 && crewRankRef.current){
+            setCurrentPage(Math.ceil(crewRankRef.current/pageSize));
+        }
+    }, [pageSize])
 
     // Helper to remove crew ID from URL (e.g when closing a modal or changing filter)
     const clearUrlParams = useCallback(() => {
@@ -149,6 +165,7 @@ export const useCrewInitialization = (mode, config, pageSize) => {
         crewFilters, setCrewFilters,
         currentPage, setCurrentPage,
         highlightedCrewId,
+        setHighlightedCrewId,
         selectedBoss, setSelectedBoss,
         isInitializingRef,
         clearUrlParams,

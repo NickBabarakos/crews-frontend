@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
 const INITIAL_CREW_DATA = {
     'Friend Captain': null,
@@ -68,7 +68,7 @@ export function useSubmitCrewState(){
     setSelectionState({editingSlot: null, selectedChar: null});
 };
 
-const resetForm = () =>{
+const resetForm = useCallback(() =>{
     setFormData({
         guideType: 'video',
         videoUrl: '',
@@ -78,7 +78,7 @@ const resetForm = () =>{
     });
     setActiveStep(1);
     setSelectionState({editingSlot: null, selectedChar: null});
-};
+},[]);
 
 return{
     activeStep, setActiveStep,

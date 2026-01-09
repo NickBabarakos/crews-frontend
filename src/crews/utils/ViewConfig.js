@@ -139,7 +139,7 @@ const viewConfig = {
             {
                 id: 'boss',
                 placeholder: 'Select Boss',
-                options: ['vs. Big Mum (Boss)', 'vs. Kid (Intrusion)']
+                options: ['Placeholder (Boss)', 'vs. Kid (Intrusion)']
             }
         ]
     }, 

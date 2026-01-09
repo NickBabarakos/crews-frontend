@@ -43,8 +43,8 @@ export const useCrewsPageData = ({
         mode: 'coliseum',
         level: crewFilters.level, 
         page: currentPage, 
-        limit: 60,
-        enabled: shouldFetchBosses
+        limit: pageSize > 0 ? pageSize: 0,
+        enabled: shouldFetchBosses && pageSize > 0
     });
 
 

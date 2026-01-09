@@ -1,7 +1,6 @@
 import React from "react";
 import Dropdown from "../../../components/common/Dropdown";
 import PillSelector from "../../../components/common/PillSelector";
-import { getCleanValue } from "../../../utils/textUtils";
 
 /**
  * GENERIC FILTER COMPONENT
@@ -40,9 +39,7 @@ function FilterControl({
 
     if(type === 'pill'){
         // Logic: Clean up the display text for specific modes
-        const displaySelectedValue = (value && (mode === 'pirate_king_adventures' || mode === 'treasure_map'))
-            ? options.find(opt => getCleanValue(opt, mode) === getCleanValue(value,mode))
-            : value;
+        const displaySelectedValue = value;
 
         //Scroll Mask Logic (fade effect on edges)
         const maskClass = scrollMode === 'none'
@@ -65,8 +62,8 @@ function FilterControl({
                         options={options} 
                         selectedOption={displaySelectedValue} 
                         onSelect={(option) => {
-                            const cleanValue = getCleanValue(option, mode);
-                            onSelect({ [id]: cleanValue});}}
+                            onSelect({[id]: option});
+                        }}
                     />
                 </div>
             </div>
@@ -82,7 +79,7 @@ function FilterControl({
                 placeholder={placeholder} 
                 onSelect={(option) => {
                     onSelect({[id]: option }); 
-                    if(onToggle) onToggle(); }} 
+                }} 
                 isOpen={isOpen} 
                 onToggle={onToggle}
                 disabled={disabled}

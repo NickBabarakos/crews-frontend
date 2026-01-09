@@ -1,5 +1,6 @@
 import {useState, useCallback} from 'react';
 import { getStageInfo } from '../../api/stageService';
+import {toast} from 'react-hot-toast';
 
 /**
  * MODALORCHESTRATOR HOOK
@@ -57,13 +58,27 @@ export const useCrewsPageModals = (config, crewFilters, selectedBoss, mode) => {
             setIsSubmitModalOpen(true)
         return;
         }
+
         
         // Case B: Other modes- Fetch Stage ID based on active filters
         let params = {mode: config.mode, ...crewFilters };
-        try{
+
+        const toastId = toast.loading("Preparing submission...");
+
+        try{ 
             const data = await getStageInfo(params);
-            if(data?.id) { setSubmitStageId(data.id); setIsSubmitModalOpen(true);}
-        } catch(e) { console.error(e)}
+
+            if(data?.id){
+                setSubmitStageId(data.id);
+                setIsSubmitModalOpen(true);
+                toast.dismiss(toastId);
+            } else{
+                toast.error("Could not find stage info. Pleas try again", {id: toastId});
+            }
+        } catch(e) {
+             console.error(e)
+            toast.error("Network Error. Please try again", {id: toastId});
+            }
     },[mode, selectedBoss, config.mode, crewFilters]);
 
     const closeGuide = useCallback(()=> setIsGuideOpen(false), []);

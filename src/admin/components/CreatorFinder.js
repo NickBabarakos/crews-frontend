@@ -62,15 +62,22 @@ function CreatorFinder({status, onUpdate, onCheck, onCreate, onCancel}) {
             {/*STEP 3: VERIFIED */}
             {status.step === 'verified' && status.data && (
                 <div className="creator-box verified">
-                    <p className="success-text">Creator Selected</p>
-                    <div className="verified-info">
-                        <span><strong>ID:</strong> {status.data.id}</span>
-                        <span><strong>Name:</strong>{status.data.name}</span>
-                    </div>
-                    <small>{status.data.social_url}</small>
 
-                    <button className="cancel-btn" onClick={onCancel}>
-                        Change Creator
+                    <div className="creator-details">
+                        <div className="status-row">
+                            <span className="success-badge">Creator Selected</span>
+                            <span className="id-badge">ID: {status.data.id}</span>
+                        </div>
+
+                        <h4 className="creator-name">{status.data.name}</h4>
+
+                        <a href={status.data.social_url} target="_blank" rel="noreferrer" className="creator-link">
+                            {status.data.social_url}
+                        </a>
+                    </div>
+
+                    <button className="change-btn" onClick={onCancel}>
+                        Change 
                     </button>
                 </div>
             )}

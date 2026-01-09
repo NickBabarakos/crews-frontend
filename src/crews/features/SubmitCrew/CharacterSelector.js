@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, useEffect} from 'react';
 import './CharacterSelector.css';
 import { useResponsiveGrid } from '../../../hooks/useResponsiveGrid';
 import { BackIcon } from '../../../components/Icons';
@@ -34,6 +34,15 @@ function CharacterSelector({onSelect, onBack}) {
         fetchCharacters,
         handleSearch 
     } = useCharacterSearch(pageSize);
+
+    useEffect(()=> {
+        const node = containerRef.current;
+        if(!node || loading || !hasMore || characters.length === 0) return;
+
+        if(node.scrollHeight <= node.clientHeight){
+            fetchCharacters(false);
+        }
+    }, [characters, hasMore, loading, fetchCharacters]);
 
 
     const handleScroll = (e) => {

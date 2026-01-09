@@ -54,6 +54,7 @@ function TextGuideEditor({ initialData, onSave }){
                                 onSave={(val)=> actions.updateNote(idx, val)}
                                 onDelete={()=> actions.deleteNote(idx)}
                                 placeholder="Enter note..."
+                                maxLength={1000}
                             />
                         </div>
                  ))}
@@ -64,6 +65,7 @@ function TextGuideEditor({ initialData, onSave }){
                     isNew 
                     onSave={actions.addNote}
                     placeholder="Add a note(e.g. Ship, Potential Abilities etc.)"
+                    maxLength={1000}
                     />
 
                  </div>
@@ -81,6 +83,7 @@ function TextGuideEditor({ initialData, onSave }){
                         onSave={(val)=> {actions.updateStageName(sIdx, val)}}
                         onDelete={()=>{ confirmDeleteStage(sIdx)}}
                         isHeader
+                        maxLength={100}
                     />
                 </div>
                 <div className="stage-card-body">
@@ -92,6 +95,7 @@ function TextGuideEditor({ initialData, onSave }){
                         onSave={(val)=> actions.updateInstruction(sIdx, iIdx, val)}
                         onDelete={()=> actions.deleteInstruction(sIdx, iIdx)}
                         placeholder="Describe the action..."
+                        maxLength={1000}
                     />
                 </div> 
                 ))}
@@ -101,6 +105,7 @@ function TextGuideEditor({ initialData, onSave }){
                             isNew
                             onSave={(val) => actions.addInstruction(sIdx, val)}
                             placeholder="Add step..."
+                            maxLength={1000}
                         />
                 </div>
                 </div>
@@ -113,6 +118,7 @@ function TextGuideEditor({ initialData, onSave }){
                         onSave={actions.addStage}
                         placeholder="+ Add New Stage"
                         icon=""
+                        maxLength={100}
                     />
                 </div>
                 </div>

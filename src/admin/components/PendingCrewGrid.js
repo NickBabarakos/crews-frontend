@@ -6,7 +6,7 @@ function PendingCrewGrid({crews, loading, onSelect, onRefresh}){
         <div className="approve-container">
             <div className="review-header">
                 <h2 className="review-title">Pending Submissions ({crews.length})</h2>
-                <button className="back-btn-list" onClick={onRefresh}>Refresh</button>
+                <button className="refresh-btn" onClick={onRefresh}>Refresh</button>
             </div>
 
             {loading ? (

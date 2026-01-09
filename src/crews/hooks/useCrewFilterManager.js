@@ -21,6 +21,7 @@ export const useCrewFilterManager = (mode, config, pageSize, eventNames) => {
         currentPage, setCurrentPage,
         selectedBoss, setSelectedBoss,
         highlightedCrewId,
+        setHighlightedCrewId,
         isInitializingRef,
         clearUrlParams,
         searchParams,
@@ -47,6 +48,10 @@ export const useCrewFilterManager = (mode, config, pageSize, eventNames) => {
             if(value){ newParams.set(key, value);}
     });
 
+    if(!highlightedCrewId){
+        newParams.delete('crew');
+    }
+
     //Sync selected Boss to URL for Coliseum mode
     //This ensures clicking a boss updates the URL to ?stage=BossName
     if(mode==='coliseum'){
@@ -59,7 +64,7 @@ export const useCrewFilterManager = (mode, config, pageSize, eventNames) => {
 
     setSearchParams(newParams, {replace: true});
     //eslint-disable-next-line react-hooks/exhaustive-deps
-}, [crewFilters, selectedBoss]);
+}, [crewFilters, selectedBoss, highlightedCrewId]);
 
     /**
      * EFFECT 2: Auto-Select Boss
@@ -88,7 +93,7 @@ export const useCrewFilterManager = (mode, config, pageSize, eventNames) => {
      * e.g. If 'Challenge type' chages, reset 'Challenge Detail'
      */
     const handleFilterChange = useCallback((newFilter) => {
-        clearUrlParams(); // Remove ?crew=ID when user manually filters
+        setHighlightedCrewId(null);
         const config = viewConfig[mode];
 
         setCrewFilters(prev =>{
@@ -120,7 +125,7 @@ export const useCrewFilterManager = (mode, config, pageSize, eventNames) => {
         return updated;
         });
         setCurrentPage(1); //Always reset to page 1 on filter change 
-    },[mode, clearUrlParams, setCrewFilters, setCurrentPage]);
+    },[mode, setHighlightedCrewId, setCrewFilters, setCurrentPage]);
 
     return{
         //State
@@ -136,6 +141,7 @@ export const useCrewFilterManager = (mode, config, pageSize, eventNames) => {
         setSelectedBoss,
         handleFilterChange,
         clearUrlParams,
-        searchParams
+        searchParams,
+        setSearchParams
     };
 };

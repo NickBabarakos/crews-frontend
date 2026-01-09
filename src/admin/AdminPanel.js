@@ -1,6 +1,7 @@
 import React, {useState} from "react";
-import axios from 'axios';
 import './Admin.css';
+
+import { useAdminAuth } from "./hooks/useAdminAuth";
 import InsertCharacterView from "./InsertCharacterView";
 import InsertCrewView from "./InsertCrewView";
 import ApproveCrewsView from "./ApproveCrewsView";
@@ -8,46 +9,24 @@ import ManageReportsView from "./ManageReportsView";
 import InsertBannerView from "./InsertBannerView";
 import ManageContentView from "./ManageContentView";
 
-const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 function AdminPanel({onExit}) {
-    const [isAuthenticated, setIsAuthenticated] = useState(()=> { return !!sessionStorage.getItem('admin_secret');});
-    const [secretInput, setSecretInput] = useState(()=> {return sessionStorage.getItem('admin_secret') || '';});
+    const {isAuthenticated, token, login, logout, loading} = useAdminAuth();
+    const [secretInput, setSecretInput] = useState('');
     const [activeTab, setActiveTab] = useState('insert_char');
 
 
-    const handleLogin = async (e) => {
+   const handleLoginSubmit = (e) =>{
         e.preventDefault();
+        login(secretInput);
+   };
 
-        if(secretInput.length > 5){
-            try{
-                await axios.get(`${BASE_URL}/api/admin/reports`, {
-                    headers: {'x-admin-secret': secretInput}
-                });
-
-                sessionStorage.setItem('admin_secret', secretInput);
-                setIsAuthenticated(true);
-            }catch(err){
-                alert("Wrong Admin Secret! Access Denied.");
-                setSecretInput('');
-                if(onExit) onExit();
-            }
-            } else {
-            alert("Password too short");
-            if (onExit) onExit();
-        }
-    };
-
-    const handleLogout = ()=> {
-        sessionStorage.removeItem('admin_secret');
-        setIsAuthenticated(false);
-        setSecretInput('');
-    }
+   if(loading) return <div className="admin-container">Loading...</div>
 
     if(!isAuthenticated){
         return(
             <div className="admin-container">
-                <form className="admin-login" onSubmit={handleLogin}>
+                <form className="admin-login" onSubmit={handleLoginSubmit}>
                     <h2>Admin Access</h2>
                     <input 
                         type="password"
@@ -61,11 +40,13 @@ function AdminPanel({onExit}) {
         );
     }
 
+    const authProp = token;
+
     return(
         <div className="admin-container">
             <div className="admin-header">
                 <h1>OPTC Database Admin</h1>
-                <button onClick={handleLogout} className="logout-btn">Logout</button>
+                <button onClick={logout} className="logout-btn">Logout</button>
             </div>
 
             <div className="admin-nav">
@@ -102,23 +83,23 @@ function AdminPanel({onExit}) {
             </div>
 
             <div className="admin-content">
-                {activeTab === 'insert_char' && <InsertCharacterView adminSecret={secretInput} />}
+                {activeTab === 'insert_char' && <InsertCharacterView adminSecret={authProp} />}
 
                 {activeTab === 'insert_crew' && (
-                    <InsertCrewView adminSecret={secretInput}/>
+                    <InsertCrewView adminSecret={authProp}/>
                 )}
 
                 {activeTab === 'approve_crew' && (
-                    <ApproveCrewsView View adminSecret={secretInput} />
+                    <ApproveCrewsView View adminSecret={authProp} />
                 )}
 
                 {activeTab === 'manage_reports' && (
-                    <ManageReportsView adminSecret={secretInput}/>
+                    <ManageReportsView adminSecret={authProp}/>
                 )}
 
-                {activeTab === 'insert_banner' && <InsertBannerView adminSecret={secretInput}/>}
+                {activeTab === 'insert_banner' && <InsertBannerView adminSecret={authProp}/>}
 
-                {activeTab === 'manage_content' && <ManageContentView adminSecret={secretInput} />}
+                {activeTab === 'manage_content' && <ManageContentView adminSecret={authProp} />}
             </div>
         </div>
     );

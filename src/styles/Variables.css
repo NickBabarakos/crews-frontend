@@ -35,6 +35,9 @@
 --color-info: #38bdf8;         /* Sky Blue (Info, Share) */
 --color-info-darker: #0ea5e9;
 --color-gold: #fbbf24;         /* Rank1, Favorites */
+--color-gold-light: #fde047;   /* Bright Highlight */
+--color-gold-dark: #d97706;    /* Deep Bronze/Amber */
+--color-gold-glow: rgba(251, 191, 36, 0.5); /*Glow Effect */
 
 --rgb-primary: 139, 92, 246;     /* brand-500 */
 --rgb-accent: 167, 139, 250;     /* brand-400 */

@@ -1,6 +1,5 @@
-import {useRef, useEffect} from 'react';
+import {useRef, useLayoutEffect} from 'react';
 import './BossGridView.css';
-import { useResponsiveGrid } from '../../../hooks/useResponsiveGrid';
 
 /**
  * BOSS SELECTION GRID (Coliseum Mode Only)
@@ -38,16 +37,36 @@ function BossCard({stage, onClick}){
 function BossGridView({stages, onPageSizeChange, onBossClick}){
     const gridRef = useRef(null);
     
-    const calculatedSize = useResponsiveGrid(gridRef, {
-        cardWidth: 240,
-        cardHeight: 70,
-        gap: 16,
-        minRows: 1
-    });
+    useLayoutEffect(()=> {
+        if(!gridRef.current) return;
 
-    useEffect(()=>{
-        if (calculatedSize>0) onPageSizeChange(calculatedSize);
-    }, [calculatedSize, onPageSizeChange]);
+        const calculateSize = (entries) =>{
+            const entry = entries[0];
+            if(!entry) return;
+
+            const {width, height} = entry.contentRect;
+
+            if(width<=0 || height <= 0) return;
+
+            const CARD_MIN_WIDTH=240;
+            const CARD_HEIGHT = 70;
+            const GAP = 16;
+
+            const columns = Math.floor((width + GAP)/(CARD_MIN_WIDTH + GAP));
+
+            const rows = Math.floor((height+GAP)/(CARD_HEIGHT + GAP));
+
+            const safeCols = Math.max(1,columns);
+            const safeRows = Math.max(1,rows);
+
+            const newPageSize = safeCols * safeRows;
+            onPageSizeChange(prev => (prev !== newPageSize ? newPageSize : prev));
+        };
+
+        const observer = new ResizeObserver(calculateSize);
+        observer.observe(gridRef.current);
+    }, [onPageSizeChange]);
+
 
     return(
         <div className="boss-grid-view" ref={gridRef}>
