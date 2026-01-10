@@ -37,7 +37,9 @@ import hitBarrierIcon from '../../assets/gimmicks/combo-barrier-hit.png';
 import perfectBarrierIcon from '../../assets/gimmicks/combo-barrier-perfect.png';
 import greatBarrierIcon from '../../assets/gimmicks/combo-barrier-great.png';
 import goodBarrierIcon from '../../assets/gimmicks/combo-barrier-good.png';
+import rainbowBarrierIcon from '../../assets/gimmicks/combo-barrier-rainbow.png';
 import harderTapTimingIcon from '../../assets/gimmicks/harder-tap-timing.png';
+import chainUpperLimitIcon from '../../assets/gimmicks/chain-upper-limit.png';
 
 export const ICON_MAP ={
     'atk_down': atkDownIcon,
@@ -79,6 +81,8 @@ export const ICON_MAP ={
     'great_barrier': greatBarrierIcon,
     'good_barrier': goodBarrierIcon,
     'harder_tap_timing': harderTapTimingIcon,
+    'chain_upper_limit': chainUpperLimitIcon,
+    'rainbow_barrier': rainbowBarrierIcon,
     'default': null
 };
 
