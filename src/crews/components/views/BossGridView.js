@@ -1,5 +1,6 @@
 import {useRef, useLayoutEffect} from 'react';
 import './BossGridView.css';
+import { getImageUrl } from '../../../utils/imageUtils';
 
 /**
  * BOSS SELECTION GRID (Coliseum Mode Only)
@@ -21,7 +22,7 @@ function BossCard({stage, onClick}){
         >
             <div className="boss-image-wrapper">
                 <img 
-                    src={stage.image_url ? `${stage.image_url}.png`: '/boss-placeholder.png'}
+                    src={stage.image_url ? getImageUrl(`${stage.image_url}.png`): '/boss-placeholder.png'}
                     alt={stage.name}
                     loading="lazy"
                     onError={(e)=> {e.target.src='/boss-placeholder.png'}}

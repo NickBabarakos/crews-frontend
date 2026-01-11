@@ -65,16 +65,16 @@
     transition: all 0.4s ease;
 }
 
-.characters-button { --bg-image: url('/public/buttons_bg/characters-bg.png');}
-.banners-button {--bg-image: url('/public/buttons_bg/banners-bg.png');}
-.grand-voyage-button { --bg-image: url('/public/buttons_bg/grand-voyage-bg.png');}
-.garps-challenge-button { --bg-image: url('/public/buttons_bg/garps-challenge-bg.png');}
-.forest-of-training-button { --bg-image: url('/public/buttons_bg/forest-of-training-bg.png');}
-.clash-button { --bg-image: url('/public/buttons_bg/clash-bg.png');}
-.coliseum-button { --bg-image: url('/public/buttons_bg/coliseum-bg.png');}
-.pka-button { --bg-image: url('/public/buttons_bg/pka-bg.png');}
-.treasure-map-button { --bg-image: url('/public/buttons_bg/treasure-map-bg.png');}
-.kizuna-clash-button { --bg-image: url('/public/buttons_bg/kizuna-clash-bg.png');}
+.characters-button { --bg-image: url('https://optc-crews-assets.github.io/optc-crews-assets/buttons_bg/characters-bg.png');}
+.banners-button { --bg-image: url('https://optc-crews-assets.github.io/optc-crews-assets/buttons_bg/banners-bg.png');}
+.grand-voyage-button { --bg-image: url('https://optc-crews-assets.github.io/optc-crews-assets/buttons_bg/grand-voyage-bg.png');}
+.garps-challenge-button { --bg-image: url('https://optc-crews-assets.github.io/optc-crews-assets/buttons_bg/garps-challenge-bg.png');}
+.forest-of-training-button { --bg-image: url('https://optc-crews-assets.github.io/optc-crews-assets/buttons_bg/forest-of-training-bg.png');}
+.clash-button { --bg-image: url('https://optc-crews-assets.github.io/optc-crews-assets/buttons_bg/clash-bg.png');}
+.coliseum-button { --bg-image: url('https://optc-crews-assets.github.io/optc-crews-assets/buttons_bg/coliseum-bg.png');}
+.pka-button { --bg-image: url('https://optc-crews-assets.github.io/optc-crews-assets/buttons_bg/pka-bg.png');}
+.treasure-map-button { --bg-image: url('https://optc-crews-assets.github.io/optc-crews-assets/buttons_bg/treasure-map-bg.png');}
+.kizuna-clash-button { --bg-image: url('https://optc-crews-assets.github.io/optc-crews-assets/buttons_bg/kizuna-clash-bg.png');}
 
 .sidebar-accent{
     width: 4px;

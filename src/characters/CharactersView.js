@@ -3,6 +3,7 @@ import { useCollection } from '../context/CollectionContext';
 import './CharactersView.css';
 import { useResponsiveGrid } from '../hooks/useResponsiveGrid';
 import InteractiveChar from '../components/common/InteractiveChar';
+import { getImageUrl } from '../utils/imageUtils';
 
 
 const CharacterCard = memo(({character, isMobile}) =>{
@@ -17,7 +18,7 @@ const CharacterCard = memo(({character, isMobile}) =>{
             className={`character-card ${owned ? '' : 'missing'}`}
             title={character.name}
         >
-            <img src={`${character.image_url}.png`} alt={character.name} style={{pointerEvents: 'none'}} />
+            <img src={getImageUrl(`${character.image_url}.png`)} alt={character.name} style={{pointerEvents: 'none'}} />
         </InteractiveChar>
     );
 });

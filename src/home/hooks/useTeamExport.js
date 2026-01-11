@@ -66,7 +66,7 @@ export const useTeamExport = (exportRef) => {
                     width: element.scrollWidth,
                     height: element.scrollHeight,
                     useCORS: true,
-                    cacheBust: false
+                    cacheBust: true
             });
 
             //4. Download

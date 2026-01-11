@@ -3,7 +3,7 @@ import { Outlet, useNavigate, useSearchParams, useLocation } from 'react-router-
 import apiClient from "../api/client";
 import Header from "../components/layout/Header";
 import Sidebar from "../components/layout/Sidebar";
-import landscapeWarning from '../assets/landscape-warning.png';
+import { getImageUrl } from "../utils/imageUtils";
 
 const MainLayout = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -59,7 +59,7 @@ const MainLayout = () => {
         <div className="app-container">
             <div className="landscape-warning">
                 <div className="warning-content">
-                    <img src={landscapeWarning} alt="Usopp Panic" className="usopp-img" />
+                    <img src={getImageUrl('./other/landscape-warning.png')} alt="Usopp Panic" className="usopp-img" />
                         <div className="text-container">
                             <h1>NAMIIIII! WE'RE OFF COURSE!</h1>
                             <p>

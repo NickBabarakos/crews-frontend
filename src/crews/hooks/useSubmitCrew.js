@@ -5,6 +5,7 @@ import { submitCrew } from '../../api/crewsService';
 import { getEventNames } from '../../api/stageService';
 import { useSubmitCrewState } from './useSubmitCrewState';
 import { isDynamicStage} from '../utils/stageGuideUtils';
+import { useQueryClient } from '@tanstack/react-query';
 
 const isValidUrl = (string) => {
     if(!string) return false;
@@ -133,8 +134,7 @@ export function useSubmitCrew(isOpen, onClose, stageName, stageId, myKeys){
         setActiveStep(3);
        }
     };
-
-
+    const queryClient = useQueryClient();
     /**
      * FINAL SUBMISSION
      * Constructs the payload and sends it to the server.
@@ -215,6 +215,7 @@ export function useSubmitCrew(isOpen, onClose, stageName, stageId, myKeys){
             const data = await submitCrew(payload);
 
             if(data.success){
+                await queryClient.invalidateQueries({queryKey: ['crews']});
                 toast.success("Crew submitted sucessfully!");
                 setTimeout(()=> {
                     onClose();

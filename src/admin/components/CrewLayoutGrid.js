@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import CharacterSelector from '../../crews/features/SubmitCrew/CharacterSelector';
 import CharacterDetailsView from '../../crews/features/SubmitCrew/CharacterDetailsView';
+import { getImageUrl } from '../../utils/imageUtils';
 
 const CREW_LAYOUT = [
     { mainId: 'Friend Captain', label: 'Friend Captain', hasSupport: false},
@@ -61,7 +62,7 @@ function CrewLayoutGrid({members, setMembers}) {
                             <div className="submission-slot main-slot" onClick={()=> handleSlotClick(slot.mainId)}>
                                 {members[slot.mainId] ? (
                                     <>
-                                        <img src = {`${members[slot.mainId].image_url}.png`} alt="char" className="selected-char-img" />
+                                        <img src = {getImageUrl(`${members[slot.mainId].image_url}.png`)} alt="char" className="selected-char-img" />
                                         {members[slot.mainId].level && members[slot.mainId].level !== 'No' && (
                                         <div className="level-badge">Lv.{members[slot.mainId].level}</div>
                                         )}
@@ -75,7 +76,7 @@ function CrewLayoutGrid({members, setMembers}) {
                                 <div className="submission-slot support-slot" onClick={()=> handleSlotClick(slot.supportId)}>
                                     {members[slot.supportId] ? (
                                         <>
-                                            <img src={`${members[slot.supportId].image_url}.png`} alt="sup" className="selected-char-img" />
+                                            <img src={getImageUrl(`${members[slot.supportId].image_url}.png`)} alt="sup" className="selected-char-img" />
                                             {members[slot.supportId].supportType === 'optional' && <div className="optional-indicator">!</div>}
                                         </>
                                     ): <div className="empty-slot-indicator small">+</div>}

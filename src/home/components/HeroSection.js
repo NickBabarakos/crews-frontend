@@ -1,9 +1,13 @@
 import React from "react";
 import '../HomePage.css';
+import { getImageUrl } from "../../utils/imageUtils";
 
 const HeroSection = ({activeCrewCount, onBuildClick, onSyncClick}) => {
     return(
-         <section className="hero-section">
+         <section 
+            className="hero-section"
+            style={{backgroundImage: `url(${getImageUrl('other/hero-bg.png')})`}}
+        >
             <div className="hero-content-wrapper">
 
                 <div className="live-badge">

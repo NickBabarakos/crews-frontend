@@ -1,4 +1,5 @@
 import React from "react";
+import { getImageUrl } from "../../../utils/imageUtils";
 
 const TeamSlot = ({slotId, label,data, onClick, isSupport = false, isOptional = false, }) =>{
     //data is the specific character object for this slot
@@ -12,7 +13,7 @@ const TeamSlot = ({slotId, label,data, onClick, isSupport = false, isOptional = 
                 {data ? (
                     <>
                         <img 
-                            src={`${data.image_url}.png`}
+                            src={getImageUrl(`${data.image_url}.png`)}
                             alt={label}
                             className="selected-char-img"
                         />

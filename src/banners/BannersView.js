@@ -3,6 +3,7 @@ import './BannersView.css';
 import { useResponsiveGrid } from '../hooks/useResponsiveGrid';
 import { useEventTimer } from '../hooks/useEventTimer';
 import { ClockIcon } from '../components/Icons';
+import { getImageUrl } from '../utils/imageUtils';
 
 function BannerCard({banner, onClick}){
     const {status, countdown, progress} = useEventTimer(banner.start_date, banner.end_date);
@@ -31,7 +32,7 @@ function BannerCard({banner, onClick}){
     return (
         <div className={`banner-card ${status}`} onClick={()=> onClick(banner.id)}>
             <div className="banner-image-container">
-                <img src={banner.image_url} alt={banner.title} loading="lazy" />
+                <img src={getImageUrl(banner.image_url)} alt={banner.title} loading="lazy" />
 
                 {status === 'active' && (
                     <div className="banner-progress-overlay" style={{

@@ -2,6 +2,7 @@ import React from 'react';
 import {useCollection} from '../context/CollectionContext';
 import BaseModal from '../components/modals/BaseModal';
 import InteractiveChar from '../components/common/InteractiveChar';
+import { getImageUrl } from '../utils/imageUtils';
 import '../characters/CharactersView.css';
 import './BannerModal.css';
 
@@ -49,7 +50,7 @@ function BannerModal({isOpen, onClose, data, loading}){
                                             className={`character-card small ${isOwned(char.id) ? '' : 'missing'}`}
                                             title={char.name}
                                         >
-                                            <img src={`${char.image_url}.png`} alt={char.name} loading="lazy"/>
+                                            <img src={getImageUrl(`${char.image_url}.png`)} alt={char.name} loading="lazy"/>
                                         </InteractiveChar>
                                     ))}
                                 </div>

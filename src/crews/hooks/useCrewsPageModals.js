@@ -63,7 +63,6 @@ export const useCrewsPageModals = (config, crewFilters, selectedBoss, mode) => {
         // Case B: Other modes- Fetch Stage ID based on active filters
         let params = {mode: config.mode, ...crewFilters };
 
-        const toastId = toast.loading("Preparing submission...");
 
         try{ 
             const data = await getStageInfo(params);
@@ -71,13 +70,12 @@ export const useCrewsPageModals = (config, crewFilters, selectedBoss, mode) => {
             if(data?.id){
                 setSubmitStageId(data.id);
                 setIsSubmitModalOpen(true);
-                toast.dismiss(toastId);
             } else{
-                toast.error("Could not find stage info. Pleas try again", {id: toastId});
+                toast.error("Could not find stage info. Pleas try again");
             }
         } catch(e) {
              console.error(e)
-            toast.error("Network Error. Please try again", {id: toastId});
+            toast.error("Network Error. Please try again");
             }
     },[mode, selectedBoss, config.mode, crewFilters]);
 

@@ -3,6 +3,7 @@ import './CharacterSelector.css';
 import { useResponsiveGrid } from '../../../hooks/useResponsiveGrid';
 import { BackIcon } from '../../../components/Icons';
 import {useCharacterSearch} from '../../hooks/useCharacterSearch';
+import { getImageUrl } from '../../../utils/imageUtils';
 
 /**
  * CHARACTER SEARCH MODAL
@@ -92,7 +93,7 @@ function CharacterSelector({onSelect, onBack}) {
                     onClick={()=>onSelect(char)}
                 >
                     <img 
-                        src={`${char.image_url}.png`}
+                        src={getImageUrl(`${char.image_url}.png`)}
                         alt={char.name}
                         loading="lazy"
                     />

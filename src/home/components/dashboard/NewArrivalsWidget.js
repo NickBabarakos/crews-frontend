@@ -2,6 +2,7 @@ import React from "react";
 import DashboardCard from "./DashboardCard";
 import InteractiveChar from "../../../components/common/InteractiveChar";
 import { StarIcon } from "../../../components/Icons";
+import { getImageUrl } from "../../../utils/imageUtils";
 
 
 
@@ -21,7 +22,7 @@ const NewArrivalsWidger = ({units = []}) =>{
                         className="unit-icon-wrapper"
                         style={{width: '100%', aspectRatio: '1/1'}}
                     >
-                        <img src={`${unit.image_url}.png`} alt={unit.name} loading="lazy" />
+                        <img src={getImageUrl(`${unit.image_url}.png`)} alt={unit.name} loading="lazy" />
                     </InteractiveChar>
                 ))}
             </div>

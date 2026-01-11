@@ -2,6 +2,7 @@ import InteractiveChar from '../../../components/common/InteractiveChar';
 import { useFavorites, useCollection } from '../../../context/CollectionContext';
 import { ArrowIcon, CommentIcon, FavoriteStarIcon as StarIcon } from '../../../components/Icons';
 import { useShareLink} from '../../../hooks/useShareLink';
+import { getImageUrl } from '../../../utils/imageUtils';
 
 
 
@@ -47,7 +48,7 @@ function MemberSlot({main, support, role, exportMode}) {
                 className={`character-link ${main ? 'has-image': ''}`}
             >
                 <img 
-                    src={`${main.image_url}.png`} 
+                    src={getImageUrl(`${main.image_url}.png`)} 
                     alt={main.name} 
                     title={main.name} 
                     className={`character-image ${isMainOwned ? '': 'missing'}`}
@@ -69,7 +70,7 @@ function MemberSlot({main, support, role, exportMode}) {
                 className="support-link has-image"
             >
                 <img 
-                    src={`${support.image_url}.png`} 
+                    src={getImageUrl(`${support.image_url}.png`)} 
                     alt={support.name} 
                     className={`support-image ${isSupportOwned ? '' : 'missing'}`}
                     crossOrigin="anonymous"

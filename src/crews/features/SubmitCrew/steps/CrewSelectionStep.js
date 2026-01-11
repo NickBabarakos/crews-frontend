@@ -1,5 +1,6 @@
 import React from 'react';
 import '../SubmitCrewModal.css';
+import { getImageUrl } from '../../../../utils/imageUtils';
 
 //STATIC CONFIG: Defines the visual layout of the 6-man team + supports.
 // Used to iterate and render slots dynamically instead of hardcoding HTML.
@@ -47,7 +48,7 @@ function CrewSelectionStep({crewData, onSlotClick, guideType, setGuideType}){
                             {crewData[slot.mainId] ? (
                                 <>
                                     <img 
-                                        src={`${crewData[slot.mainId].image_url}.png`}
+                                        src={getImageUrl(`${crewData[slot.mainId].image_url}.png`)}
                                         alt="Selected"
                                         className="selected-char-img"
                                     />
@@ -72,7 +73,7 @@ function CrewSelectionStep({crewData, onSlotClick, guideType, setGuideType}){
                                     {crewData[slot.supportId] ? (
                                         <>
                                             <img
-                                                src={`${crewData[slot.supportId].image_url}.png`}
+                                                src={getImageUrl(`${crewData[slot.supportId].image_url}.png`)}
                                                 alt="Sup"
                                                 className="selected-char-img"
                                             />
