@@ -32,11 +32,14 @@ export function useCreatorVerification(myKeys){
         setInputType('handle');
     };
 
-     const verifyHandle = async() => {
-        if(!socialInput.trim()) return;
+     const verifyHandle = async(e) => {
+        if(e && e.preventDefault) e.preventDefault();
+        const cleanInput = socialInput.trim();
+
+        if(!cleanInput) return;
         setVerificationStep('checking');
         try{
-            const data = await verifyCreatorHandle(socialInput);
+            const data = await verifyCreatorHandle(cleanInput);
             if(data.status === 'FOUND'){
                 setCreatorIdentity(data.creator);
                 setVerificationStep('found');
@@ -45,12 +48,17 @@ export function useCreatorVerification(myKeys){
             }
         } catch(err){
             console.error(err);
-            toast.error("Verification failed");
+            if(err.response && err.response.status === 404){
+                setVerificationStep('not_found');
+                return;
+            }
+            toast.error("Verification failed. Please check the URL/Handle");
             setVerificationStep('idle');
         }
     };
 
-    const verifyKey = async () => {
+    const verifyKey = async (e) => {
+        if(e && e.preventDefault) e.preventDefault();
             if(!keyInput.trim()) return;
             setVerificationStep('checking');
             try{

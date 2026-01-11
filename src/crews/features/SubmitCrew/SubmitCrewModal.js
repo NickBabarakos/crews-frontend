@@ -149,6 +149,7 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
                                 verificationStep={verification.verificationStep}
                                 creatorIdentity={verification.creatorIdentity}
                                 socialInput={verification.socialInput}
+                                setSocialInput={verification.setSocialInput}
                                 keyInput={verification.keyInput}
                                 setKeyInput={verification.setKeyInput}
                                 manualName={verification.manualName}
