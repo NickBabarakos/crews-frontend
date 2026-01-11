@@ -3,6 +3,7 @@ import React, {useState} from "react";
 import DashboardCard from "./DashboardCard";
 import BaseModal from "../../../components/modals/BaseModal";
 import { LogIcon, PinIcon } from "../../../components/Icons";
+import ReactMarkdown from 'react-markdown';
 
 /**
  * COMPONENT: Changelog Dahsboard Widget
@@ -62,11 +63,13 @@ const ChangelogWidget = ({logs = []}) => {
                 isOpen={!!activeLog}
                 onClose={()=> setActiveLog(null)}
                 title={activeLog?.title || ''}
-                size="small"
+                size="medium"
                 footer={<button className="base-btn base-btn-secondary" onClick={()=> setActiveLog(null)}>Close</button>}
             >
-                <div className="changelog-body" style={{color: '#cdb5e1', lineHeight: '1.6', whiteSpace: 'pre-wrap'}}>
-                    {activeLog?.text}
+                <div className="changelog-body">
+                   <ReactMarkdown>
+                        {activeLog?.text}
+                    </ReactMarkdown> 
                 </div>
             </BaseModal>
         
