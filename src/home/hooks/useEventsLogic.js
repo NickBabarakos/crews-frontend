@@ -36,7 +36,7 @@ export const useEventsLogic = (allEvents = []) => {
 
     //Logic 2: Navigator Handler
     const handleEventClick = (mode) => {
-        if(!mode) return;
+        if(!mode || mode === 'game_event') return;
         let targetView = 'grandVoyage';
 
         switch(mode) {

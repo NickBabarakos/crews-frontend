@@ -75,10 +75,17 @@ function Sidebar({isOpen, onClose}){
                     <span className="tooltip">Creators</span>
                 </button>
 
-                <button className="footer-btn discord" aria-label="Discord" onClick={onClose}>
+                <a 
+                    href="https://discord.gg/ZT6SSteNXb"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="footer-btn discord"
+                    aria-label="Discord"
+                    onClick={onClose}
+                >
                     <DiscordIcon/>
                     <span className="tooltip">Discord</span>
-                </button>
+                </a>
 
                 <button className="footer-btn transfer" aria-label="Sync Data" onClick={()=> {setIsTransferModalOpen(true); onClose();}}>
                     <TransferIcon/>

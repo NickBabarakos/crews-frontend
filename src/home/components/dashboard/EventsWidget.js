@@ -36,7 +36,7 @@ const EventRow = ({event, onClick}) => {
         <div 
             className={`event-row ${status}`}
             onClick={()=> onClick(event.mode)}
-            style={{cursor: event.mode ? 'pointer' : 'default'}}
+            style={{cursor: event.mode && event.mode !== 'game_event' ? 'pointer' : 'default'}}
         >
             {status === 'active' && (
                 <div 
