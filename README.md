@@ -1,70 +1,41 @@
-# Getting Started with Create React App
+# OPTC Crews - Frontend Client
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A community-driven platform for *One Piece Treasure Cruise* players to find, share and build strategy teams efficiently.
 
-## Available Scripts
+## Project Overview
 
-In the project directory, you can run:
+Finding specific teams for game stages is currently time-consuming, forcing players to search Youtube videos for hours or seek help on community hubs like Reddit and Discord. **OPTC Crews** solves this by creating a centralized, searchable database where users can filter strategies based on the specific "Game Stage" and , crucially, their own character box.
 
-### `npm start`
+**Live URL:** [https://optc-crews.vercel.app/home]
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Key Features & Technical Highlights
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 1. "My Box" Smart Filtering
+Instead of showing generic teams, the application allows users to input their character collection. The UI utollizes this data to:
+*   **Filter out unplayable teams:** Users can toggle a "My Box" filter to see only the crews they can actually build.
+*   **Logic:** Implemented real-time client-side comparison logic to cross-reference user-owned units against crew compositions. This enables instant visual feedback (dimming units) and smart sorting based on "completable" teams without performance lag.
 
-### `npm test`
+### 2. Interactive Team Builder & Export
+A visual, slot-based editor for constructing teams. Users click individual slots to open a searchable modal and populate their crew configuration.
+*   **Complex State Management:** Handles a 6-slot main team plus support characters, valdiating role restrictions (Captain, Crewmate, Support).
+*   **Canvas Generation:** Integrated `html-to-image` to generate high-quality PNG exports of teams, formatted specifically for sharing on Discord or social media.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 3. Dynamic Stage Guides
+Stages in the game have complex mechanics (gimmicks). The application parses JSON guide data to render:
+*   **Interactive Checklists:** Users can track turn-by-turn interactions.
+*   **Dynamic Routing:** The UI adapts based on the game mode (e.g. *Grand Voyage*, *Kizuna Clash*), changing available filters and dropdown dependencies dynamically using a configuration-driven approach.
 
-### `npm run build`
+### 4. Admin Dashboard
+A comprehensive protected area for content management.
+*   **Features:** CRUD operations for Characters, Stages and Banners.
+*   **Approval System:** A workflow for reviewing user-submitted crews before they go public.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Tech Stack
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+*  **Framework:** React.js
+*  **State Management & Data Fetching:** TanStack Query (React Query)
+*  **Context API:** Used for global application state (User Auth, Box Data)
+*  **Routing:** React Router v6
+*  **Styling:** CSS Modules & CSS Variables (Theming)
+   * Implemented a fully responsive design (Mobile-First approach) with custom scroll logic for horizontal pill-selectors
+*  **Utilities:** Axios (API Client), React Hot Toast (Notifications)
