@@ -15,8 +15,7 @@ const ExportPreview = forwardRef(({teams, teamCount}, ref) => {
         const members = [];
         Object.keys(teamDataMap).forEach(key => {
             if(teamDataMap[key]){
-                const level = teamDataMap[key].level;
-                const finalNotes = (level && level !=='No') ? level : (teamDataMap[key].supportType || null);
+                const finalNotes = teamDataMap[key].notes || null;
 
                 members.push({
                     position: key,

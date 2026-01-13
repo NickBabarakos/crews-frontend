@@ -10,6 +10,25 @@ import GuideDetailsStep from "./steps/GuideDetailsStep";
 import VerificationStep from "./steps/VerificationStep";
 import CharacterDetailsView from "./CharacterDetailsView";
 
+
+/**
+ * SUBMIT CREW ORCHESTRATOR
+ * -------------------------
+ * The main container component that manages the multi-step wizard for submitting a new crew startegy.
+ * 
+ * Architecture:
+ * - **Orchestrator:** It doesn't render HTML directly but coordinates child component (`Base Modal`, `Steps`)
+ * - **State Management:** Delegated entirely to the `useSubmitCrew` custom hook.
+ * - **Dynamic Rendering:** Changes its body content (`children`) and footer button based on the `activeStep`.
+ * 
+ * @param {Object} props - The component properties
+ * @param {boolean} props.isOpen - Controls the visibility of the modal (Conditional Rendering)
+ * @param {Function} props.OnClose - Callback to close the modaland reset the state.
+ * @param {string} props.stageName - The name of the game stage (for display purposes).
+ * @param {number} props.stageId - The unique identifier of the stage (for API submission).
+ * 
+ * @returns {React.ReactNode} the fully assembled Modal with the active step content. 
+ */
 function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
     const {myKeys} = useCollection();
     const {
@@ -35,7 +54,8 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
 
     if(!isOpen) return null;
 
-    //1. Title Renderer
+//--- RENDER HELPERS---
+    //1. Title Logic: Decides what text appears in the modal header
     const renderTitle = () => {
         if(editingSlot){
             return selectedChar ? `Configure ${selectedChar.name}` : 'Selected Character';
@@ -48,19 +68,20 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
         );
     };
 
-    //2. Footer Renderer (Dynamic Buttons)
+    //2. Footer Logic: Complex switch used to determije which buttons to show based on 'activeStep', 'guideType' and 'isSubmitting'
     const renderFooter = () =>{
         if(editingSlot) return null; 
 
         return(
-            <>
+            <>  
+                {/*Conditional Rendering using Nested Ternary Operators */}
                 {activeStep === 1 ? (
                         <>
                             <button className="base-btn base-btn-secondary" onClick={onClose}>Cancel</button>
                             <button className="base-btn base-btn-primary" onClick={handleNext}>Next</button>
                         </>
 
-                    ): activeStep === 2 ? (
+               ):activeStep === 2 ? (
                         <>
                             <button className="base-btn base-btn-secondary" onClick={()=> setActiveStep(1)}>Back</button>
                             <button className="base-btn base-btn-primary" onClick={handleNext}>
@@ -69,7 +90,7 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
                                     : 'Next'
                                 }</button>
                         </>
-                    ) : (
+               ) : (
                          <>
                             <button className="base-btn base-btn-secondary" onClick={()=> setActiveStep(2)}>Back</button>
                             <button 

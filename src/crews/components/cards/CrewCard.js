@@ -1,6 +1,6 @@
 import InteractiveChar from '../../../components/common/InteractiveChar';
 import { useFavorites, useCollection } from '../../../context/CollectionContext';
-import { ArrowIcon, CommentIcon, FavoriteStarIcon as StarIcon } from '../../../components/Icons';
+import { ArrowIcon, CommentIcon, FavoriteStarIcon as StarIcon, KeyIcon } from '../../../components/Icons';
 import { useShareLink} from '../../../hooks/useShareLink';
 import { getImageUrl } from '../../../utils/imageUtils';
 
@@ -23,10 +23,16 @@ function MemberSlot({main, support, role, exportMode}) {
     const supportId = support?.character_id;
     const rawMainNotes = main?.notes;
  
+    //Check for LB+ (contains '+')
+    const isLbPlus = rawMainNotes ? rawMainNotes.includes('+') : false;
+    //Clean the level string (remove '+' to display just the number)
+    let mainLevel = null;
+    if(rawMainNotes && rawMainNotes !== 'optional'){
+        mainLevel = rawMainNotes.replace('+', '');
+    }
 
     const isEmpty = !main;
     const isMainOwned = isOwned(mainId) || exportMode;
-    const mainLevel = (rawMainNotes && rawMainNotes !== 'optional') ? rawMainNotes: null;
 
     const isSupportOwned = isOwned(supportId) || exportMode;
     const isSupportOptional = support?.notes === 'optional';
@@ -54,12 +60,21 @@ function MemberSlot({main, support, role, exportMode}) {
                     className={`character-image ${isMainOwned ? '': 'missing'}`}
                     crossOrigin = "anonymous"
                     loading="eager"
-                />  
+                /> 
+
+                {isLbPlus && (
+                    <div className="lb-key-icon" title="Limit Break Expansion (LLB+)">
+                        <KeyIcon/>
+                    </div>
+                )} 
             </InteractiveChar>
         )}
 
         {main && mainLevel && (
-            <div className="level-badge">LV.{mainLevel}</div>
+            <div className="level-badge">
+                <span className="lv-label">Lv.</span>
+                <span className="lv-num">{mainLevel}</span>
+            </div>
         )}
 
         {support && (

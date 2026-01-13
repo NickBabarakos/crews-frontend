@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import CharacterSelector from '../../crews/features/SubmitCrew/CharacterSelector';
 import CharacterDetailsView from '../../crews/features/SubmitCrew/CharacterDetailsView';
 import { getImageUrl } from '../../utils/imageUtils';
+import { KeyIcon } from '../../components/Icons';
 
 const CREW_LAYOUT = [
     { mainId: 'Friend Captain', label: 'Friend Captain', hasSupport: false},
@@ -15,6 +16,31 @@ const CREW_LAYOUT = [
 function CrewLayoutGrid({members, setMembers}) {
     const [editingSlot, setEditingSlot] = useState(null);
     const [selectedChar, setSelectedChar] = useState(null);
+
+    const renderMainSlotBadges = (member) => {
+        if(!member) return null;
+
+        const rawNotes = member.notes;
+        const isLbPlus = rawNotes ? rawNotes.includes('+') : false;
+
+        let displayLevel = null;
+        if(rawNotes && rawNotes !== 'optional'){
+            displayLevel = rawNotes.replace('+', '');
+        }
+
+        return(
+            <>
+                {displayLevel && displayLevel !== 'No' && (
+                    <div className="level-badge">Lv.{displayLevel}</div>
+                )}
+                {isLbPlus && (
+                    <div className="lb-key-icon">
+                        <KeyIcon width="14" height="14"/>
+                    </div>
+                )}
+            </>
+        );
+    };
 
     const handleSlotClick = (slotId) => {
         setEditingSlot(slotId);
@@ -63,9 +89,7 @@ function CrewLayoutGrid({members, setMembers}) {
                                 {members[slot.mainId] ? (
                                     <>
                                         <img src = {getImageUrl(`${members[slot.mainId].image_url}.png`)} alt="char" className="selected-char-img" />
-                                        {members[slot.mainId].level && members[slot.mainId].level !== 'No' && (
-                                        <div className="level-badge">Lv.{members[slot.mainId].level}</div>
-                                        )}
+                                        {renderMainSlotBadges(members[slot.mainId])}
                                     </>
                                 ): <div className="empty-slot-indicator">+</div>}
                             </div>
@@ -77,7 +101,7 @@ function CrewLayoutGrid({members, setMembers}) {
                                     {members[slot.supportId] ? (
                                         <>
                                             <img src={getImageUrl(`${members[slot.supportId].image_url}.png`)} alt="sup" className="selected-char-img" />
-                                            {members[slot.supportId].supportType === 'optional' && <div className="optional-indicator">!</div>}
+                                            {members[slot.supportId].notes === 'optional' && <div className="optional-indicator">!</div>}
                                         </>
                                     ): <div className="empty-slot-indicator small">+</div>}
                                 </div>

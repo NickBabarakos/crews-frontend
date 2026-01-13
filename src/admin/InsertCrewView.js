@@ -71,21 +71,25 @@ function InsertCrewView({ adminSecret, prefilledData, onCancel, onApproveSuccess
             } else if (prefilledData.creator_url){
                 updateCreatorState({
                     step: 'search',
-                    urlInput: prefilledData.creator_url
+                    urlInput: prefilledData.creator_url,
+                    inputType: 'url'
                 });
                 checkCreator({social_url: prefilledData.creator_url});
+            } else if(prefilledData.creator_key){
+                updateCreatorState({
+                    step: 'search',
+                    inputType: 'key',
+                    urlInput: prefilledData.creator_key,
+                    tempName: prefilledData.creator_name || prefilledData.user_name || ''
+                });
+                checkCreator({ public_key: prefilledData.creator_key});
             }
 
             if(prefilledData.crew_data){
                 const mappedMemebers = {};
                 Object.entries(prefilledData.crew_data).forEach(([pos, data]) => {
                     if(data && data.id){
-                        let notes = null;
-                        if(pos.toLowerCase().includes('support')){
-                            if(data.supportType === 'optional') notes = 'optional';
-                        } else{
-                            if (data.level && data.level !== 'No') notes = data.level;
-                        }
+                        const notes = data.notes || null;
                         mappedMemebers[pos] = {...data, character_id: data.id, notes: notes};
                     }
                 });

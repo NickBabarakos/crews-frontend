@@ -31,12 +31,7 @@ export const useCrewSubmission = (adminSecret, creatorData) => {
         const membersArray = [];
         Object.entries(members).forEach(([pos,data]) => {
             if(data && data.id){
-                let notes = null;
-                if (pos.toLocaleLowerCase().includes('support')){
-                    notes = data.supportType === 'optional' ? 'optional' : null;
-                } else {
-                    notes = (data.level && data.level !== 'No') ? data.level : null;
-                }
+                const notes = data.notes || null;
 
                 membersArray.push({
                     position: pos,

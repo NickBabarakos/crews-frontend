@@ -1,5 +1,6 @@
 import React from "react";
 import { getImageUrl } from "../../../utils/imageUtils";
+import { KeyIcon } from "../../../components/Icons";
 
 const TeamSlot = ({slotId, label,data, onClick, isSupport = false, isOptional = false, }) =>{
     //data is the specific character object for this slot
@@ -7,6 +8,14 @@ const TeamSlot = ({slotId, label,data, onClick, isSupport = false, isOptional = 
     const className = isSupport
         ? "submission-slot support-slot"
         : "submission-slot main-slot";
+
+        const rawNotes = data?.notes;
+        const isLbPlus = rawNotes ? rawNotes.includes('+') : false;
+        let displayLevel = null;
+
+        if(rawNotes && rawNotes !== 'optional'){
+            displayLevel = rawNotes.replace('+', '');
+        }
 
         return(
             <div className={className} onClick={()=> onClick(slotId)}>
@@ -19,8 +28,18 @@ const TeamSlot = ({slotId, label,data, onClick, isSupport = false, isOptional = 
                         />
 
                         {/*Level Badge for Main Slots*/}
-                        {!isSupport && data.level && data.level !== 'No' && (
-                            <div className="level-badge level">Lv.{data.level}</div>
+                        {!isSupport && displayLevel && displayLevel !== 'No' && (
+                            <div className="level-badge level">
+                                 <span className="lv-label">Lv.</span>
+                                <span className="lv-num">{displayLevel}</span>
+                            </div>
+                        )}
+
+                        {/*LB+ Key Icon */}
+                        {isLbPlus && (
+                            <div className="lb-key-icon">
+                                <KeyIcon width="18" height="18"/>
+                            </div>
                         )}
 
                         {/*Optional Indicator for Support Slots */}

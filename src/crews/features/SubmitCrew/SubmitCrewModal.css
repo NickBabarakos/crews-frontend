@@ -346,30 +346,6 @@
     cursor: pointer;
 }
 
-.level-badge{
-    position: absolute;
-    bottom: 5px;
-    left: 35%;
-    transform: translateX(-50%);
-    width: auto;
-
-    background-color: rgba(0,0,0,0.85);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    padding: 2px 8px;
-    border-radius: 12px;
-
-    color: var(--color-gold);
-    font-family: "Roboto Mono", monospace;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
-
-    z-index: 10;
-    pointer-events: none;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
-}
-
 .optional-indicator .tooltip-text{
     visibility: hidden;
     opacity: 0;
@@ -1184,4 +1160,51 @@
     flex: 1;
     background: rgba(var(--rgb-card),0.4);
     border: 1px solid var(--border-subtle);
+}
+
+.lb-section{
+    margin-top: 15px;
+    border-top: 1px solid var(--border-light);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.lb-toggle-btn{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lb-toggle-btn:hover{
+    border-color: #a855f7;
+    color: #e9d5ff;
+    background: rgba(168, 85, 247, 0.05);
+}
+
+.lb-toggle-btn.active{
+    background: rgba(168, 85, 247, 0.15);
+    border-color: #a855f7;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.25);
+}
+
+.lb-toggle-btn svg {
+    filter: drop-shadow(0 0 2px currentColor);
+}
+
+.lb-label{
+    font-size: 0.8rem;
+    color: var(--text-muted);
 }

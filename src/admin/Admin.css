@@ -705,6 +705,47 @@
     z-index: 15;
 }
 
+/* Limit Break Plus Key Animation */
+@keyframes key-pulse{
+  0%{
+    filter: drop-shadow(0 0 2px #ff0000);
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    filter: drop-shadow(0 0 8px #ff4d4d);
+    transform: scale(1.05) rotate(2deg);
+  }
+  100% {
+    filter: drop-shadow(0 0 2px #ff0000);
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.lb-key-icon{
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  z-index: 20;
+  color: #ff0000;
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  animation: key-pulse 2s infinite ease-in-out;
+  display: flex; 
+  align-items: center;
+  justify-content: center;
+}
+
+.lb-key-icon svg{
+  stroke: white;
+  stroke-width: 1px;
+  overflow: visible;
+  fill:currentColor;
+}
+
 .empty-slot-indicator{
     font-size: 24px;
     color: rgba(var(--rgb-accent),0.5);
