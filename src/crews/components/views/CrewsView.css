@@ -756,16 +756,23 @@
 
   .level-badge{
     bottom: 1px;
-    left: 2px;
   }
 
   .level-badge .lv-label{
-    font-size: 15px; margin-bottom: 2px;
+    font-size: 11px; margin-bottom: 1px;
   }
 
-  .level-badge .lvl-num{
-    font-size: 19px;
+  .level-badge .lv-num{
+    font-size: 13px; margin-bottom: 1px;
   }
+    .level-badge .lv-label.step{
+    font-size: 16px; margin-bottom: 2px;
+  }
+
+  .level-badge .lv-num.step{
+    font-size: 18px; margin-bottom: 2px;
+  }
+
 
 
   .video-button{

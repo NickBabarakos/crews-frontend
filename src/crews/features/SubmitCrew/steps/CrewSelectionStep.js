@@ -91,8 +91,8 @@ function CrewSelectionStep({crewData, onSlotClick, guideType, setGuideType}){
                                     )}
                                     {mainData.displayLevel && (
                                         <div className="level-badge level">
-                                            <span className="lv-label">Lv.</span>
-                                            <span className="lv-num small">{mainData.displayLevel}</span>
+                                            <span className="lv-label step">Lv.</span>
+                                            <span className="lv-num step">{mainData.displayLevel}</span>
                                         </div>    
                                     )}
                                 </>

@@ -121,7 +121,7 @@ function SubmitCrewModal({isOpen, onClose, stageName, stageId}) {
                 title={renderTitle()}
                 footer={renderFooter()}
                 size="large"
-                className={editingSlot ? "modal-no-scroll": ""}
+                className={editingSlot ? "": ""}
             >
                 {/* BODY CONTENT */}
                  {editingSlot ? (

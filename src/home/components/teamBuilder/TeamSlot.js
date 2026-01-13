@@ -30,8 +30,8 @@ const TeamSlot = ({slotId, label,data, onClick, isSupport = false, isOptional = 
                         {/*Level Badge for Main Slots*/}
                         {!isSupport && displayLevel && displayLevel !== 'No' && (
                             <div className="level-badge level">
-                                 <span className="lv-label">Lv.</span>
-                                <span className="lv-num">{displayLevel}</span>
+                                 <span className="lv-label step">Lv.</span>
+                                <span className="lv-num step">{displayLevel}</span>
                             </div>
                         )}
 
