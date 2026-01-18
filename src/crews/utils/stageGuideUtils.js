@@ -14,6 +14,7 @@ const GIMMICK_FILES = {
     'immunity_delay': 'gimmicks/immunity-delay.png',
     'intimidation': 'gimmicks/intimidation.png',
     'burn': 'gimmicks/burn.png',
+    'super_burn': 'gimmicks/super-burn.png',
     'special_limit': 'gimmicks/special-limit.png',
     'immunity': 'gimmicks/immunity.png',
     'pain': 'gimmicks/pain.png',
@@ -29,6 +30,7 @@ const GIMMICK_FILES = {
     'damage_nullification': 'gimmicks/damage-nullification.png',
     'slot_damage': 'gimmicks/slot-damage-reduction.png',
     'chain_boundary': 'gimmicks/chain-boundry-atk-down.png',
+    'chain_damage_down': 'gimmicks/chain-damage-down.png',
     'poison': 'gimmicks/poison.png',
     'toxic': 'gimmicks/toxic.png',
     'increased_damage_taken': 'gimmicks/increased-damage-taken.png',
@@ -36,6 +38,8 @@ const GIMMICK_FILES = {
     'special_reverse': 'gimmicks/special-reverse.png',
     'special_bind': 'gimmicks/special-bind.png',
     'no_healing': 'gimmicks/no-healing.png',
+    'heal_to_damage': 'gimmicks/heal-to-damage.png',
+    'rcv_to_damage': 'gimmicks/rcv-to-damage.png',
     'hit_barrier': 'gimmicks/combo-barrier-hit.png',
     'perfect_barrier': 'gimmicks/combo-barrier-perfect.png',
     'great_barrier': 'gimmicks/combo-barrier-great.png',
@@ -43,6 +47,10 @@ const GIMMICK_FILES = {
     'harder_tap_timing': 'gimmicks/harder-tap-timing.png',
     'chain_upper_limit': 'gimmicks/chain-upper-limit.png',
     'rainbow_barrier': 'gimmicks/combo-barrier-rainbow.png',
+    'wano_barrier' : 'gimmicks/combo-barrier-wano.png',
+    'nullify_potential_abilities': 'gimmicks/nullify-potential-abilities.png',
+    'silence':'gimmicks/silence.png',
+    'enemy_territory': 'gimmicks/enemy-territory.png',
     'default': null
 };
 
