@@ -12,6 +12,7 @@ const GIMMICK_FILES = {
     'immunity_status': 'gimmicks/immunity-status-effects.png',
     'immunity_poison': 'gimmicks/immunity-poison.png',
     'immunity_delay': 'gimmicks/immunity-delay.png',
+    'def_down_immunity': 'gimmicks/immunity-increased-defense-down.png',
     'intimidation': 'gimmicks/intimidation.png',
     'burn': 'gimmicks/burn.png',
     'super_burn': 'gimmicks/super-burn.png',
@@ -51,6 +52,7 @@ const GIMMICK_FILES = {
     'nullify_potential_abilities': 'gimmicks/nullify-potential-abilities.png',
     'silence':'gimmicks/silence.png',
     'enemy_territory': 'gimmicks/enemy-territory.png',
+    'slot_effect': 'gimmicks/slot.png',
     'default': null
 };
 
