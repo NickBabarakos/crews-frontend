@@ -1,6 +1,5 @@
 import React from "react";
 import DashboardCard from "./DashboardCard";
-import InteractiveChar from "../../../components/common/InteractiveChar";
 import { StarIcon } from "../../../components/Icons";
 import { getImageUrl } from "../../../utils/imageUtils";
 
@@ -15,15 +14,23 @@ const NewArrivalsWidger = ({units = []}) =>{
         >
             <div className="units-grid">
                 {units.map(unit => (
-                    <InteractiveChar
+                    <div
                         key={unit.id}
-                        id={unit.id}
-                        type={unit.type}
                         className="unit-icon-wrapper"
-                        style={{width: '100%', aspectRatio: '1/1'}}
+                        style={{width: '100%', aspectRatio: '1/1', cursor: 'pointer', position: 'relative'}}
+                        onClick={()=> unit.info_url && window.open(unit.info_url, '_blank')}
+                        onContextMenu={(e)=> {
+                            e.preventDefault();
+                            unit.info_url && window.open(unit.info_url, '_blank');
+                        }}
                     >
-                        <img src={getImageUrl(`${unit.image_url}.png`)} alt={unit.name} loading="lazy" />
-                    </InteractiveChar>
+                        <img 
+                            src={getImageUrl(`${unit.image_url}.png`)}
+                            alt={unit.name}
+                            loading="lazy"
+                            style={{width: '100%', height: '100%', pointerEvents: 'none', display: 'block'}}
+                        />
+                    </div>
                 ))}
             </div>
 

@@ -33,6 +33,18 @@ const normalizeType = (input) => {
     return String(input).trim();
 };
 
+/**
+ * GLOBAL STATE: COLLECTION CONTEXT
+ * -------------------------------
+ * The "Brain" of the user's box. Manages ownership, persistence, and synchronization.
+ * 
+ * Core Systems:
+ * 1. **Persistence:** Auto-saves to LocalStorage and syncs with Server via `useBoxApi`.
+ * 2. **View Mode:** Can switch state to display another user's box (`viewingOther`).
+ * 3. **Business Logic:** Calculates owned counts based on dynamic filters. 
+ * @param {*} param0 
+ * @returns 
+ */
 export function CollectionProvider({children}){
     //1. Persistence  Hook
     const{
@@ -190,6 +202,20 @@ export function CollectionProvider({children}){
         return !!visibleItems[Number(id)];
     }, [visibleItems])
 
+    /**
+     * CALCULATE OWNED COUNT
+     * --------------------
+     * Counts how many items the user owns within a specific filter category
+     * 
+     * Logic:
+     * 1. Filters out placeholder/invalid items (key '-1').
+     * 2. Checks if we need 'All' or a specific subset (Legends/RRs)
+     * 3. Matches the item's `type` against the `constants.js` arrays.
+     * 
+     * @param {string} uiCategory - 'legends', 'rareRecruits', or 'all'.
+     * @param {string} subCategory - Specific filter (e.g. 'Super Sugo').
+     * @param {boolean} isPlus - If true, targets 6+ or 5+ evolutions only.
+     */
     const getOwnedCountByCategory = useCallback((uiCategory, subCategory, isPlus) => {
         if(!uiCategory) return 0;
 

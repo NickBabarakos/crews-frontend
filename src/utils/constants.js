@@ -1,4 +1,13 @@
-
+/**
+ * APP CONSTANTS & CONFIGURATION
+ * -----------------------------
+ * Acts as the "Source of Truth" for character categorizations.
+ * 
+ * Purpose:
+ * 1. Maps UI dropdown labels to Database values.
+ * 2. Defines arrays for Bulk Filtering (e.g. "All Legends").
+ * 3. Ensures consistency accross Toolbar, Context and Hooks.
+ */
 export const ALL_LEGEND_TYPES = [
   'Super Sugo-Fest Only', 'Anniversary', 'Pirate Rumble Sugo-Fest Only', 'Treasure Sugo-Fest Only', 
   'Pirate Alliance Kizuna Clash Sugo-Fest Only', 'Exchange Only', 'Sugo Rare'
