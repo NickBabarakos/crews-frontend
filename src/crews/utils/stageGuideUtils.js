@@ -56,6 +56,7 @@ const GIMMICK_FILES = {
     'silence':'gimmicks/silence.png',
     'enemy_territory': 'gimmicks/enemy-territory.png',
     'slot_effect': 'gimmicks/slot.png',
+    'damage_limit': 'damage_limit.png',
     'default': null
 };
 
