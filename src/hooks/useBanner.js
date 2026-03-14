@@ -8,5 +8,5 @@ export const useBanners = ({page, limit, enabled}) => {
         placeholderData: keepPreviousData,
         enabled: enabled,
         staleTime: 10*60*1000,
-    });
+    }); 
 };

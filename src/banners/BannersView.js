@@ -34,7 +34,7 @@ function BannerCard({banner, onClick}){
             <div className="banner-image-container">
                 <img src={getImageUrl(banner.image_url)} alt={banner.title} loading="lazy" />
 
-                {status === 'active' && (
+                {status === 'active' && ( 
                     <div className="banner-progress-overlay" style={{
                         position: 'absolute',
                         bottom: 0, left: 0, height: '4px',

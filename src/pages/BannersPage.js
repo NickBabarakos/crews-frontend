@@ -3,7 +3,7 @@ import { useBanners } from "../hooks/useBanner";
 import { getBannerDetails } from "../api/bannerService";
 import BannersView from "../banners/BannersView";
 import BannerModal from "../banners/BannerModal";
-import Footer from "../components/layout/Footer";
+import Footer from "../components/layout/Footer"; 
 
 const BannersPage = () => {
     const [currentPage, setCurrentPage] = useState(1);

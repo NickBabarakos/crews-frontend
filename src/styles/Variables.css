@@ -40,6 +40,11 @@
 --color-gold-glow: rgba(251, 191, 36, 0.5); /*Glow Effect */
 --color-guide-text: var(--color-info);
 --color-guide-text-glow: rgba(56, 189, 248, 0.4);
+--color-danger-glow: rgba(var(--rgb-danger), 0.3);
+--color-gold-glow: rgba(var(--rgb-gold), 0.3);
+--shadow-base: rgba(0, 0, 0, 0.5);
+--shadow-heavy: rgba(0, 0, 0, 0.7);
+--shadow-light: rgba(0, 0, 0, 0.2);
 
 --rgb-primary: 139, 92, 246;     /* brand-500 */
 --rgb-accent: 167, 139, 250;     /* brand-400 */
@@ -48,6 +53,7 @@
 --rgb-danger: 239, 68, 68;
 --rgb-success: 16, 185, 129;
 --rgb-info: 56, 189, 248;  
+--rgb-gold: 251, 191, 36;
 
 /* ==============================
        2. Semantic Variables
@@ -82,6 +88,33 @@
 --primary-base:     var(--color-brand-500);
 --primary-hover:    var(--color-brand-400);
 --primary-gradient: linear-gradient(135deg, var(--color-brand-500) 0%, var(--color-brand-700) 100%);
+
+/*============================================
+     GACHA GRADIENTS
+==============================================*/
+  --grad-rainbow-gems: linear-gradient(90deg, #f472b6 0%, #c084fc 25%, #38bdf8 50%, #4ade80 75%, #facc15 100%);
+  --grad-aurora: linear-gradient(90deg, #fbcfe8 0%, #c4b5fd 35%, #3b82f6 70%, #2dd4bf 100%);
+  
+  /* Rainbow for Tavern Medals */
+  --grad-medals: linear-gradient(90deg, #ef4444 0%, #f97316 20%, #eab308 40%, #22c55e 60%, #3b82f6 80%, #a855f7 100%);
+  
+  --grad-red-light: linear-gradient(90deg, #fecaca 0%, #fca5a5 25%, #f87171 50%, #ef4444 75%, #dc2626 100%);
+  --grad-red-dark: linear-gradient(90deg, #fca5a5 0%, #ef4444 33%, #dc2626 66%, #991b1b 100%);
+  --grad-red-extreme: linear-gradient(90deg, #ef4444 0%, #dc2626 33%, #991b1b 66%, #7f1d1d 100%); 
+  
+  --grad-gold: linear-gradient(90deg, #fef08a 0%, #fde047 25%, #eab308 50%, #ca8a04 75%, #a16207 100%);
+  --grad-yellow-orange: linear-gradient(90deg, #fef08a 0%, #fde047 25%, #f97316 50%, #ea580c 75%, #c2410c 100%);
+  --grad-white-orange: linear-gradient(90deg, #ffffff 0%, #ffedd5 33%, #fb923c 66%, #ea580c 100%);
+  --grad-white-red: linear-gradient(90deg, #ffffff 0%, #fee2e2 33%, #f87171 66%, #dc2626 100%);
+
+  /* Types (OPTC Colors) */
+  --grad-type-str: linear-gradient(90deg, #fca5a5 0%, #f87171 25%, #ef4444 50%, #dc2626 75%, #991b1b 100%);
+  --grad-type-dex: linear-gradient(90deg, #bbf7d0 0%, #86efac 25%, #22c55e 50%, #16a34a 75%, #14532d 100%);
+  --grad-type-qck: linear-gradient(90deg, #bfdbfe 0%, #93c5fd 25%, #3b82f6 50%, #2563eb 75%, #1e3a8a 100%);
+  --grad-type-psy: linear-gradient(90deg, #fef08a 0%, #fde047 25%, #eab308 50%, #ca8a04 75%, #713f12 100%);
+  --grad-type-int: linear-gradient(90deg, #e9d5ff 0%, #d8b4fe 25%, #a855f7 50%, #7e22ce 75%, #4c1d95 100%);
+  --grad-type-rainbow: linear-gradient(90deg, #ef4444 0%, #f97316 20%, #eab308 40%, #22c55e 60%, #3b82f6 80%, #a855f7 100%);
+
 
 /* --- Z-Index Layers --- */
 --z-negative: -1;

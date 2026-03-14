@@ -1,0 +1,195 @@
+.banner-steps-list{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.banner-step-row{
+    display: flex;
+    align-items: stretch;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2);
+}
+
+/* LEFT BOX: Step Number */
+.step-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(var(--rgb-primary), 0.1);
+    width: 60px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--border-subtle);
+}
+
+.step-label{
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.step-num {
+    font-size: 24px;
+    color: var(--text-main);
+    font-weight: 900;
+    line-height: 1;
+}
+
+/*Right BOX: Text */
+.step-wrapper{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    gap: 12px;
+}
+
+/*Text1*/
+.step-main-title{
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--text-main);
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/*Text2*/
+.step-bonus-row{
+    background: var(--bg-surface); 
+    border: 1px dashed var(--border-strong); 
+    padding: 10px 14px;
+    border-radius: 8px;
+    box-shadow: inset 0 2px 6px var(--shadow-base);
+}
+
+.step-bonus-text{
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-main);
+    text-shadow: 0 2px 4px var(--shadow-heavy); 
+    letter-spacing: 0.3px; 
+}
+
+/*Pools Row*/
+.step-pool-row{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.pool-label{
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.pool-badge{
+    font-size: 11px;
+    font-weight: 800;
+    padding: 6px 12px; 
+    border-radius: 8px; 
+    text-transform: uppercase;
+    box-shadow: 0 4px 10px var(--shadow-light);
+    text-shadow: 0 1px 2px var(--shadow-base);
+    backdrop-filter: blur(4px);
+}
+
+.pool-legends{
+    background: rgba(var(--rgb-danger), 0.15);
+    color: var(--color-danger);
+    border: 1px solid var(--color-danger); 
+    box-shadow: 0 0 8px var(--color-danger-glow);
+}
+
+.pool-rr{
+    background: rgba(var(--rgb-gold), 0.15);
+    color: var(--color-gold);
+    border: 1px solid var(--color-gold); 
+    box-shadow: 0 0 8px var(--color-gold-glow);
+}
+
+/* =============================================
+                GRADIENT TEXTS
+===============================================*/
+.highlight-text{
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 900;
+    filter: drop-shadow(0px 2px 4px var(--shadow-heavy)); 
+}
+
+/*Special Colors*/
+.highlight-rainbow-gems { background-image: var(--grad-rainbow-gems);}
+.highlight-aurora-gem {background-image: var(--grad-aurora);}
+.highlight-aurora-gems {background-image: var(--grad-aurora);}
+.highlight-rainbow-tavern-medals { background-image: var(--grad-medals);}
+
+/*Tablets & Keys (Light Red)*/
+.highlight-guaranteed-damage-limit-break-type-tablet,
+.highlight-guaranteed-damage-limit-break-class-tablet,
+.highlight-guiding-key-rainbow 
+{ background-image: var(--grad-red-light);}
+
+/*Sugo Exclusive (Dark Red)*/
+.highlight-sugo-fest-exclusive,
+.highlight-pirate-rumble-sugo-fest-only-character,
+.highlight-anniversary-sugo-fest-exclusive-character {
+    background-image: var(--grad-red-dark);
+}
+
+/*Red -> Purple */
+.highlight-rate-boosted-character,
+.highlight-recommended-character {
+    background-image: var(--grad-yellow-orange);
+}
+
+/*Limited Pools */
+.highlight-limited-pool { background-image: var(--grad-white-orange); }
+.highlight-super-limited-pool { background-image: var(--grad-white-red); }
+
+/*Special Words*/
+.highlight-all { background-image: var(--grad-red-extreme); }
+.highlight-get { background-image: var(--grad-gold); }
+
+/*Percentages*/
+.highlight-30pct { background-image: var(--grad-red-light); }
+.highlight-40pct { background-image: var(--grad-red-dark); }
+.highlight-50pct { background-image: var(--grad-red-extreme); }
+
+/*--- RARE LLB POSTERS */
+.highlight-rare-str-llb-poster { background-image: var(--grad-type-str); filter: brightness(1.2) drop-shadow(0px 2px 2px rgba(0,0,0,0.5)); }
+.highlight-rare-dex-llb-poster { background-image: var(--grad-type-dex); filter: brightness(1.2) drop-shadow(0px 2px 2px rgba(0,0,0,0.5)); }
+.highlight-rare-qck-llb-poster { background-image: var(--grad-type-qck); filter: brightness(1.2) drop-shadow(0px 2px 2px rgba(0,0,0,0.5)); }
+.highlight-rare-psy-llb-poster { background-image: var(--grad-type-psy); filter: brightness(1.2) drop-shadow(0px 2px 2px rgba(0,0,0,0.5)); }
+.highlight-rare-int-llb-poster { background-image: var(--grad-type-int); filter: brightness(1.2) drop-shadow(0px 2px 2px rgba(0,0,0,0.5)); }
+.highlight-rare-rainbow-llb-poster { background-image: var(--grad-type-rainbow); filter: brightness(1.2) drop-shadow(0px 2px 2px rgba(0,0,0,0.5)); }
+
+/*--- SUGO RARE LLB POSTERS */
+.highlight-sugo-rare-str-llb-poster { background-image: var(--grad-type-str); filter: brightness(0.8) drop-shadow(0px 2px 2px rgba(0,0,0,0.5)); }
+.highlight-sugo-rare-dex-llb-poster { background-image: var(--grad-type-dex); filter: brightness(0.8) drop-shadow(0px 2px 2px rgba(0,0,0,0.5)); }
+.highlight-sugo-rare-qck-llb-poster { background-image: var(--grad-type-qck); filter: brightness(0.8) drop-shadow(0px 2px 2px rgba(0,0,0,0.5)); }
+.highlight-sugo-rare-psy-llb-poster { background-image: var(--grad-type-psy); filter: brightness(0.8) drop-shadow(0px 2px 2px rgba(0,0,0,0.5)); }
+.highlight-sugo-rare-int-llb-poster { background-image: var(--grad-type-int); filter: brightness(0.8) drop-shadow(0px 2px 2px rgba(0,0,0,0.5)); }
+.highlight-sugo-rare-rainbow-llb-poster { background-image: var(--grad-type-rainbow); filter: brightness(0.8) drop-shadow(0px 2px 2px rgba(0,0,0,0.5)); }
+
+/*Responsive (Mobile)*/
+@media(max-width:600px){
+    .step-indicator {width: 50px;}
+    .step-main-title {font-size: 13px;}
+    .step-bonus-text {font-size: 12px;}
+    .pool-badge { font-size: 10px;}
+}
