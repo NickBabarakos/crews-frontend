@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import BaseModal from '../components/modals/BaseModal';
 import './BannerModal.css';
 import BannerCharacters from './BannerCharacters';
