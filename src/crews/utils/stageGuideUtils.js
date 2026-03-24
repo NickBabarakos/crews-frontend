@@ -52,11 +52,13 @@ const GIMMICK_FILES = {
     'chain_upper_limit': 'gimmicks/chain-upper-limit.png',
     'rainbow_barrier': 'gimmicks/combo-barrier-rainbow.png',
     'wano_barrier' : 'gimmicks/combo-barrier-wano.png',
+    'bomb_barrier': 'gimmicks/combo-barrier-bomb.png',
     'nullify_potential_abilities': 'gimmicks/nullify-potential-abilities.png',
     'silence':'gimmicks/silence.png',
     'enemy_territory': 'gimmicks/enemy-territory.png',
     'slot_effect': 'gimmicks/slot.png',
-    'damage_limit': 'damage_limit.png',
+    'damage_limit': 'gimmicks/damage_limit.png',
+    'blind': 'gimmicks/blind.png',
     'default': null
 };
 
