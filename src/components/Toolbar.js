@@ -2,7 +2,7 @@ import './Toolbar.css';
 import CharactersToolbar from '../characters/CharactersToolbar';
 import CrewsToolbar from '../crews/components/listing/CrewsToolbar';
 
-const crewBasedViews = ['grandVoyage', 'garpsChallenge', 'forestOfTraining', 'coliseum', 'pirateKingAdventures', 'treasureMap', 'kizunaClash'];
+const crewBasedViews = ['grandVoyage', 'garpsChallenge', 'forestOfTraining', 'coliseum', 'pirateKingAdventures', 'treasureMap', 'kizunaClash', 'blitzBattle'];
 
 function Toolbar(props){
     return(

@@ -29,6 +29,7 @@ const MainLayout = () => {
                         case 'kizuna_clash': targetMode = 'kizunaClash'; break;
                         case 'treasure_map': targetMode = 'treasureMap'; break;
                         case 'coliseum': targetMode = 'coliseum'; break;
+                        case 'blitz_battle': targetMode = 'blitzBattle'; break;
                         default: targetMode = 'grandVoyage';
                     }
                     if(!location.pathname.includes(targetMode)){

@@ -43,7 +43,7 @@ function CharacterSelector({onSelect, onBack}) {
         if(node.scrollHeight <= node.clientHeight){
             fetchCharacters(false);
         }
-    }, [characters, hasMore, loading, fetchCharacters]);
+    }, [characters, hasMore, loading]);
 
 
     const handleScroll = (e) => {

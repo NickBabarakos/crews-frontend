@@ -75,6 +75,8 @@
 .pka-button { --bg-image: url('https://optc-crews-assets.github.io/optc-crews-assets/buttons_bg/pka-bg.png');}
 .treasure-map-button { --bg-image: url('https://optc-crews-assets.github.io/optc-crews-assets/buttons_bg/treasure-map-bg.png');}
 .kizuna-clash-button { --bg-image: url('https://optc-crews-assets.github.io/optc-crews-assets/buttons_bg/kizuna-clash-bg.png');}
+.blitz-battle-button { --bg-image: url('https://optc-crews-assets.github.io/optc-crews-assets/buttons_bg/blitz-battle.png'); }
+
 
 .sidebar-accent{
     width: 4px;

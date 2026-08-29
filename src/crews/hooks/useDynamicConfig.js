@@ -5,55 +5,59 @@ import { useMemo } from "react";
  * ---------------
  * Takes the static ViewConfig and injects 'Live' data (Event Names) into it.
  * 
- * @param {object} config - The static config from ViewConfig. 
+ * @param {object} staticConfig - The static config from ViewConfig. 
  * @param {object} eventNames  - Dictionary of { id: "Name" } fetched from API.
  */
 
-export const useDynamicConfig = (config, eventNames ) =>{
-    return useMemo(()=> {
-        //Αν δεν υπάρχει config ή eventNames, επιστρέφουμε το αρχικο
-        if(!config || Object.keys(eventNames).length === 0) return config;
+export const useDynamicConfig = (staticConfig, eventNames) => {
+    return useMemo(() => {
+        if (!staticConfig) return null;
+        
+        // Deep copy για να μην πειράζουμε το static object
+        const config = {
+            ...staticConfig,
+            dropdowns: (staticConfig.dropdowns || []).map(d => ({ ...d }))
+        };
 
-            //Διατηρουμε deep copy των dropdowns για να μην πειραξουμε το original config
-            const newConfig = {...config, dropdowns: config.dropdowns.map(d=> ({...d}))};
+        const hasEventNames = eventNames && Object.keys(eventNames).length > 0;
 
-            //1. Logic για PKA
-            if(config.mode === 'pirate_king_adventures'){
-                const bossFilter = newConfig.dropdowns.find(d => d.id === 'bosses');
-                if(bossFilter){
-                    const dynamicOptions = [];
-                    if(eventNames[281]) dynamicOptions.push(eventNames[281]);
-                    if(eventNames[284]) dynamicOptions.push(eventNames[284]);
-                    if(eventNames[287]) dynamicOptions.push(eventNames[287]);
-
-                    if(dynamicOptions.length >0) bossFilter.options = dynamicOptions;
-                }
+        // 1. PKA
+        if (config.mode === 'pirate_king_adventures' && hasEventNames) {
+            const bossFilter = config.dropdowns.find(d => d.id === 'bosses');
+            if (bossFilter) {
+                const dynamicOptions = [eventNames[281], eventNames[284], eventNames[287]].filter(Boolean);
+                if (dynamicOptions.length > 0) bossFilter.options = dynamicOptions;
             }
-            
-            //2. Logic για TM
-            if(config.mode === 'treasure_map'){
-                const tmFilter = newConfig.dropdowns.find(d=> d.id === 'boss');
-                if(tmFilter ) {
-                    const dynamicOptions = [];
-                    if(eventNames[290]) dynamicOptions.push(eventNames[290]);
-                    if(eventNames[291]) dynamicOptions.push(eventNames[291]);
+        }
 
-                    if(dynamicOptions.length>0) tmFilter.options = dynamicOptions;
-                }
+        // 2. TM
+        if (config.mode === 'treasure_map' && hasEventNames) {
+            const tmFilter = config.dropdowns.find(d => d.id === 'boss');
+            if (tmFilter) {
+                const dynamicOptions = [eventNames[290], eventNames[291]].filter(Boolean);
+                if (dynamicOptions.length > 0) tmFilter.options = dynamicOptions;
             }
+        }
 
-            //3. Logic για Kizuna
-            if(config.mode === 'kizuna_clash'){
-                const kizunaFilter = newConfig.dropdowns.find(d => d.id === 'boss');
-                if(kizunaFilter) {
-                    const options = [eventNames[292], eventNames[293]];
-                    if(eventNames[294] && eventNames[294].toLowerCase() !== 'no'){
-                        options.push(eventNames[294], eventNames[295]);
-                    }
-                    kizunaFilter.options = options;
+        // 3. Kizuna
+        if (config.mode === 'kizuna_clash' && hasEventNames) {
+            const kizunaFilter = config.dropdowns.find(d => d.id === 'boss');
+            if (kizunaFilter) {
+                const options = [eventNames[292], eventNames[293]].filter(Boolean);
+                if (eventNames[294] && eventNames[294].toLowerCase() !== 'no') {
+                    options.push(eventNames[294], eventNames[295]);
                 }
+                kizunaFilter.options = options.filter(Boolean);
             }
+        }
     
-            return newConfig;
-        }, [config, eventNames]);
+        if (config.mode === 'blitz_battle' && hasEventNames) {
+            const blitzFilter = config.dropdowns.find(d => d.id === 'boss');
+            if (blitzFilter && eventNames[296]) {
+                blitzFilter.options = [eventNames[296]].filter(Boolean);
+            }
+        }
+
+        return config;
+    }, [staticConfig, eventNames]);
 };

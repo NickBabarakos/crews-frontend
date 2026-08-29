@@ -33,17 +33,17 @@ const CrewsPage = ({mode}) => {
 
     //2. CONTROLLER LAYER (State & URL Management)
     // Handles filters, pagination, and URL sync
-    const{
-        crewFilters,
-        currentPage, setCurrentPage,
-        selectedBoss, setSelectedBoss,
-        highlightedCrewId,
-        isInitializingRef,
-        handleFilterChange,
-        searchParams,
-        setSearchParams,
-        clearUrlParams
-    } = useCrewFilterManager(mode, config, pageSize, eventNames);
+const {
+    crewFilters,
+    currentPage, setCurrentPage,
+    selectedBoss, setSelectedBoss,
+    highlightedCrewId,
+    isInitializingRef,
+    handleFilterChange,
+    searchParams,
+    setSearchParams,
+    clearUrlParams
+} = useCrewFilterManager(mode, config, pageSize, eventNames);
 
     //3. INTERACTION LAYER (Modals)
     // Manages open/close state of Guide, Report and Submit modals

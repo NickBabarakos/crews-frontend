@@ -154,7 +154,19 @@ const viewConfig = {
                 options: ['Boss(DEX)', 'Boss(INT)', 'Super Boss(STR)', 'Super Boss(INT)'] 
             }
         ]
-    }
+    },
+
+    blitzBattle: {
+        mode: 'blitz_battle',
+        contextMapper: (data) => ({ boss: data.stage_name }),
+        dropdowns: [
+            {
+                id: 'boss',
+                placeholder: 'Select Stage',
+                options: ['placeholder'] 
+            }
+        ]
+    } 
 };
 
 export default viewConfig;

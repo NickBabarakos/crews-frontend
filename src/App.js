@@ -63,6 +63,8 @@ function App(){
                         <Route path="pirateKingAdventures" element={<CrewsPage mode="pirateKingAdventures" />} />
                         <Route path="treasureMap" element={<CrewsPage mode="treasureMap" />} />
                         <Route path="kizunaClash" element={<CrewsPage mode="kizunaClash" />} />
+                        <Route path="blitzBattle" element={<CrewsPage mode="blitzBattle" />} />
+
 
                         <Route path="admin" element={<AdminPanel />} />
 

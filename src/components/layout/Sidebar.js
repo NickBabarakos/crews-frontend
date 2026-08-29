@@ -25,7 +25,8 @@ function Sidebar({isOpen, onClose}){
         {key:'coliseum', label: 'Coliseum', className:'coliseum-button', iconPath: "M2 12.16V12a10 10 0 0 1 10-10h0a10 10 0 0 1 10 10v.16"}, 
         {key:'pirateKingAdventures', label: 'Pirate King Adventures', className:'pka-button', iconPath: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"}, 
         {key:'treasureMap', label: 'Treasure Map', className:'treasure-map-button', iconPath: "M1 6v16h16"}, 
-        {key:'kizunaClash', label: 'Kizuna Clash', className:'kizuna-clash-button', iconPath: "M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"},  
+        {key:'kizunaClash', label: 'Kizuna Clash', className:'kizuna-clash-button', iconPath: "M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"}, 
+        {key:'blitzBattle', label: 'Blitz Battle', className: 'blitz-battle-button', iconPath: "M14.5 17.5L3 6V3h3l11.5 11.5M13 19l6-6M19 13l2 2-6 6-2-2M9.5 6.5L18 15M6.5 9.5L15 18" } 
     ];
 
 
