@@ -36,14 +36,14 @@ function CharacterSelector({onSelect, onBack}) {
         handleSearch 
     } = useCharacterSearch(pageSize);
 
-    useEffect(()=> {
+    useEffect(() => {
         const node = containerRef.current;
-        if(!node || loading || !hasMore || characters.length === 0) return;
+        if (!node || loading || !hasMore || characters.length === 0) return;
 
-        if(node.scrollHeight <= node.clientHeight){
+        if (node.scrollHeight <= node.clientHeight) {
             fetchCharacters(false);
         }
-    }, [characters, hasMore, loading]);
+    }, [characters, hasMore, loading, fetchCharacters]);
 
 
     const handleScroll = (e) => {
