@@ -54,7 +54,7 @@ function MemberSlot({main, support, role, exportMode}) {
                 className={`character-link ${main ? 'has-image': ''}`}
             >
                 <img 
-                    src={getImageUrl(`${main.image_url}.png`)} 
+                    src={getImageUrl(`${main.image_url}.webp`)} 
                     alt={main.name} 
                     title={main.name} 
                     className={`character-image ${isMainOwned ? '': 'missing'}`}
@@ -85,7 +85,7 @@ function MemberSlot({main, support, role, exportMode}) {
                 className="support-link has-image"
             >
                 <img 
-                    src={getImageUrl(`${support.image_url}.png`)} 
+                    src={getImageUrl(`${support.image_url}.webp`)} 
                     alt={support.name} 
                     className={`support-image ${isSupportOwned ? '' : 'missing'}`}
                     crossOrigin="anonymous"

@@ -93,7 +93,7 @@ function CharacterSelector({onSelect, onBack}) {
                     onClick={()=>onSelect(char)}
                 >
                     <img 
-                        src={getImageUrl(`${char.image_url}.png`)}
+                        src={getImageUrl(`${char.image_url}.webp`)}
                         alt={char.name}
                         loading="lazy"
                     />

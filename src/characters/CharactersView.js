@@ -18,7 +18,7 @@ const CharacterCard = memo(({character, isMobile}) =>{
             className={`character-card ${owned ? '' : 'missing'}`}
             title={character.name}
         >
-            <img src={getImageUrl(`${character.image_url}.png`)} alt={character.name} style={{pointerEvents: 'none'}} />
+            <img src={getImageUrl(`${character.image_url}.webp`)} alt={character.name} style={{pointerEvents: 'none'}} />
         </InteractiveChar>
     );
 });

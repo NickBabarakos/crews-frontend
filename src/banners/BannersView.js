@@ -32,7 +32,7 @@ function BannerCard({banner, onClick}){
     return (
         <div className={`banner-card ${status}`} onClick={()=> onClick(banner.id)}>
             <div className="banner-image-container">
-                <img src={getImageUrl(banner.image_url)} alt={banner.title} loading="lazy" />
+                <img src={getImageUrl(banner.image_url)} alt={getImageUrl("tba.webp")} loading="lazy" />
 
                 {status === 'active' && ( 
                     <div className="banner-progress-overlay" style={{

@@ -88,7 +88,7 @@ function CrewLayoutGrid({members, setMembers}) {
                             <div className="submission-slot main-slot" onClick={()=> handleSlotClick(slot.mainId)}>
                                 {members[slot.mainId] ? (
                                     <>
-                                        <img src = {getImageUrl(`${members[slot.mainId].image_url}.png`)} alt="char" className="selected-char-img" />
+                                        <img src = {getImageUrl(`${members[slot.mainId].image_url}.webp`)} alt="char" className="selected-char-img" />
                                         {renderMainSlotBadges(members[slot.mainId])}
                                     </>
                                 ): <div className="empty-slot-indicator">+</div>}
@@ -100,7 +100,7 @@ function CrewLayoutGrid({members, setMembers}) {
                                 <div className="submission-slot support-slot" onClick={()=> handleSlotClick(slot.supportId)}>
                                     {members[slot.supportId] ? (
                                         <>
-                                            <img src={getImageUrl(`${members[slot.supportId].image_url}.png`)} alt="sup" className="selected-char-img" />
+                                            <img src={getImageUrl(`${members[slot.supportId].image_url}.webp`)} alt="sup" className="selected-char-img" />
                                             {members[slot.supportId].notes === 'optional' && <div className="optional-indicator">!</div>}
                                         </>
                                     ): <div className="empty-slot-indicator small">+</div>}

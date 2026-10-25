@@ -25,7 +25,7 @@ const NewArrivalsWidger = ({units = []}) =>{
                         }}
                     >
                         <img 
-                            src={getImageUrl(`${unit.image_url}.png`)}
+                            src={getImageUrl(`${unit.image_url}.webp`)}
                             alt={unit.name}
                             loading="lazy"
                             style={{width: '100%', height: '100%', pointerEvents: 'none', display: 'block'}}

@@ -22,7 +22,7 @@ const TeamSlot = ({slotId, label,data, onClick, isSupport = false, isOptional = 
                 {data ? (
                     <>
                         <img 
-                            src={getImageUrl(`${data.image_url}.png`)}
+                            src={getImageUrl(`${data.image_url}.webp`)}
                             alt={label}
                             className="selected-char-img"
                         />

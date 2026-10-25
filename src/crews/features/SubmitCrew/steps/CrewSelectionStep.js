@@ -27,7 +27,7 @@ const getSlotDisplayData = (member) => {
 
     return{
         isEmpty: false,
-        imageUrl: getImageUrl(`${member.image_url}.png`),
+        imageUrl: getImageUrl(`${member.image_url}.webp`),
         isLbPlus,
         displayLevel,
         isOptionalSupport

@@ -25,7 +25,7 @@ function BannerCharacters({data}) {
                             className={`character-card small ${isOwned(char.id) ? '' : 'missing'}`}
                             title={char.name}
                         >
-                            <img src={getImageUrl(`${char.image_url}.png`)} alt={char.name} loading="lazy"/>
+                            <img src={getImageUrl(`${char.image_url}.webp`)} alt={char.name} loading="lazy"/>
                         </InteractiveChar>
                     ))}
                 </div>

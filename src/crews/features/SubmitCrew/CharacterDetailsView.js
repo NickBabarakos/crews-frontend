@@ -35,7 +35,7 @@ export default function CharacterDetailsView({character, isSupport, onConfirm, o
             <h3>Configure {isSupport ? 'Support' : 'Character' }</h3>
 
             <div className="selected-preview">
-                <img src={getImageUrl(`${character.image_url}.png`)} alt={character.name} />
+                <img src={getImageUrl(`${character.image_url}.webp`)} alt={character.name} />
                 <p>{character.name}</p>
             </div>
 

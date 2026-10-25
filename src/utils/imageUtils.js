@@ -1,4 +1,4 @@
-export const CDN_BASE_URL = "https://optc-crews-assets.github.io/optc-crews-assets";
+export const CDN_BASE_URL = "https://optc-crews-assets.pages.dev";
 
 /**
  * Μετατρέπει τα τοπικα paths σε CDN URLs

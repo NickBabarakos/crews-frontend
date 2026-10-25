@@ -3,7 +3,6 @@ import { Outlet, useNavigate, useSearchParams, useLocation } from 'react-router-
 import apiClient from "../api/client";
 import Header from "../components/layout/Header";
 import Sidebar from "../components/layout/Sidebar";
-import { getImageUrl } from "../utils/imageUtils";
 
 const MainLayout = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -60,7 +59,7 @@ const MainLayout = () => {
         <div className="app-container">
             <div className="landscape-warning">
                 <div className="warning-content">
-                    <img src={getImageUrl('./other/landscape-warning.png')} alt="Usopp Panic" className="usopp-img" />
+                    <img src={"https://optc-crews-assets.github.io/optc-crews-assets/other/landscape-warning.png"} alt="Usopp Panic" className="usopp-img" />
                         <div className="text-container">
                             <h1>NAMIIIII! WE'RE OFF COURSE!</h1>
                             <p>
