@@ -1,5 +1,4 @@
 
-import { getImageUrl } from "../../utils/imageUtils";
 
 const GIMMICK_FILES = {
     //Buffs
@@ -101,7 +100,7 @@ const GIMMICK_FILES = {
 
 export const getIcon = (key) => {
     const filePath = GIMMICK_FILES[key];
-    return filePath ? getImageUrl(filePath) : null;
+    return filePath ? `https://cdn.jsdelivr.net/gh/OPTC-Crews-assets/optc-crews-assets@main/${filePath}` : null;
 };
 
 
